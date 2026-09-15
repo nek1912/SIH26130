@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile
 
 from app.api.deps import get_documents_repository
 from app.audit.service import AuditEntry, create_audit_record
@@ -123,6 +123,7 @@ async def upload_document(
     application_id: str,
     requirement_key: str,
     file: UploadFile = File(...),
+    background_tasks: BackgroundTasks = BackgroundTasks(),
     repo: DocumentsRepository = Depends(get_documents_repository),
     user: UserContext = Depends(
         require_any_permission(
@@ -205,6 +206,12 @@ async def upload_document(
                 "requirement_key": requirement_key,
             },
         )
+    )
+
+    # Trigger background extraction
+    from app.extraction.background import run_extraction_background
+    background_tasks.add_task(
+        run_extraction_background, document["id"], application_id
     )
 
     return {
