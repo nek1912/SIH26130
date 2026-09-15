@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '@/lib/api'
-import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument, ExtractionSummary, ConsistencyResult } from '@/types/api'
+import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument, ExtractionSummary, ConsistencyResult, SlaInfo } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/shared/StatusBadge'
@@ -54,6 +54,7 @@ export function ApplicantApplicationDetailPage() {
   const [validatingDocId, setValidatingDocId] = useState('')
   const [consistency, setConsistency] = useState<ConsistencyResult | null>(null)
   const [consistencyLoading, setConsistencyLoading] = useState(false)
+  const [sla, setSla] = useState<SlaInfo | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -84,6 +85,11 @@ export function ApplicantApplicationDetailPage() {
   useEffect(() => {
     if (!id) return
     api.consistency.get(id).then(setConsistency).catch(() => {})
+  }, [id])
+
+  useEffect(() => {
+    if (!id) return
+    api.applications.getSla(id).then(setSla).catch(() => {})
   }, [id])
 
   const handleRunConsistency = async () => {
@@ -276,6 +282,52 @@ export function ApplicantApplicationDetailPage() {
         <Card>
           <CardContent className="py-4">
             <p className="text-sm">{nextActionHint}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* SLA Status */}
+      {sla && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">SLA Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-4">
+              <div>
+                <p className="text-sm font-medium">{sla.stage_label}</p>
+                <p className="text-xs text-muted-foreground">
+                  Target: {sla.sla_business_days} business days
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm">
+                  Due: {new Date(sla.due_date).toLocaleDateString()}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {sla.remaining_business_days > 0
+                    ? `${sla.remaining_business_days} days remaining`
+                    : `${sla.overdue_business_days} days overdue`}
+                </p>
+              </div>
+              <span
+                className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                  sla.state === 'on_track'
+                    ? 'bg-green-100 text-green-800'
+                    : sla.state === 'due_soon' || sla.state === 'due_today'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800'
+                }`}
+              >
+                {sla.state === 'on_track'
+                  ? 'On Track'
+                  : sla.state === 'due_soon'
+                    ? 'Due Soon'
+                    : sla.state === 'due_today'
+                      ? 'Due Today'
+                      : 'Breached'}
+              </span>
+            </div>
           </CardContent>
         </Card>
       )}
