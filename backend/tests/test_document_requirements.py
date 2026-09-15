@@ -85,3 +85,93 @@ class TestApprovalToDocsMapping:
 
     def test_gidc_plan_maps_to_three_docs(self):
         assert len(APPROVAL_TO_DOCS["A01"]) >= 3
+
+
+class TestDocumentsRepository:
+    """Tests for DocumentsRepository (unit tests with mocked Supabase client)."""
+
+    def test_list_requirements_for_application(self):
+        from unittest.mock import MagicMock
+
+        from app.repositories.documents import DocumentsRepository
+
+        mock_client = MagicMock()
+        chain = mock_client.table.return_value.select.return_value
+        chain = chain.eq.return_value.order.return_value
+        chain.execute.return_value.data = [
+            {
+                "id": "1",
+                "application_id": "app-1",
+                "requirement_key": "D01",
+                "readiness": "pending",
+            },
+        ]
+        repo = DocumentsRepository(mock_client)
+        result = repo.list_requirements_for_application("app-1")
+        assert len(result) == 1
+        assert result[0]["requirement_key"] == "D01"
+
+    def test_get_requirement(self):
+        from unittest.mock import MagicMock
+
+        from app.repositories.documents import DocumentsRepository
+
+        mock_client = MagicMock()
+        chain = mock_client.table.return_value.select.return_value
+        chain = chain.eq.return_value.eq.return_value
+        chain.execute.return_value.data = [
+            {"id": "1", "requirement_key": "D01"},
+        ]
+        repo = DocumentsRepository(mock_client)
+        result = repo.get_requirement("app-1", "D01")
+        assert result is not None
+
+    def test_update_requirement_readiness(self):
+        from unittest.mock import MagicMock
+
+        from app.repositories.documents import DocumentsRepository
+
+        mock_client = MagicMock()
+        chain = mock_client.table.return_value.update.return_value
+        chain = chain.eq.return_value.eq.return_value
+        chain.execute.return_value.data = [
+            {"id": "1", "readiness": "uploaded"},
+        ]
+        repo = DocumentsRepository(mock_client)
+        result = repo.update_requirement_readiness("app-1", "D01", "uploaded")
+        assert result["readiness"] == "uploaded"
+
+    def test_list_documents_for_application(self):
+        from unittest.mock import MagicMock
+
+        from app.repositories.documents import DocumentsRepository
+
+        mock_client = MagicMock()
+        chain = mock_client.table.return_value.select.return_value
+        chain = chain.eq.return_value.order.return_value
+        chain.execute.return_value.data = [
+            {
+                "id": "doc-1",
+                "application_id": "app-1",
+                "requirement_key": "D01",
+            },
+        ]
+        repo = DocumentsRepository(mock_client)
+        result = repo.list_documents_for_application("app-1")
+        assert len(result) == 1
+
+    def test_create_document(self):
+        from unittest.mock import MagicMock
+
+        from app.repositories.documents import DocumentsRepository
+
+        mock_client = MagicMock()
+        mock_client.table.return_value.insert.return_value \
+            .execute.return_value.data = [
+            {"id": "doc-1", "requirement_key": "D01"},
+        ]
+        repo = DocumentsRepository(mock_client)
+        result = repo.create_document(
+            {"requirement_key": "D01", "application_id": "app-1"}
+        )
+        assert result["id"] == "doc-1"

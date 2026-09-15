@@ -8,6 +8,7 @@ from supabase import Client
 from app.db.client import get_supabase
 from app.repositories.applications import ApplicationsRepository
 from app.repositories.approvals import ApprovalsRepository
+from app.repositories.documents import DocumentsRepository
 from app.repositories.obligations import ObligationsRepository
 from app.repositories.project_facts import ProjectFactsRepository
 from app.repositories.projects import ProjectRepository
@@ -60,3 +61,10 @@ def get_applications_repository(
 ) -> ApplicationsRepository:
     """Get applications repository dependency."""
     return ApplicationsRepository(client)
+
+
+def get_documents_repository(
+    client: Client = Depends(get_db_client),
+) -> DocumentsRepository:
+    """Get documents repository dependency."""
+    return DocumentsRepository(client)
