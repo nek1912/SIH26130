@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '@/lib/api'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Application, WorkflowResult } from '@/types/api'
+import type { Application, WorkflowResult, ConsistencyResult } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -54,6 +54,8 @@ export function ApplicationDetailPage() {
   const [actionLoading, setActionLoading] = useState('')
   const [reason, setReason] = useState('')
   const [actionError, setActionError] = useState('')
+  const [consistency, setConsistency] = useState<ConsistencyResult | null>(null)
+  const [consistencyLoading, setConsistencyLoading] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -63,6 +65,24 @@ export function ApplicationDetailPage() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [id])
+
+  useEffect(() => {
+    if (!id) return
+    api.consistency.get(id).then(setConsistency).catch(() => {})
+  }, [id])
+
+  const handleRunConsistency = async () => {
+    if (!id) return
+    setConsistencyLoading(true)
+    try {
+      const result = await api.consistency.check(id)
+      setConsistency(result)
+    } catch (err) {
+      console.error('Consistency check failed', err)
+    } finally {
+      setConsistencyLoading(false)
+    }
+  }
 
   const handleAction = async (action: WorkflowAction) => {
     if (!id) return
@@ -217,6 +237,84 @@ export function ApplicationDetailPage() {
               <dd>{new Date(application.created_at).toLocaleString()}</dd>
             </div>
           </dl>
+        </CardContent>
+      </Card>
+
+      {/* Cross-Document Consistency */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base">Cross-Document Consistency</CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleRunConsistency}
+              disabled={consistencyLoading}
+            >
+              {consistencyLoading ? 'Checking...' : 'Run Check'}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {consistency ? (
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <span
+                  className={`inline-block rounded px-2 py-1 text-xs font-medium ${
+                    consistency.outcome === 'VALID'
+                      ? 'bg-green-100 text-green-800'
+                      : consistency.outcome === 'REVIEW_REQUIRED'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
+                  {consistency.outcome}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Checked: {new Date(consistency.checked_at).toLocaleString()}
+                </span>
+              </div>
+
+              {consistency.findings.length > 0 ? (
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="py-1 text-left">Rule</th>
+                      <th className="py-1 text-left">Field</th>
+                      <th className="py-1 text-left">Status</th>
+                      <th className="py-1 text-left">Message</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {consistency.findings.map((f) => (
+                      <tr key={f.rule_id} className="border-b">
+                        <td className="py-1">{f.rule_id}</td>
+                        <td className="py-1">{f.canonical_field}</td>
+                        <td className="py-1">
+                          <span
+                            className={`inline-block rounded px-1.5 py-0.5 text-xs ${
+                              f.outcome === 'VALID'
+                                ? 'bg-green-50 text-green-700'
+                                : f.outcome === 'REVIEW_REQUIRED'
+                                  ? 'bg-yellow-50 text-yellow-700'
+                                  : 'bg-gray-50 text-gray-700'
+                            }`}
+                          >
+                            {f.outcome}
+                          </span>
+                        </td>
+                        <td className="py-1 text-muted-foreground">{f.message}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="text-sm text-muted-foreground">No findings.</p>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">No consistency check performed yet.</p>
+          )}
         </CardContent>
       </Card>
     </div>

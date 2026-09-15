@@ -1,5 +1,13 @@
 import { supabase } from './supabase'
-import type { DocumentRequirement, UploadedDocument, UploadResult } from '../types/api'
+import type {
+  DocumentRequirement,
+  UploadedDocument,
+  UploadResult,
+  ExtractionResult,
+  ValidationResult,
+  ExtractionSummary,
+  ConsistencyResult,
+} from '../types/api'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? ''
 
@@ -13,13 +21,20 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function authHeaders(): Promise<Record<string, string>> {
   const { data: { session } } = await supabase.auth.getSession()
-  const headers: Record<string, string> = {
-    ...(options.headers as Record<string, string>),
-  }
+  const headers: Record<string, string> = {}
   if (session?.access_token) {
     headers['Authorization'] = `Bearer ${session.access_token}`
+  }
+  return headers
+}
+
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const baseHeaders = await authHeaders()
+  const headers: Record<string, string> = {
+    ...baseHeaders,
+    ...(options.headers as Record<string, string>),
   }
 
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers })
@@ -135,5 +150,31 @@ export const api = {
       request<UploadedDocument>(`/applications/${appId}/documents/${docId}`),
     delete: (appId: string, docId: string) =>
       request<{ deleted: boolean }>(`/applications/${appId}/documents/${docId}`, { method: 'DELETE' }),
+    extract: (appId: string, docId: string) =>
+      request<ExtractionResult>(`/applications/${appId}/documents/${docId}/extract`, { method: 'POST' }),
+    validate: (appId: string, docId: string) =>
+      request<ValidationResult>(`/applications/${appId}/documents/${docId}/validate`, { method: 'POST' }),
+    getExtraction: (appId: string, docId: string) =>
+      request<{ document_id: string; extraction: unknown; fields: unknown[] }>(
+        `/applications/${appId}/documents/${docId}/extraction`,
+      ),
+    getValidation: (appId: string, docId: string) =>
+      request<{ document_id: string; validation: unknown; findings: unknown[] }>(
+        `/applications/${appId}/documents/${docId}/validation`,
+      ),
+    getExtractionSummary: (appId: string) =>
+      request<ExtractionSummary[]>(`/applications/${appId}/extraction-summary`),
+  },
+
+  consistency: {
+    check: (appId: string) =>
+      request<ConsistencyResult>(`/applications/${appId}/consistency/check`, { method: 'POST' }),
+    get: async (appId: string): Promise<ConsistencyResult | null> => {
+      const headers = await authHeaders()
+      const res = await fetch(`${API_BASE}/applications/${appId}/consistency`, { headers })
+      if (res.status === 404) return null
+      if (!res.ok) throw new ApiError(res.status, `Get consistency failed: ${res.status}`)
+      return res.json()
+    },
   },
 }

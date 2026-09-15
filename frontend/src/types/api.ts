@@ -163,3 +163,83 @@ export interface UploadResult {
   document: UploadedDocument
   requirement: DocumentRequirement
 }
+
+export type ExtractionStatus = 'pending' | 'completed' | 'failed' | 'unsupported'
+
+export type ValidationOutcome = 'VALID' | 'INVALID' | 'REVIEW_REQUIRED' | 'INSUFFICIENT_DATA'
+
+export interface ExtractedField {
+  id: string
+  document_id: string
+  application_id: string
+  field_name: string
+  field_value: unknown
+  field_type: string
+  extraction_method: string
+  confidence: number
+  extracted_at: string
+  metadata: Record<string, unknown>
+}
+
+export interface ExtractionResult {
+  document_id: string
+  application_id: string
+  extraction_status: ExtractionStatus
+  field_count: number
+  errors: string[]
+  metadata: Record<string, unknown>
+}
+
+export interface FieldFinding {
+  field_name: string
+  rule_id: string
+  rule_description: string
+  outcome: ValidationOutcome
+  expected: unknown
+  actual: unknown
+  message: string
+  source_ref: string
+}
+
+export interface ValidationResult {
+  document_id: string
+  requirement_key: string
+  outcome: ValidationOutcome
+  finding_count: number
+  findings: FieldFinding[]
+  source_refs: string[]
+}
+
+export interface ExtractionSummary {
+  requirement_key: string
+  document_name: string
+  domain: string
+  readiness: string
+  extraction_status: ExtractionStatus | null
+  validation_outcome: ValidationOutcome | null
+  has_document: boolean
+  extraction: unknown
+  validation: unknown
+  finding_count: number
+  findings: FieldFinding[]
+}
+
+export type ConsistencyOutcome = 'VALID' | 'REVIEW_REQUIRED' | 'INSUFFICIENT_DATA'
+
+export interface ConsistencyFinding {
+  rule_id: string
+  canonical_field: string
+  outcome: ConsistencyOutcome
+  observed_values: Record<string, unknown>
+  expected_relationship: string
+  message: string
+  source_ref: string
+}
+
+export interface ConsistencyResult {
+  application_id: string
+  outcome: ConsistencyOutcome
+  findings: ConsistencyFinding[]
+  checked_at: string
+  rule_version: string
+}
