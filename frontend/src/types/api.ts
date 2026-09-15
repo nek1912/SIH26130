@@ -87,6 +87,18 @@ export interface Application {
   updated_at?: string
 }
 
+export interface SlaInfo {
+  stage_key: string
+  stage_label: string
+  sla_business_days: number
+  entered_at: string
+  due_date: string
+  used_business_days: number
+  remaining_business_days: number
+  overdue_business_days: number
+  state: 'on_track' | 'due_soon' | 'due_today' | 'breached'
+}
+
 export interface WorkflowEvent {
   id: string
   application_id: string
@@ -154,6 +166,7 @@ export interface UploadedDocument {
   mime_type: string
   file_size_bytes: number
   status: 'pending_upload' | 'uploaded' | 'verified' | 'rejected' | 'virus_detected' | 'expired'
+  extraction_status: ExtractionStatus | null
   rejection_reason: string | null
   uploaded_by_user_id: string | null
   created_at: string

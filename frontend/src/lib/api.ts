@@ -7,6 +7,7 @@ import type {
   ValidationResult,
   ExtractionSummary,
   ConsistencyResult,
+  SlaInfo,
 } from '../types/api'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? ''
@@ -98,6 +99,8 @@ export const api = {
     get: (id: string) => request<unknown>(`/applications/${id}`),
     create: (projectId: string, approvalId: string) =>
       request<unknown>(`/applications${toQuery({ project_id: projectId, approval_id: approvalId })}`, { method: 'POST' }),
+    getSla: (appId: string) =>
+      request<SlaInfo | null>(`/applications/${appId}/sla`),
   },
 
   workflow: {
