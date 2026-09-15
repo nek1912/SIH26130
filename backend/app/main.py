@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import applications, approvals, health, projects, workflow
+from app.api import applications, approvals, documents, health, projects, workflow
 
 app = FastAPI(
     title="SIH 26130 Gujarat MVP",
@@ -24,6 +24,7 @@ app.include_router(health.router, tags=["health"])
 app.include_router(projects.router, tags=["projects"])
 app.include_router(approvals.router, tags=["approvals"])
 app.include_router(applications.router, tags=["applications"])
+app.include_router(documents.router, tags=["documents"])
 app.include_router(workflow.router, tags=["workflow"])
 
 

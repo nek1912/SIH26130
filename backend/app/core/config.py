@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     app_name: str = "SIH 26130 Gujarat MVP"
     debug: bool = False
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {"env_file": ".env", "env_file_encoding": "utf-8", "extra": "ignore"}
 
 
 def get_settings() -> Settings:
