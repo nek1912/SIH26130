@@ -226,6 +226,7 @@ def execute_transition(
     metadata: dict[str, Any] | None = None,
     ip_address: str | None = None,
     user_agent: str | None = None,
+    events_repository: Any | None = None,
 ) -> TransitionResult:
     """Execute a workflow transition atomically.
 
@@ -279,6 +280,18 @@ def execute_transition(
         metadata=metadata or {},
         created_at=datetime.now(),
     )
+
+    # Persist event if repository provided
+    if events_repository is not None:
+        events_repository.create({
+            "application_id": str(event.application_id),
+            "from_stage": event.from_stage,
+            "to_stage": event.to_stage,
+            "action": event.action,
+            "performed_by_id": str(event.performed_by) if event.performed_by else None,
+            "metadata": event.metadata,
+            "created_at": event.created_at.isoformat(),
+        })
 
     # Create audit record
     audit_entry = AuditEntry(

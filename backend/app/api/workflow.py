@@ -14,13 +14,14 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.api.deps import get_applications_repository
+from app.api.deps import get_applications_repository, get_workflow_events_repository
 from app.auth.dependencies import (
     require_permission,
 )
 from app.auth.models import UserContext
 from app.auth.permissions import Permission
 from app.repositories.applications import ApplicationsRepository
+from app.repositories.workflow_events import WorkflowEventsRepository
 from app.workflow.assignments import can_assign
 from app.workflow.engine import execute_transition
 from app.workflow.models import ApplicationStatus
@@ -42,6 +43,7 @@ def _get_application_or_404(
 async def submit_application(
     application_id: UUID,
     repo: ApplicationsRepository = Depends(get_applications_repository),
+    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
 ):
     """Submit a draft application — DRAFT → SUBMITTED."""
@@ -60,6 +62,7 @@ async def submit_application(
         action="submit",
         user_id=user.user_id,
         user_role=user.role,
+        events_repository=events_repo,
     )
 
     if not result.success:
@@ -87,6 +90,7 @@ async def submit_application(
 async def advance_application(
     application_id: UUID,
     repo: ApplicationsRepository = Depends(get_applications_repository),
+    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_REVIEW)),
 ):
     """Advance to the next review stage."""
@@ -102,6 +106,7 @@ async def advance_application(
         user_id=user.user_id,
         user_role=user.role,
         current_stage=current_stage,
+        events_repository=events_repo,
     )
 
     if not result.success:
@@ -128,6 +133,7 @@ async def advance_application(
 async def request_information(
     application_id: UUID,
     repo: ApplicationsRepository = Depends(get_applications_repository),
+    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_REVIEW)),
 ):
     """Request additional information — UNDER_REVIEW → RETURNED."""
@@ -143,6 +149,7 @@ async def request_information(
         user_id=user.user_id,
         user_role=user.role,
         current_stage=current_stage,
+        events_repository=events_repo,
     )
 
     if not result.success:
@@ -169,6 +176,7 @@ async def request_information(
 async def respond_to_query(
     application_id: UUID,
     repo: ApplicationsRepository = Depends(get_applications_repository),
+    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
 ):
     """Respond to a query — RETURNED/INCOMPLETE → UNDER_REVIEW."""
@@ -184,6 +192,7 @@ async def respond_to_query(
         user_id=user.user_id,
         user_role=user.role,
         current_stage=current_stage,
+        events_repository=events_repo,
     )
 
     if not result.success:
@@ -237,6 +246,7 @@ async def approve_application(
     application_id: UUID,
     reason: str = "",
     repo: ApplicationsRepository = Depends(get_applications_repository),
+    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_DECIDE)),
 ):
     """Approve an application — UNDER_REVIEW → APPROVED."""
@@ -253,6 +263,7 @@ async def approve_application(
         user_role=user.role,
         current_stage=current_stage,
         metadata={"reason": reason} if reason else None,
+        events_repository=events_repo,
     )
 
     if not result.success:
@@ -281,6 +292,7 @@ async def refuse_application(
     application_id: UUID,
     reason: str = "",
     repo: ApplicationsRepository = Depends(get_applications_repository),
+    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_DECIDE)),
 ):
     """Refuse an application — UNDER_REVIEW → REFUSED."""
@@ -297,6 +309,7 @@ async def refuse_application(
         user_role=user.role,
         current_stage=current_stage,
         metadata={"reason": reason} if reason else None,
+        events_repository=events_repo,
     )
 
     if not result.success:
@@ -324,6 +337,7 @@ async def refuse_application(
 async def withdraw_application(
     application_id: UUID,
     repo: ApplicationsRepository = Depends(get_applications_repository),
+    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
 ):
     """Withdraw an application (applicant only)."""
@@ -339,6 +353,7 @@ async def withdraw_application(
         user_id=user.user_id,
         user_role=user.role,
         current_stage=current_stage,
+        events_repository=events_repo,
     )
 
     if not result.success:
