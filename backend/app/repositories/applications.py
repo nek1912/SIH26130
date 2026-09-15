@@ -63,6 +63,21 @@ class ApplicationsRepository(BaseRepository):
         total = result.count if result.count is not None else len(items)
         return items, total
 
+    def get_approval_stages(self, approval_id: str) -> list[dict[str, Any]] | None:
+        """Load workflow stages from the approval's workflow_definition."""
+        result = (
+            self.client.table("approvals")
+            .select("workflow_definition")
+            .eq("id", approval_id)
+            .execute()
+        )
+        if not result.data:
+            return None
+        wf_def = result.data[0].get("workflow_definition")
+        if not wf_def:
+            return None
+        return wf_def.get("stages", [])
+
     def create_with_reference(self, data: dict[str, Any]) -> dict[str, Any]:
         """Create application with auto-generated reference number."""
         data["reference_number"] = f"APP-{uuid.uuid4().hex[:8].upper()}"

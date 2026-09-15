@@ -4,7 +4,9 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from app.api.deps import get_applications_repository, get_documents_repository
+from app.api.deps import get_applications_repository, get_documents_repository, get_workflow_events_repository
+from app.repositories.workflow_events import WorkflowEventsRepository
+from app.workflow.sla import compute_application_sla
 from app.auth.dependencies import (
     check_application_ownership,
     require_any_permission,
@@ -152,3 +154,59 @@ async def list_project_applications(
 ):
     """List all applications for a project."""
     return repo.get_by_project(project_id)
+
+
+@router.get("/applications/{application_id}/sla")
+async def get_application_sla(
+    application_id: UUID,
+    repo: ApplicationsRepository = Depends(get_applications_repository),
+    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
+    user: UserContext = Depends(
+        require_any_permission(
+            Permission.APPLICATION_VIEW_OWN,
+            Permission.APPLICATION_VIEW_TEAM,
+            Permission.APPLICATION_VIEW_ALL,
+        )
+    ),
+):
+    """Get SLA status for an application.
+
+    Returns SLA info (stage, due date, remaining days, state) or null
+    if no SLA applies (inactive status or no SLA target on stage).
+    """
+    application = repo.get_by_id(application_id)
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found")
+    check_application_ownership(user, application)
+
+    # Load workflow events
+    events = events_repo.list_for_application(str(application_id))
+
+    # Load approval stages
+    approval_id = application.get("approval_id")
+    stages = repo.get_approval_stages(approval_id) if approval_id else []
+
+    # Compute SLA
+    sla = compute_application_sla(
+        status=application.get("status"),
+        current_stage=application.get("current_stage"),
+        submitted_at=application.get("submitted_at"),
+        created_at=application.get("created_at"),
+        workflow_events=events,
+        stages=stages or [],
+    )
+
+    if sla is None:
+        return None
+
+    return {
+        "stage_key": sla.stage_key,
+        "stage_label": sla.stage_label,
+        "sla_business_days": sla.sla_business_days,
+        "entered_at": sla.entered_at.isoformat(),
+        "due_date": sla.due_date.isoformat(),
+        "used_business_days": sla.used_business_days,
+        "remaining_business_days": sla.remaining_business_days,
+        "overdue_business_days": sla.overdue_business_days,
+        "state": sla.state,
+    }
