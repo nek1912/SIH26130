@@ -1,0 +1,288 @@
+"""Document requirements from the frozen workbook Document_Register.
+
+17 documents (D01-D17) mapped to approvals (A01-A18).
+Source: SIH_130_Gujarat_Chemical_Final_Verified_Dataset.xlsx → Document_Register sheet.
+"""
+from __future__ import annotations
+
+from typing import Any  # noqa: I001
+
+# Approval ID → list of document requirement keys
+APPROVAL_TO_DOCS: dict[str, list[str]] = {
+    "A01": ["D01", "D02", "D04", "D05"],       # GIDC Plan
+    "A02": ["D01", "D02", "D03", "D05"],       # GIDC Water
+    "A03": ["D01", "D02", "D03", "D05", "D06"],# GIDC Drainage
+    "A04": ["D05", "D07", "D08", "D09"],       # GPCB CTE
+    "A05": ["D15"],                             # EIA/EC
+    "A06": ["D12"],                             # Fire Safety
+    "A07": ["D14"],                             # Factory Registration
+    "A08": ["D14"],                             # BOCW
+    "A09": ["D13"],                             # HT Electricity
+    "A10": ["D13"],                             # CEICED
+    "A11": ["D10"],                             # HOWM
+    "A12": ["D11"],                             # MSIHC
+    "A13": ["D11"],                             # Chemical Accidents
+    "A14": [],                                  # BU Permission (no specific doc)
+    "A15": ["D13"],                             # Lift
+    "A16": [],                                  # Boiler (no specific doc in register)
+    "A17": ["D16"],                             # PESO
+    "A18": ["D17"],                             # CGWA
+}
+
+
+def parse_used_for(used_for: str) -> list[str]:
+    """Parse workbook 'used_for' text into approval ID list."""
+    mapping: dict[str, str] = {
+        "Plan": "A01",
+        "Water": "A02",
+        "Drainage": "A03",
+        "CTE": "A04",
+        "EIA": "A05",
+        "PARIVESH": "A05",
+        "Fire Safety": "A06",
+        "Factory": "A07",
+        "Labour": "A07",
+        "DISH": "A07",
+        "BOCW": "A08",
+        "HT Electricity": "A09",
+        "CEICED": "A10",
+        "IFP": "A10",
+        "HOWM": "A11",
+        "MSIHC": "A12",
+        "Chemical Accidents": "A13",
+        "BU Permission": "A14",
+        "Lift": "A15",
+        "Boiler": "A16",
+        "PESO": "A17",
+        "CGWA": "A18",
+    }
+    result: set[str] = set()
+    for keyword, aid in mapping.items():
+        if keyword in used_for:
+            result.add(aid)
+    return sorted(result)
+
+
+DOCUMENT_REQUIREMENTS: list[dict[str, Any]] = [
+    {
+        "requirement_key": "D01",
+        "document_name": "GIDC Offer-cum-Allotment / latest Transfer Order",
+        "approval_ids": ["A01", "A02", "A03"],
+        "domain": "LAND",
+        "requirement_level": "required",
+        "source_basis": "GIDC page",
+        "source_url": "https://gidc.gujarat.gov.in/Pages/Contents/application-for-plan-approval",
+        "document_role": "Applicant document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 10,
+    },
+    {
+        "requirement_key": "D02",
+        "document_name": "GIDC Licence Agreement",
+        "approval_ids": ["A01", "A02", "A03"],
+        "domain": "LAND",
+        "requirement_level": "required",
+        "source_basis": "GIDC pages",
+        "source_url": "https://gidc.gujarat.gov.in/Pages/Contents/application-for-water-connection",
+        "document_role": "Applicant document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 10,
+    },
+    {
+        "requirement_key": "D03",
+        "document_name": "Possession Receipt / Final Transfer Order",
+        "approval_ids": ["A02", "A03"],
+        "domain": "LAND",
+        "requirement_level": "mandatory",
+        "source_basis": "GIDC pages",
+        "source_url": "https://gidc.gujarat.gov.in/Pages/Contents/application-for-water-connection",
+        "document_role": "Applicant document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 10,
+    },
+    {
+        "requirement_key": "D04",
+        "document_name": "Approved Building Plan + complete drawings",
+        "approval_ids": ["A01"],
+        "domain": "BUILDING",
+        "requirement_level": "required",
+        "source_basis": "GIDC Plan Approval",
+        "source_url": "https://gidc.gujarat.gov.in/Pages/Contents/application-for-plan-approval",
+        "document_role": "Applicant/design document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 20,
+    },
+    {
+        "requirement_key": "D05",
+        "document_name": "GPCB CTE / NOC",
+        "approval_ids": ["A01", "A02", "A03", "A04"],
+        "domain": "ENVIRONMENT",
+        "requirement_level": "required",
+        "source_basis": "GIDC/IFP",
+        "source_url": "https://gidc.gujarat.gov.in/Pages/Contents/application-for-water-connection",
+        "document_role": "Authority document",
+        "accepted_mime_types": ["application/pdf"],
+        "max_size_mb": 10,
+    },
+    {
+        "requirement_key": "D06",
+        "document_name": "Primary ETP/STP plan + installation certificate",
+        "approval_ids": ["A03"],
+        "domain": "ENVIRONMENT",
+        "requirement_level": "required",
+        "source_basis": "GIDC Drainage",
+        "source_url": "https://gidc.gujarat.gov.in/Pages/Contents/application-for-drainage-connection",
+        "document_role": "Technical document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 15,
+    },
+    {
+        "requirement_key": "D07",
+        "document_name": "Water balance",
+        "approval_ids": ["A04"],
+        "domain": "ENVIRONMENT",
+        "requirement_level": "required",
+        "source_basis": "IFP GPCB checklist",
+        "source_url": "https://ifp.gujarat.gov.in/DIGIGOV/IFP-pages/pre_establishment_approvals.jsp",
+        "document_role": "Technical document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 10,
+    },
+    {
+        "requirement_key": "D08",
+        "document_name": "Manufacturing process flow + chemical equations",
+        "approval_ids": ["A04"],
+        "domain": "PROCESS",
+        "requirement_level": "required",
+        "source_basis": "IFP GPCB checklist",
+        "source_url": "https://ifp.gujarat.gov.in/DIGIGOV/IFP-pages/pre_establishment_approvals.jsp",
+        "document_role": "Technical document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 10,
+    },
+    {
+        "requirement_key": "D09",
+        "document_name": "Raw material & finished-product list",
+        "approval_ids": ["A04"],
+        "domain": "PROCESS",
+        "requirement_level": "required",
+        "source_basis": "IFP GPCB checklist",
+        "source_url": "https://ifp.gujarat.gov.in/DIGIGOV/IFP-pages/pre_establishment_approvals.jsp",
+        "document_role": "Technical document",
+        "accepted_mime_types": [
+            "application/pdf",
+            "text/csv",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        ],
+        "max_size_mb": 5,
+    },
+    {
+        "requirement_key": "D10",
+        "document_name": "Hazardous waste list + quantities + disposal route",
+        "approval_ids": ["A11"],
+        "domain": "WASTE",
+        "requirement_level": "conditional",
+        "source_basis": "HOWM Rule 6 + GPCB workflow",
+        "source_url": "https://cpcb.nic.in/uploads/hwmd/HOWM-Ninth-Amendment-Rules-2024.pdf",
+        "document_role": "Technical document",
+        "accepted_mime_types": ["application/pdf"],
+        "max_size_mb": 10,
+    },
+    {
+        "requirement_key": "D11",
+        "document_name": "Hazardous chemical list + maximum on-site quantities",
+        "approval_ids": ["A12", "A13"],
+        "domain": "CHEMICAL",
+        "requirement_level": "required",
+        "source_basis": "MSIHC guidance",
+        "source_url": "https://cpcb.nic.in/uploads/Guidelines_integrated_guidance_framework.pdf",
+        "document_role": "Technical document",
+        "accepted_mime_types": ["application/pdf", "text/csv"],
+        "max_size_mb": 10,
+    },
+    {
+        "requirement_key": "D12",
+        "document_name": "Fire safety drawings/systems schedule",
+        "approval_ids": ["A06"],
+        "domain": "FIRE",
+        "requirement_level": "conditional",
+        "source_basis": "2023 Regulations + current portal",
+        "source_url": "https://gujfiresafetycop.in/uploads/regulations2023.pdf",
+        "document_role": "Technical document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 15,
+    },
+    {
+        "requirement_key": "D13",
+        "document_name": "Electrical single-line / equipment / earthing documents",
+        "approval_ids": ["A09", "A10", "A15"],
+        "domain": "ELECTRICAL",
+        "requirement_level": "conditional",
+        "source_basis": "CEICED/IFP current checklist",
+        "source_url": "https://ceiced.gujarat.gov.in/",
+        "document_role": "Technical document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 15,
+    },
+    {
+        "requirement_key": "D14",
+        "document_name": "Factory site/building/machinery information + chemical process documents",
+        "approval_ids": ["A07", "A08"],
+        "domain": "FACTORY",
+        "requirement_level": "conditional",
+        "source_basis": "ShramSetu + current Gujarat requirements",
+        "source_url": "https://shramsetu.gujarat.gov.in/Pages/OnlineApplication",
+        "document_role": "Technical document",
+        "accepted_mime_types": ["application/pdf", "image/*"],
+        "max_size_mb": 20,
+    },
+    {
+        "requirement_key": "D15",
+        "document_name": "EC/ToR/EC exemption evidence",
+        "approval_ids": ["A05"],
+        "domain": "ENVIRONMENT",
+        "requirement_level": "conditional",
+        "source_basis": "EIA 5(f) and current location facts",
+        "source_url": "https://parivesh.nic.in/kya/",
+        "document_role": "Authority document",
+        "accepted_mime_types": ["application/pdf"],
+        "max_size_mb": 20,
+    },
+    {
+        "requirement_key": "D16",
+        "document_name": "PESO substance/storage documents",
+        "approval_ids": ["A17"],
+        "domain": "CHEMICAL STORAGE",
+        "requirement_level": "conditional",
+        "source_basis": "Exact petroleum/gas classes and quantities",
+        "source_url": "https://www.peso.gov.in/web/en/requirement-license-under-petroleum-rules-2002-storage-petroleum",
+        "document_role": "Technical/legal document",
+        "accepted_mime_types": ["application/pdf"],
+        "max_size_mb": 10,
+    },
+    {
+        "requirement_key": "D17",
+        "document_name": "CGWA NOC / abstraction records",
+        "approval_ids": ["A18"],
+        "domain": "WATER",
+        "requirement_level": "conditional",
+        "source_basis": "Current CGWA guidance",
+        "source_url": "https://cgwa-noc.gov.in/landingpage/Guidlines/ConsolidateGuidline.pdf",
+        "document_role": "Authority document",
+        "accepted_mime_types": ["application/pdf"],
+        "max_size_mb": 10,
+    },
+]
+
+
+def load_document_requirements() -> list[dict[str, Any]]:
+    """Return all 17 document requirements from the workbook."""
+    return list(DOCUMENT_REQUIREMENTS)
+
+
+def get_requirements_for_approval(approval_id: str) -> list[dict[str, Any]]:
+    """Return document requirements that apply to a given approval."""
+    return [
+        req for req in DOCUMENT_REQUIREMENTS
+        if approval_id in req["approval_ids"]
+    ]
