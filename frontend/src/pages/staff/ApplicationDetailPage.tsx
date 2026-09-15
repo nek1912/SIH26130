@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '@/lib/api'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Application, WorkflowResult, ConsistencyResult, SlaInfo } from '@/types/api'
+import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument, ExtractionSummary, ConsistencyResult, SlaInfo } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -57,6 +57,14 @@ export function ApplicationDetailPage() {
   const [consistency, setConsistency] = useState<ConsistencyResult | null>(null)
   const [consistencyLoading, setConsistencyLoading] = useState(false)
   const [sla, setSla] = useState<SlaInfo | null>(null)
+  const [docRequirements, setDocRequirements] = useState<DocumentRequirement[]>([])
+  const [uploadedDocs, setUploadedDocs] = useState<UploadedDocument[]>([])
+  const [extractionSummary, setExtractionSummary] = useState<ExtractionSummary[]>([])
+  const [docLoading, setDocLoading] = useState(false)
+  const [docError, setDocError] = useState('')
+  const [uploadingKey, setUploadingKey] = useState('')
+  const [extractingDocId, setExtractingDocId] = useState('')
+  const [validatingDocId, setValidatingDocId] = useState('')
 
   useEffect(() => {
     if (!id) return
@@ -76,6 +84,102 @@ export function ApplicationDetailPage() {
     if (!id) return
     api.applications.getSla(id).then(setSla).catch(() => {})
   }, [id])
+
+  useEffect(() => {
+    if (!id) return
+    setDocLoading(true)
+    Promise.all([
+      api.documents.listRequirements(id),
+      api.documents.list(id),
+      api.documents.getExtractionSummary(id),
+    ])
+      .then(([reqs, docs, summary]) => {
+        setDocRequirements(reqs as DocumentRequirement[])
+        setUploadedDocs(docs as UploadedDocument[])
+        setExtractionSummary(summary as ExtractionSummary[])
+      })
+      .catch((err) => setDocError(err.message))
+      .finally(() => setDocLoading(false))
+  }, [id])
+
+  const handleUpload = async (reqKey: string, file: File) => {
+    if (!id) return
+    setUploadingKey(reqKey)
+    setDocError('')
+    try {
+      const result = await api.documents.upload(id, reqKey, file)
+      setUploadedDocs((prev) => {
+        const filtered = prev.filter((d) => d.requirement_key !== reqKey)
+        return [result.document, ...filtered]
+      })
+      setDocRequirements((prev) =>
+        prev.map((r) => (r.requirement_key === reqKey ? result.requirement : r)),
+      )
+      setTimeout(async () => {
+        try {
+          const summary = await api.documents.getExtractionSummary(id)
+          setExtractionSummary(summary as ExtractionSummary[])
+        } catch {
+          // Ignore poll errors
+        }
+      }, 2000)
+    } catch (err) {
+      if (err instanceof ApiError) setDocError(err.message)
+      else setDocError(err instanceof Error ? err.message : 'Upload failed')
+    } finally {
+      setUploadingKey('')
+    }
+  }
+
+  const handleDeleteDoc = async (docId: string, reqKey: string) => {
+    if (!id) return
+    try {
+      await api.documents.delete(id, docId)
+      setUploadedDocs((prev) => prev.filter((d) => d.id !== docId))
+      setDocRequirements((prev) =>
+        prev.map((r) =>
+          r.requirement_key === reqKey
+            ? { ...r, readiness: 'pending' as const, uploaded_document_id: null }
+            : r,
+        ),
+      )
+    } catch (err) {
+      if (err instanceof ApiError) setDocError(err.message)
+      else setDocError(err instanceof Error ? err.message : 'Delete failed')
+    }
+  }
+
+  const handleExtract = async (docId: string) => {
+    if (!id) return
+    setExtractingDocId(docId)
+    setDocError('')
+    try {
+      await api.documents.extract(id, docId)
+      const summary = await api.documents.getExtractionSummary(id)
+      setExtractionSummary(summary as ExtractionSummary[])
+    } catch (err) {
+      if (err instanceof ApiError) setDocError(err.message)
+      else setDocError(err instanceof Error ? err.message : 'Extraction failed')
+    } finally {
+      setExtractingDocId('')
+    }
+  }
+
+  const handleValidate = async (docId: string) => {
+    if (!id) return
+    setValidatingDocId(docId)
+    setDocError('')
+    try {
+      await api.documents.validate(id, docId)
+      const summary = await api.documents.getExtractionSummary(id)
+      setExtractionSummary(summary as ExtractionSummary[])
+    } catch (err) {
+      if (err instanceof ApiError) setDocError(err.message)
+      else setDocError(err instanceof Error ? err.message : 'Validation failed')
+    } finally {
+      setValidatingDocId('')
+    }
+  }
 
   const handleRunConsistency = async () => {
     if (!id) return
@@ -289,6 +393,196 @@ export function ApplicationDetailPage() {
               <dd>{new Date(application.created_at).toLocaleString()}</dd>
             </div>
           </dl>
+        </CardContent>
+      </Card>
+
+      {/* Document Checklist */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Document Checklist</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {docLoading ? (
+            <LoadingSpinner className="py-4" />
+          ) : docError ? (
+            <div className="text-sm text-destructive">{docError}</div>
+          ) : docRequirements.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No document requirements for this application.</p>
+          ) : (
+            <div className="space-y-3">
+              {docRequirements.map((req) => {
+                const uploaded = uploadedDocs.find((d) => d.requirement_key === req.requirement_key)
+                const summary = extractionSummary.find((s) => s.requirement_key === req.requirement_key)
+                const extractionStatus = summary?.extraction_status
+                const validationOutcome = summary?.validation_outcome
+                return (
+                  <div
+                    key={req.requirement_key}
+                    className="rounded-md border p-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-muted-foreground">{req.requirement_key}</span>
+                          <span className="text-sm font-medium truncate">{req.document_name}</span>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                              req.requirement_level === 'mandatory'
+                                ? 'bg-red-100 text-red-800'
+                                : req.requirement_level === 'conditional'
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : 'bg-blue-100 text-blue-800'
+                            }`}
+                          >
+                            {req.requirement_level}
+                          </span>
+                          <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
+                            {req.domain}
+                          </span>
+                        </div>
+                        {uploaded ? (
+                          <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                            <span>{uploaded.original_filename}</span>
+                            <span>({(uploaded.file_size_bytes / 1024).toFixed(1)} KB)</span>
+                            <StatusBadge status={uploaded.status === 'verified' ? 'approved' : uploaded.status === 'rejected' ? 'refused' : 'submitted'} />
+                          </div>
+                        ) : (
+                          <p className="mt-1 text-xs text-muted-foreground">Not uploaded</p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 ml-4">
+                        {uploaded ? (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleExtract(uploaded.id)}
+                              disabled={extractingDocId === uploaded.id}
+                            >
+                              {extractingDocId === uploaded.id ? 'Extracting...' : 'Extract'}
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleValidate(uploaded.id)}
+                              disabled={validatingDocId === uploaded.id}
+                            >
+                              {validatingDocId === uploaded.id ? 'Validating...' : 'Validate'}
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteDoc(uploaded.id, req.requirement_key)}
+                            >
+                              Remove
+                            </Button>
+                          </>
+                        ) : (
+                          <label className="cursor-pointer">
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept={req.accepted_mime_types?.join(',')}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0]
+                                if (file) handleUpload(req.requirement_key, file)
+                              }}
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={uploadingKey === req.requirement_key}
+                              asChild
+                            >
+                              <span>
+                                {uploadingKey === req.requirement_key ? 'Uploading...' : 'Upload'}
+                              </span>
+                            </Button>
+                          </label>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Extraction/Validation Status */}
+                    {uploaded && (
+                      <div className="mt-2 flex items-center gap-3 text-xs">
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${
+                            (uploaded.extraction_status ?? extractionStatus) === 'succeeded'
+                              ? 'bg-green-100 text-green-800'
+                              : (uploaded.extraction_status ?? extractionStatus) === 'failed'
+                                ? 'bg-red-100 text-red-800'
+                                : (uploaded.extraction_status ?? extractionStatus) === 'running'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : (uploaded.extraction_status ?? extractionStatus) === 'unsupported'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          Extraction: {(uploaded.extraction_status ?? extractionStatus) === 'succeeded'
+                            ? 'Extracted'
+                            : (uploaded.extraction_status ?? extractionStatus) === 'running'
+                              ? 'Extracting...'
+                              : (uploaded.extraction_status ?? extractionStatus) ?? 'pending'}
+                          {(uploaded.extraction_status ?? extractionStatus) === 'running' && (
+                            <svg className="ml-1 h-3 w-3 animate-spin" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                          )}
+                        </span>
+                        {validationOutcome && (
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${
+                              validationOutcome === 'VALID'
+                                ? 'bg-green-100 text-green-800'
+                                : validationOutcome === 'INVALID'
+                                  ? 'bg-red-100 text-red-800'
+                                  : validationOutcome === 'REVIEW_REQUIRED'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : 'bg-gray-100 text-gray-700'
+                            }`}
+                          >
+                            Validation: {validationOutcome}
+                          </span>
+                        )}
+                        {summary?.finding_count ? (
+                          <span className="text-muted-foreground">
+                            {summary.finding_count} finding{summary.finding_count !== 1 ? 's' : ''}
+                          </span>
+                        ) : null}
+                      </div>
+                    )}
+
+                    {/* Validation Findings */}
+                    {summary?.findings && summary.findings.length > 0 && (
+                      <div className="mt-2 space-y-1">
+                        {summary.findings.map((finding, idx) => (
+                          <div
+                            key={idx}
+                            className={`text-xs p-2 rounded ${
+                              finding.outcome === 'VALID'
+                                ? 'bg-green-50 text-green-700'
+                                : finding.outcome === 'INVALID'
+                                  ? 'bg-red-50 text-red-700'
+                                  : finding.outcome === 'REVIEW_REQUIRED'
+                                    ? 'bg-yellow-50 text-yellow-700'
+                                    : 'bg-gray-50 text-gray-700'
+                            }`}
+                          >
+                            <span className="font-medium">{finding.rule_id}:</span> {finding.message}
+                            {finding.source_ref && (
+                              <span className="ml-1 text-muted-foreground">({finding.source_ref})</span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
 

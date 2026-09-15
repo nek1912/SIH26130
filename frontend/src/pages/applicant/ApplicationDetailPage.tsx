@@ -118,6 +118,14 @@ export function ApplicantApplicationDetailPage() {
       setDocRequirements((prev) =>
         prev.map((r) => (r.requirement_key === reqKey ? result.requirement : r)),
       )
+      setTimeout(async () => {
+        try {
+          const summary = await api.documents.getExtractionSummary(id)
+          setExtractionSummary(summary as ExtractionSummary[])
+        } catch {
+          // Ignore poll errors
+        }
+      }, 2000)
     } catch (err) {
       if (err instanceof ApiError) setDocError(err.message)
       else setDocError(err instanceof Error ? err.message : 'Upload failed')
@@ -513,23 +521,33 @@ export function ApplicantApplicationDetailPage() {
                     </div>
 
                     {/* Extraction/Validation Status */}
-                    {(extractionStatus || validationOutcome) && (
+                    {uploaded && (
                       <div className="mt-2 flex items-center gap-3 text-xs">
-                        {extractionStatus && (
-                          <span
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${
-                              extractionStatus === 'completed'
-                                ? 'bg-green-100 text-green-800'
-                                : extractionStatus === 'failed'
-                                  ? 'bg-red-100 text-red-800'
-                                  : extractionStatus === 'unsupported'
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${
+                            (uploaded.extraction_status ?? extractionStatus) === 'succeeded'
+                              ? 'bg-green-100 text-green-800'
+                              : (uploaded.extraction_status ?? extractionStatus) === 'failed'
+                                ? 'bg-red-100 text-red-800'
+                                : (uploaded.extraction_status ?? extractionStatus) === 'running'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : (uploaded.extraction_status ?? extractionStatus) === 'unsupported'
                                     ? 'bg-yellow-100 text-yellow-800'
                                     : 'bg-gray-100 text-gray-700'
-                            }`}
-                          >
-                            Extraction: {extractionStatus}
-                          </span>
-                        )}
+                          }`}
+                        >
+                          Extraction: {(uploaded.extraction_status ?? extractionStatus) === 'succeeded'
+                            ? 'Extracted'
+                            : (uploaded.extraction_status ?? extractionStatus) === 'running'
+                              ? 'Extracting...'
+                              : (uploaded.extraction_status ?? extractionStatus) ?? 'pending'}
+                          {(uploaded.extraction_status ?? extractionStatus) === 'running' && (
+                            <svg className="ml-1 h-3 w-3 animate-spin" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                            </svg>
+                          )}
+                        </span>
                         {validationOutcome && (
                           <span
                             className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${
