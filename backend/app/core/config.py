@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     # but for local dev it may be "authenticated" or the supabase_url.
     auth_jwt_audience: str = "authenticated"
 
+    # Storage
+    supabase_storage_bucket: str = "documents"
+
     # App
     app_name: str = "SIH 26130 Gujarat MVP"
     debug: bool = False

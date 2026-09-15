@@ -151,20 +151,66 @@ class FetchRecipe(BaseModel):
 
 
 # ─────────────────────────────────────────────────────────────
-# Applicability conditions
+# Applicability conditions — recursive condition tree
+# Supports AND, OR, NOT with arbitrary nesting.
 # Source: compliance-grid/src/schemas/applicability-condition.ts
 # ─────────────────────────────────────────────────────────────
 
 
 class ApplicabilityCondition(BaseModel):
-    """Structured predicate for applicability evaluation.
+    """Leaf predicate for applicability evaluation.
 
-    Multiple conditions on an obligation are AND-combined.
+    Evaluates a single field against a value using an operator.
     """
 
+    kind: Literal["condition"] = "condition"
     field: str = Field(min_length=1)
     op: ApplicabilityOp
     value: Any
+
+
+class AndNode(BaseModel):
+    """Logical AND of multiple condition nodes.
+
+    Result is TRUE only if ALL children are TRUE.
+    Result is FALSE if any child is FALSE.
+    Result is INSUFFICIENT_DATA if no child is FALSE but at least one is INSUFFICIENT_DATA.
+    """
+
+    kind: Literal["and"] = "and"
+    conditions: list[ConditionNode] = Field(min_length=1)
+
+
+class OrNode(BaseModel):
+    """Logical OR of multiple condition nodes.
+
+    Result is TRUE if any child is TRUE.
+    Result is FALSE only if ALL children are FALSE.
+    Result is INSUFFICIENT_DATA if no child is TRUE but at least one is INSUFFICIENT_DATA.
+    """
+
+    kind: Literal["or"] = "or"
+    conditions: list[ConditionNode] = Field(min_length=1)
+
+
+class NotNode(BaseModel):
+    """Logical NOT of a single condition node.
+
+    Result is TRUE if child is FALSE.
+    Result is FALSE if child is TRUE.
+    Result is INSUFFICIENT_DATA if child is INSUFFICIENT_DATA.
+    """
+
+    kind: Literal["not"] = "not"
+    condition: ConditionNode
+
+
+# Forward reference resolution — Pydantic v2 handles this via
+# the model_rebuild() call at the end of this file.
+ConditionNode = Annotated[
+    ApplicabilityCondition | AndNode | OrNode | NotNode,
+    Field(discriminator="kind"),
+]
 
 
 # ─────────────────────────────────────────────────────────────
@@ -282,7 +328,7 @@ class Obligation(BaseModel):
     instrument_ref: InstrumentRef
     type: ObligationType
     summary: str = Field(min_length=1)
-    applicability_conditions: list[ApplicabilityCondition]
+    applicability_conditions: list[ConditionNode]
     frequency: Frequency
     deadline_rule: DeadlineRule
     proof_types: list[str]
@@ -302,7 +348,7 @@ class ObligationCandidate(BaseModel):
     instrument_ref: InstrumentRef
     type: ObligationType
     summary: str = Field(min_length=1)
-    applicability_conditions: list[ApplicabilityCondition]
+    applicability_conditions: list[ConditionNode]
     frequency: Frequency
     deadline_rule: DeadlineRule
     proof_types: list[str]
@@ -319,7 +365,80 @@ class ObligationCandidate(BaseModel):
 
 
 class ApprovalResult(StrEnum):
-    APPLICABLE = "applicable"
-    NOT_APPLICABLE = "not_applicable"
+    APPLIES = "applies"
+    DOES_NOT_APPLY = "does_not_apply"
     CONDITIONAL = "conditional"
-    UNKNOWN = "unknown"
+    INSUFFICIENT_DATA = "insufficient_data"
+
+
+# ─────────────────────────────────────────────────────────────
+# Approval Rule — links an approval to applicability conditions
+# and source references. Maps to the approval_rules table.
+# ─────────────────────────────────────────────────────────────
+
+
+class ApprovalRule(BaseModel):
+    """A rule that determines whether an approval applies to a project.
+
+    Each rule links an approval to a set of applicability conditions.
+    Multiple rules can exist for the same approval (any matching rule
+    makes the approval applicable).
+    """
+
+    id: str = Field(min_length=1)
+    approval_id: str = Field(min_length=1)
+    obligation_id: str | None = None
+    applicability_conditions: list[ConditionNode]
+    source_refs: list[SourceRef] = Field(default_factory=list)
+    version: str = Field(min_length=1)
+    active: bool = True
+
+
+# ─────────────────────────────────────────────────────────────
+# Applicability Evaluation — detailed result for a single rule
+# evaluation against project facts
+# ─────────────────────────────────────────────────────────────
+
+
+class ApplicabilityEvaluation(BaseModel):
+    """Detailed result of evaluating an approval rule against project facts.
+
+    Every evaluation includes:
+    - rule_id: the rule that was evaluated
+    - approval_id: the approval this rule relates to
+    - result: APPLIES, DOES_NOT_APPLY, CONDITIONAL, or INSUFFICIENT_DATA
+    - reason: human-readable explanation of why this result was produced
+    - required_inputs: all fact fields required by this rule's conditions
+    - missing_inputs: fact fields that were required but not provided
+    - authority: the authority responsible for this approval (from approval)
+    - source_references: regulatory source citations for this rule
+    """
+
+    rule_id: str
+    approval_id: str
+    result: str  # "applies" | "does_not_apply" | "conditional" | "insufficient_data"
+    reason: str
+    required_inputs: list[str]
+    missing_inputs: list[str]
+    authority: str
+    source_references: list[SourceRef]
+
+
+class ApprovalEvaluationRequest(BaseModel):
+    """Request to evaluate approval applicability for a project."""
+
+    project_facts: dict[str, Any]
+    approval_ids: list[str] | None = None  # Optional filter: evaluate only specific approvals
+
+
+class ApprovalEvaluationResponse(BaseModel):
+    """Response containing evaluation results for all evaluated rules."""
+
+    evaluations: list[ApplicabilityEvaluation]
+    summary: dict[str, int]  # Count of each result type
+
+
+# Resolve forward references for the recursive ConditionNode type.
+AndNode.model_rebuild()
+OrNode.model_rebuild()
+NotNode.model_rebuild()

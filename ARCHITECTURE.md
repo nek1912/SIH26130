@@ -381,7 +381,6 @@ Both source repos are TypeScript/Next.js. Our locked stack requires Python/FastA
 
 ### Known limitations
 - No optimistic locking at the database level (caller must use conditional updates)
-- No workflow_events table persistence yet (events created in-memory)
 - No notification system for SLA breaches
 - No auto-assignment logic (manual assignment only)
 - Workflow definition is not persisted in DB yet (stages are passed at call time)

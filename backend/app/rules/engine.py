@@ -63,7 +63,8 @@ def _evaluate_condition(entity: EntityProfile, condition: ApplicabilityCondition
                 and value <= condition.value
             )
 
-    return True
+    # Unknown operator — conservatively reject rather than silently assume
+    return False
 
 
 def evaluate_applicability(

@@ -36,3 +36,14 @@ class ApprovalsRepository(BaseRepository):
         )
         approval["rules"] = rules_result.data
         return approval
+
+    def get_rules_for_approval(self, approval_id: UUID) -> list[dict[str, Any]]:
+        """Get all active rules for an approval."""
+        result = (
+            self.client.table("approval_rules")
+            .select("*")
+            .eq("approval_id", str(approval_id))
+            .eq("active", True)
+            .execute()
+        )
+        return result.data

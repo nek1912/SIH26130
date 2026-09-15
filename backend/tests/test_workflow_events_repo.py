@@ -46,12 +46,21 @@ class TestWorkflowEventsRepository:
 
         mock_result = MagicMock()
         mock_result.data = [
-            {"id": "1", "application_id": app_id, "action": "submit", "created_at": "2026-09-10T10:00:00"},
-            {"id": "2", "application_id": app_id, "action": "advance", "created_at": "2026-09-11T10:00:00"},
+            {
+                "id": "1",
+                "application_id": app_id,
+                "action": "submit",
+                "created_at": "2026-09-10T10:00:00",
+            },
+            {
+                "id": "2",
+                "application_id": app_id,
+                "action": "advance",
+                "created_at": "2026-09-11T10:00:00",
+            },
         ]
-        client.table.return_value.select.return_value.eq.return_value.order.return_value.execute.return_value = (
-            mock_result
-        )
+        chain = client.table.return_value.select.return_value.eq.return_value
+        chain.order.return_value.execute.return_value = mock_result
 
         events = repo.list_for_application(app_id)
 
@@ -66,9 +75,8 @@ class TestWorkflowEventsRepository:
 
         mock_result = MagicMock()
         mock_result.data = []
-        client.table.return_value.select.return_value.eq.return_value.order.return_value.execute.return_value = (
-            mock_result
-        )
+        chain = client.table.return_value.select.return_value.eq.return_value
+        chain.order.return_value.execute.return_value = mock_result
 
         events = repo.list_for_application(app_id)
         assert events == []

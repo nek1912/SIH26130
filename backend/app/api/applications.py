@@ -4,9 +4,11 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from app.api.deps import get_applications_repository, get_documents_repository, get_workflow_events_repository
-from app.repositories.workflow_events import WorkflowEventsRepository
-from app.workflow.sla import compute_application_sla
+from app.api.deps import (
+    get_applications_repository,
+    get_documents_repository,
+    get_workflow_events_repository,
+)
 from app.auth.dependencies import (
     check_application_ownership,
     require_any_permission,
@@ -16,6 +18,8 @@ from app.auth.models import UserContext
 from app.auth.permissions import Permission
 from app.repositories.applications import ApplicationsRepository
 from app.repositories.documents import DocumentsRepository
+from app.repositories.workflow_events import WorkflowEventsRepository
+from app.workflow.sla import compute_application_sla
 
 router = APIRouter()
 

@@ -1,0 +1,404 @@
+﻿diff --git a/backend/app/api/deps.py b/backend/app/api/deps.py
+index ce9ad16..ee682d1 100644
+--- a/backend/app/api/deps.py
++++ b/backend/app/api/deps.py
+@@ -13,6 +13,7 @@ from app.repositories.obligations import ObligationsRepository
+ from app.repositories.project_facts import ProjectFactsRepository
+ from app.repositories.projects import ProjectRepository
+ from app.repositories.sources import SourcesRepository
++from app.repositories.workflow_events import WorkflowEventsRepository
+ 
+ 
+ @lru_cache
+@@ -67,4 +68,11 @@ def get_documents_repository(
+     client: Client = Depends(get_db_client),
+ ) -> DocumentsRepository:
+     """Get documents repository dependency."""
+-    return DocumentsRepository(client)
+\ No newline at end of file
++    return DocumentsRepository(client)
++
++
++def get_workflow_events_repository(
++    client: Client = Depends(get_db_client),
++) -> WorkflowEventsRepository:
++    """Get workflow events repository dependency."""
++    return WorkflowEventsRepository(client)
+\ No newline at end of file
+diff --git a/backend/app/api/workflow.py b/backend/app/api/workflow.py
+index edd6a81..baad8c4 100644
+--- a/backend/app/api/workflow.py
++++ b/backend/app/api/workflow.py
+@@ -14,13 +14,14 @@ from uuid import UUID
+ 
+ from fastapi import APIRouter, Depends, HTTPException, status
+ 
+-from app.api.deps import get_applications_repository
++from app.api.deps import get_applications_repository, get_workflow_events_repository
+ from app.auth.dependencies import (
+     require_permission,
+ )
+ from app.auth.models import UserContext
+ from app.auth.permissions import Permission
+ from app.repositories.applications import ApplicationsRepository
++from app.repositories.workflow_events import WorkflowEventsRepository
+ from app.workflow.assignments import can_assign
+ from app.workflow.engine import execute_transition
+ from app.workflow.models import ApplicationStatus
+@@ -42,6 +43,7 @@ def _get_application_or_404(
+ async def submit_application(
+     application_id: UUID,
+     repo: ApplicationsRepository = Depends(get_applications_repository),
++    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
+     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
+ ):
+     """Submit a draft application ΓÇö DRAFT ΓåÆ SUBMITTED."""
+@@ -60,6 +62,7 @@ async def submit_application(
+         action="submit",
+         user_id=user.user_id,
+         user_role=user.role,
++        events_repository=events_repo,
+     )
+ 
+     if not result.success:
+@@ -87,6 +90,7 @@ async def submit_application(
+ async def advance_application(
+     application_id: UUID,
+     repo: ApplicationsRepository = Depends(get_applications_repository),
++    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
+     user: UserContext = Depends(require_permission(Permission.APPLICATION_REVIEW)),
+ ):
+     """Advance to the next review stage."""
+@@ -102,6 +106,7 @@ async def advance_application(
+         user_id=user.user_id,
+         user_role=user.role,
+         current_stage=current_stage,
++        events_repository=events_repo,
+     )
+ 
+     if not result.success:
+@@ -128,6 +133,7 @@ async def advance_application(
+ async def request_information(
+     application_id: UUID,
+     repo: ApplicationsRepository = Depends(get_applications_repository),
++    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
+     user: UserContext = Depends(require_permission(Permission.APPLICATION_REVIEW)),
+ ):
+     """Request additional information ΓÇö UNDER_REVIEW ΓåÆ RETURNED."""
+@@ -143,6 +149,7 @@ async def request_information(
+         user_id=user.user_id,
+         user_role=user.role,
+         current_stage=current_stage,
++        events_repository=events_repo,
+     )
+ 
+     if not result.success:
+@@ -169,6 +176,7 @@ async def request_information(
+ async def respond_to_query(
+     application_id: UUID,
+     repo: ApplicationsRepository = Depends(get_applications_repository),
++    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
+     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
+ ):
+     """Respond to a query ΓÇö RETURNED/INCOMPLETE ΓåÆ UNDER_REVIEW."""
+@@ -184,6 +192,7 @@ async def respond_to_query(
+         user_id=user.user_id,
+         user_role=user.role,
+         current_stage=current_stage,
++        events_repository=events_repo,
+     )
+ 
+     if not result.success:
+@@ -237,6 +246,7 @@ async def approve_application(
+     application_id: UUID,
+     reason: str = "",
+     repo: ApplicationsRepository = Depends(get_applications_repository),
++    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
+     user: UserContext = Depends(require_permission(Permission.APPLICATION_DECIDE)),
+ ):
+     """Approve an application ΓÇö UNDER_REVIEW ΓåÆ APPROVED."""
+@@ -253,6 +263,7 @@ async def approve_application(
+         user_role=user.role,
+         current_stage=current_stage,
+         metadata={"reason": reason} if reason else None,
++        events_repository=events_repo,
+     )
+ 
+     if not result.success:
+@@ -281,6 +292,7 @@ async def refuse_application(
+     application_id: UUID,
+     reason: str = "",
+     repo: ApplicationsRepository = Depends(get_applications_repository),
++    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
+     user: UserContext = Depends(require_permission(Permission.APPLICATION_DECIDE)),
+ ):
+     """Refuse an application ΓÇö UNDER_REVIEW ΓåÆ REFUSED."""
+@@ -297,6 +309,7 @@ async def refuse_application(
+         user_role=user.role,
+         current_stage=current_stage,
+         metadata={"reason": reason} if reason else None,
++        events_repository=events_repo,
+     )
+ 
+     if not result.success:
+@@ -324,6 +337,7 @@ async def refuse_application(
+ async def withdraw_application(
+     application_id: UUID,
+     repo: ApplicationsRepository = Depends(get_applications_repository),
++    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
+     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
+ ):
+     """Withdraw an application (applicant only)."""
+@@ -339,6 +353,7 @@ async def withdraw_application(
+         user_id=user.user_id,
+         user_role=user.role,
+         current_stage=current_stage,
++        events_repository=events_repo,
+     )
+ 
+     if not result.success:
+diff --git a/backend/app/repositories/workflow_events.py b/backend/app/repositories/workflow_events.py
+new file mode 100644
+index 0000000..87d96dd
+--- /dev/null
++++ b/backend/app/repositories/workflow_events.py
+@@ -0,0 +1,26 @@
++"""Workflow events repository ΓÇö CRUD for workflow_events table."""
++from __future__ import annotations
++
++from typing import Any
++
++from supabase import Client
++
++from app.repositories.base import BaseRepository
++
++
++class WorkflowEventsRepository(BaseRepository):
++    """Repository for workflow event operations."""
++
++    def __init__(self, client: Client):
++        super().__init__(client, "workflow_events")
++
++    def list_for_application(self, application_id: str) -> list[dict[str, Any]]:
++        """List all workflow events for an application, ordered by time."""
++        result = (
++            self.client.table(self.table_name)
++            .select("*")
++            .eq("application_id", application_id)
++            .order("created_at")
++            .execute()
++        )
++        return result.data or []
+diff --git a/backend/app/workflow/engine.py b/backend/app/workflow/engine.py
+index 1e96938..e77c385 100644
+--- a/backend/app/workflow/engine.py
++++ b/backend/app/workflow/engine.py
+@@ -226,6 +226,7 @@ def execute_transition(
+     metadata: dict[str, Any] | None = None,
+     ip_address: str | None = None,
+     user_agent: str | None = None,
++    events_repository: Any | None = None,
+ ) -> TransitionResult:
+     """Execute a workflow transition atomically.
+ 
+@@ -280,6 +281,18 @@ def execute_transition(
+         created_at=datetime.now(),
+     )
+ 
++    # Persist event if repository provided
++    if events_repository is not None:
++        events_repository.create({
++            "application_id": str(event.application_id),
++            "from_stage": event.from_stage,
++            "to_stage": event.to_stage,
++            "action": event.action,
++            "performed_by_id": str(event.performed_by) if event.performed_by else None,
++            "metadata": event.metadata,
++            "created_at": event.created_at.isoformat(),
++        })
++
+     # Create audit record
+     audit_entry = AuditEntry(
+         action=f"workflow.{action}",
+diff --git a/backend/tests/test_workflow_events_persistence.py b/backend/tests/test_workflow_events_persistence.py
+new file mode 100644
+index 0000000..789edb6
+--- /dev/null
++++ b/backend/tests/test_workflow_events_persistence.py
+@@ -0,0 +1,96 @@
++"""Tests that workflow events are persisted on transitions."""
++from __future__ import annotations
++
++from unittest.mock import MagicMock
++from uuid import uuid4
++
++from app.auth.permissions import SystemRole
++from app.workflow.engine import execute_transition
++from app.workflow.models import ApplicationStatus
++from app.workflow.stages import StageType, WorkflowDefinition, WorkflowStage
++
++
++class TestExecuteTransitionEventPersistence:
++    """Test that execute_transition persists events when repository is provided."""
++
++    def _make_workflow_def(self):
++        """Create a simple workflow definition for testing."""
++        return WorkflowDefinition(
++            stages=[
++                WorkflowStage(
++                    key="validation",
++                    label="Validation",
++                    order=0,
++                    type=StageType.VALIDATION,
++                    sla_business_days=5,
++                ),
++                WorkflowStage(
++                    key="review",
++                    label="Review",
++                    order=1,
++                    type=StageType.REVIEW,
++                    sla_business_days=10,
++                ),
++            ]
++        )
++
++    def test_event_persisted_when_repository_provided(self):
++        """When events_repository is provided, event is persisted."""
++        mock_repo = MagicMock()
++        mock_repo.create.return_value = {"id": "event-1"}
++
++        result = execute_transition(
++            application_id=uuid4(),
++            current_status=ApplicationStatus.DRAFT,
++            action="submit",
++            user_id=uuid4(),
++            user_role=SystemRole.APPLICANT,
++            workflow_def=self._make_workflow_def(),
++            events_repository=mock_repo,
++        )
++
++        assert result.success
++        mock_repo.create.assert_called_once()
++        event_data = mock_repo.create.call_args[0][0]
++        assert event_data["to_stage"] == "validation"
++        assert event_data["action"] == "submit"
++
++    def test_event_not_persisted_when_repository_not_provided(self):
++        """When events_repository is not provided, no DB call is made."""
++        result = execute_transition(
++            application_id=uuid4(),
++            current_status=ApplicationStatus.DRAFT,
++            action="submit",
++            user_id=uuid4(),
++            user_role=SystemRole.APPLICANT,
++            workflow_def=self._make_workflow_def(),
++        )
++
++        assert result.success
++        # workflow_event is still in the result dict (in-memory)
++        assert result.workflow_event is not None
++
++    def test_event_includes_correct_fields(self):
++        """Persisted event includes all required fields."""
++        mock_repo = MagicMock()
++        mock_repo.create.return_value = {"id": "event-1"}
++        app_id = uuid4()
++        user_id = uuid4()
++
++        execute_transition(
++            application_id=app_id,
++            current_status=ApplicationStatus.DRAFT,
++            action="submit",
++            user_id=user_id,
++            user_role=SystemRole.APPLICANT,
++            workflow_def=self._make_workflow_def(),
++            events_repository=mock_repo,
++        )
++
++        event_data = mock_repo.create.call_args[0][0]
++        assert event_data["application_id"] == str(app_id)
++        assert event_data["performed_by_id"] == str(user_id)
++        assert event_data["from_stage"] is None  # DRAFT has no previous stage
++        assert event_data["to_stage"] == "validation"
++        assert event_data["action"] == "submit"
++        assert "created_at" in event_data
+diff --git a/backend/tests/test_workflow_events_repo.py b/backend/tests/test_workflow_events_repo.py
+new file mode 100644
+index 0000000..c758a0d
+--- /dev/null
++++ b/backend/tests/test_workflow_events_repo.py
+@@ -0,0 +1,74 @@
++"""Tests for workflow events repository."""
++from __future__ import annotations
++
++from unittest.mock import MagicMock
++from uuid import uuid4
++
++
++class TestWorkflowEventsRepository:
++    """Test workflow events repository operations."""
++
++    def _make_repo(self):
++        """Create a repository with a mocked Supabase client."""
++        from app.repositories.workflow_events import WorkflowEventsRepository
++
++        client = MagicMock()
++        return WorkflowEventsRepository(client), client
++
++    def test_create_event(self):
++        """Creating an event inserts into workflow_events table."""
++        repo, client = self._make_repo()
++        event_data = {
++            "application_id": str(uuid4()),
++            "from_status": "draft",
++            "to_status": "submitted",
++            "action": "submit",
++            "performed_by": str(uuid4()),
++            "metadata": {},
++        }
++
++        mock_result = MagicMock()
++        mock_result.data = [{"id": str(uuid4()), **event_data}]
++        client.table.return_value.insert.return_value.execute.return_value = (
++            mock_result
++        )
++
++        result = repo.create(event_data)
++
++        client.table.assert_called_with("workflow_events")
++        assert result["to_status"] == "submitted"
++        assert result["action"] == "submit"
++
++    def test_list_for_application_ordered_by_time(self):
++        """Events for an application are returned ordered by created_at."""
++        repo, client = self._make_repo()
++        app_id = str(uuid4())
++
++        mock_result = MagicMock()
++        mock_result.data = [
++            {"id": "1", "application_id": app_id, "action": "submit", "created_at": "2026-09-10T10:00:00"},
++            {"id": "2", "application_id": app_id, "action": "advance", "created_at": "2026-09-11T10:00:00"},
++        ]
++        client.table.return_value.select.return_value.eq.return_value.order.return_value.execute.return_value = (
++            mock_result
++        )
++
++        events = repo.list_for_application(app_id)
++
++        client.table.assert_called_with("workflow_events")
++        assert len(events) == 2
++        assert events[0]["action"] == "submit"
++
++    def test_list_for_application_empty(self):
++        """Empty result returns empty list."""
++        repo, client = self._make_repo()
++        app_id = str(uuid4())
++
++        mock_result = MagicMock()
++        mock_result.data = []
++        client.table.return_value.select.return_value.eq.return_value.order.return_value.execute.return_value = (
++            mock_result
++        )
++
++        events = repo.list_for_application(app_id)
++        assert events == []

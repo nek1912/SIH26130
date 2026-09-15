@@ -1,0 +1,4 @@
+﻿1c263a9 feat: persist workflow events on transitions via optional repository parameter
+ff3deb8 feat: register WorkflowEventsRepository dependency
+70f9adb fix: clean up WorkflowEventsRepository ΓÇö remove redundant create, add types, use table_name
+9cff5ed feat: add WorkflowEventsRepository with create and list_for_application

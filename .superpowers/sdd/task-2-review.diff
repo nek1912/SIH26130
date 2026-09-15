@@ -1,0 +1,117 @@
+﻿diff --git a/backend/app/repositories/workflow_events.py b/backend/app/repositories/workflow_events.py
+new file mode 100644
+index 0000000..4b024bc
+--- /dev/null
++++ b/backend/app/repositories/workflow_events.py
+@@ -0,0 +1,29 @@
++"""Workflow events repository ΓÇö CRUD for workflow_events table."""
++from __future__ import annotations
++
++from typing import Any
++
++from app.repositories.base import BaseRepository
++
++
++class WorkflowEventsRepository(BaseRepository):
++    """Repository for workflow event operations."""
++
++    def __init__(self, client):
++        super().__init__(client, "workflow_events")
++
++    def list_for_application(self, application_id: str) -> list[dict[str, Any]]:
++        """List all workflow events for an application, ordered by time."""
++        result = (
++            self.client.table("workflow_events")
++            .select("*")
++            .eq("application_id", application_id)
++            .order("created_at")
++            .execute()
++        )
++        return result.data or []
++
++    def create(self, event_data: dict[str, Any]) -> dict[str, Any]:
++        """Create a workflow event record."""
++        result = self.client.table("workflow_events").insert(event_data).execute()
++        return result.data[0]
+diff --git a/backend/tests/test_workflow_events_repo.py b/backend/tests/test_workflow_events_repo.py
+new file mode 100644
+index 0000000..7c059f9
+--- /dev/null
++++ b/backend/tests/test_workflow_events_repo.py
+@@ -0,0 +1,76 @@
++"""Tests for workflow events repository."""
++from __future__ import annotations
++
++from unittest.mock import MagicMock, patch
++from uuid import uuid4
++
++import pytest
++
++
++class TestWorkflowEventsRepository:
++    """Test workflow events repository operations."""
++
++    def _make_repo(self):
++        """Create a repository with a mocked Supabase client."""
++        from app.repositories.workflow_events import WorkflowEventsRepository
++
++        client = MagicMock()
++        return WorkflowEventsRepository(client), client
++
++    def test_create_event(self):
++        """Creating an event inserts into workflow_events table."""
++        repo, client = self._make_repo()
++        event_data = {
++            "application_id": str(uuid4()),
++            "from_status": "draft",
++            "to_status": "submitted",
++            "action": "submit",
++            "performed_by": str(uuid4()),
++            "metadata": {},
++        }
++
++        mock_result = MagicMock()
++        mock_result.data = [{"id": str(uuid4()), **event_data}]
++        client.table.return_value.insert.return_value.execute.return_value = (
++            mock_result
++        )
++
++        result = repo.create(event_data)
++
++        client.table.assert_called_with("workflow_events")
++        assert result["to_status"] == "submitted"
++        assert result["action"] == "submit"
++
++    def test_list_for_application_ordered_by_time(self):
++        """Events for an application are returned ordered by created_at."""
++        repo, client = self._make_repo()
++        app_id = str(uuid4())
++
++        mock_result = MagicMock()
++        mock_result.data = [
++            {"id": "1", "application_id": app_id, "action": "submit", "created_at": "2026-09-10T10:00:00"},
++            {"id": "2", "application_id": app_id, "action": "advance", "created_at": "2026-09-11T10:00:00"},
++        ]
++        client.table.return_value.select.return_value.eq.return_value.order.return_value.execute.return_value = (
++            mock_result
++        )
++
++        events = repo.list_for_application(app_id)
++
++        client.table.assert_called_with("workflow_events")
++        assert len(events) == 2
++        assert events[0]["action"] == "submit"
++
++    def test_list_for_application_empty(self):
++        """Empty result returns empty list."""
++        repo, client = self._make_repo()
++        app_id = str(uuid4())
++
++        mock_result = MagicMock()
++        mock_result.data = []
++        client.table.return_value.select.return_value.eq.return_value.order.return_value.execute.return_value = (
++            mock_result
++        )
++
++        events = repo.list_for_application(app_id)
++        assert events == []

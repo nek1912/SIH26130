@@ -15,7 +15,7 @@ def test_applicability_evaluation():
         type="filing",
         summary="Test obligation",
         applicability_conditions=[
-            {"field": "sector", "op": "eq", "value": "chemicals"}
+            {"kind": "condition", "field": "sector", "op": "eq", "value": "chemicals"}
         ],
         frequency="annual",
         deadline_rule={"kind": "fixed-date", "month": 3, "day": 31},
@@ -54,7 +54,7 @@ def test_applicability_no_match():
         type="filing",
         summary="Test obligation",
         applicability_conditions=[
-            {"field": "sector", "op": "eq", "value": "chemicals"}
+            {"kind": "condition", "field": "sector", "op": "eq", "value": "chemicals"}
         ],
         frequency="annual",
         deadline_rule={"kind": "fixed-date", "month": 3, "day": 31},

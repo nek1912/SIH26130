@@ -1,10 +1,9 @@
 """Tests for SLA API endpoint."""
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from uuid import uuid4
 
-import pytest
 from fastapi.testclient import TestClient
 
 
@@ -13,8 +12,8 @@ class TestSlaEndpoint:
 
     def _make_client(self):
         """Create a test client with mocked dependencies."""
-        from app.main import app
         from app.api.deps import get_db_client
+        from app.main import app
 
         client = MagicMock()
         app.dependency_overrides[get_db_client] = lambda: client
@@ -68,7 +67,8 @@ class TestSlaEndpoint:
             if table_name == "applications":
                 m.select.return_value.eq.return_value.execute.return_value = mock_app
             elif table_name == "workflow_events":
-                m.select.return_value.eq.return_value.order.return_value.execute.return_value = mock_events
+                chain = m.select.return_value.eq.return_value.order
+                chain.return_value.execute.return_value = mock_events
             elif table_name == "approvals":
                 m.select.return_value.eq.return_value.execute.return_value = mock_approval
             return m
