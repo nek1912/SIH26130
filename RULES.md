@@ -56,7 +56,7 @@ At minimum test:
 ## Migration reality
 The source repos (Digital-Permit-Platform, Compliance-Grid) were TypeScript/Next.js full-stack. All necessary business logic has been rewritten in Python and ported to the FastAPI backend. Those repositories have been deleted. Do not reference them as runtime dependencies.
 
-## Backend structure (Phase 3C)
+## Backend structure (Phase 3E)
 `backend/app/` contains:
 - `rules/` — obligation models, applicability engine, approval applicability engine, deadline, canonical, validation, **dependency models, dependency engine** (pure logic)
 - `forms/` — form models, condition evaluator (pure logic)
@@ -65,9 +65,11 @@ The source repos (Digital-Permit-Platform, Compliance-Grid) were TypeScript/Next
 - `auth/` — RBAC permissions, UserContext model, JWT verification, FastAPI auth dependencies
 - `core/` — config with Pydantic BaseSettings (includes JWT settings, storage bucket)
 - `db/` — Supabase client factory (`get_supabase()` with lru_cache)
-- `repositories/` — database access layer (base CRUD + specialized repos, including `documents.py`)
-- `api/` — FastAPI routes with auth dependencies (health, projects, approvals, applications, workflow, **documents**)
-- `seed/` — workbook scenario, approval rules, dependency edges, **document requirements**, expected results
+- `repositories/` — database access layer (base CRUD + specialized repos, including `documents.py`, **`consistency.py`**)
+- `api/` — FastAPI routes with auth dependencies (health, projects, approvals, applications, workflow, **documents**, **extraction**, **consistency**)
+- `extraction/` — extraction models, service (PDF/CSV/Excel), deterministic validation engine
+- **`consistency/`** — cross-document consistency models and deterministic comparison engine
+- `seed/` — workbook scenario, approval rules, dependency edges, **document requirements**, **consistency rules**, expected results
 - `main.py` — FastAPI app with all routers
 
 Tests in `backend/tests/`. Run with `cd backend && python -m pytest tests/ -v`. Lint with `python -m ruff check app/ tests/`.

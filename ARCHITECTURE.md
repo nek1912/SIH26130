@@ -557,4 +557,81 @@ Both source repos are TypeScript/Next.js. Our locked stack requires Python/FastA
 - No signed URL generation for direct download (deferred)
 
 ### Next phase
-- Phase 5: Document extraction/OCR, consistency engine, SLA display
+- Phase 3D: Document extraction/OCR, consistency engine, SLA display
+
+## 24. Phase 3D implementation status (2026-09-15)
+
+### Created
+- `backend/app/extraction/__init__.py` — extraction module
+- `backend/app/extraction/models.py` — ExtractedField, ExtractionResult, ValidationResult, FieldFinding, ExtractionStatus, ValidationOutcome
+- `backend/app/extraction/service.py` — PDF metadata extraction, CSV/Excel header validation
+- `backend/app/extraction/validation.py` — Deterministic validation engine with rules per document domain
+- `backend/app/api/extraction.py` — 5 REST endpoints (extract, validate, get extraction, get validation, summary)
+- `backend/tests/test_extraction_service.py` — 15 extraction service tests
+- `backend/tests/test_validation_engine.py` — 13 validation engine tests
+- `backend/tests/test_extraction_api.py` — 14 API endpoint + repository tests
+- `supabase/migrations/003_document_extraction.sql` — extracted_fields, extraction_results, validation_findings, validation_results tables
+
+### Implemented
+- Structured extracted-field storage linked to documents
+- Document extraction status/error tracking
+- Deterministic extraction for PDF (metadata: title, author, pages, file size), CSV (headers, row/column counts), Excel (sheet info, headers)
+- Deterministic validation rules per document domain (11 domains from workbook)
+- Explicit outcomes: VALID, INVALID, REVIEW_REQUIRED, INSUFFICIENT_DATA
+- Source/rule traceability for every validation result
+- Field-level findings with rule ID, description, expected/actual values
+- API endpoints: POST extract, POST validate, GET extraction status, GET validation status, GET extraction summary
+- Frontend extraction/validation status display in document checklist
+- Frontend extract/validate buttons per uploaded document
+- Frontend validation findings display with color-coded outcomes
+
+### Checks
+- Backend: 500 passed, 4 skipped, 0 failed, ruff clean
+- Frontend: tsc clean, oxlint clean, vite build success
+
+### Known limitations
+- No OCR for image-based documents (requires external OCR service)
+- No cross-document consistency checks (deferred)
+- No async background extraction (runs synchronously on request)
+- Storage bucket must be created manually in Supabase dashboard
+
+### Next phase
+- Phase 3E: Cross-document consistency engine
+- Phase 5: SLA display, background extraction
+
+## 25. Phase 3E implementation status (2026-09-15)
+
+### Created
+- `backend/app/consistency/__init__.py` — consistency module
+- `backend/app/consistency/models.py` — ConsistencyOutcome, ConsistencyRule, ConsistencyFinding, ConsistencyResult
+- `backend/app/consistency/engine.py` — `check_application_consistency()` deterministic cross-document comparison
+- `backend/app/seed/consistency.py` — 18 consistency rules (C01-C18) from workbook Consistency_Fields sheet
+- `backend/app/repositories/consistency.py` — ConsistencyRepository with CRUD for consistency_results/findings
+- `backend/app/api/consistency.py` — 2 REST endpoints (POST check, GET latest)
+- `backend/tests/test_consistency_engine.py` — 20 engine + model + seed tests
+- `backend/tests/test_consistency_api.py` — 7 repository + API tests
+- `supabase/migrations/004_consistency.sql` — consistency_results, consistency_findings tables
+
+### Implemented
+- Deterministic cross-document consistency engine comparing 18 canonical fields across documents
+- Seed config mapping each canonical field to document requirement keys (D01-D17)
+- Exact string comparison (no normalization) per workbook MUST_MATCH rules
+- On-demand consistency checks via API
+- Results persisted with findings per canonical field
+- Frontend consistency section in both staff and applicant application detail pages
+- "Run Check" button with outcome badge and findings table
+- Re-running replaces previous results deterministically
+
+### Checks
+- Backend: 527 passed, 4 skipped, 0 failed, ruff clean
+- Frontend: tsc clean, oxlint clean (pre-existing warnings only), vite build success
+
+### Known limitations
+- No OCR for image-based documents (extracted fields depend on extraction layer)
+- No automatic trigger on extraction (on-demand only)
+- Single-document rules always VALID (nothing to compare)
+- No normalization (exact string comparison)
+- Storage bucket must be created manually in Supabase dashboard
+
+### Next phase
+- Phase 5: SLA display, background extraction
