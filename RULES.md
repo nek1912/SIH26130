@@ -3,7 +3,7 @@
 ## Regulatory correctness
 1. Never invent approval names, authorities, legal thresholds, SLAs, exemptions, prerequisites, or deadlines.
 2. Regulatory data is untrusted until the team records the official source and effective/version information.
-3. If the facts are insufficient, return `UNKNOWN`/needs-more-information rather than guessing.
+3. If the facts are insufficient, return `INSUFFICIENT_DATA` rather than guessing.
 4. AI output must not be represented as a statutory determination.
 5. Every user-visible regulatory claim must be traceable to a stored source.
 
@@ -39,7 +39,7 @@
 ## Testing
 At minimum test:
 - applicability rule boundaries,
-- UNKNOWN cases,
+- INSUFFICIENT_DATA cases,
 - approval dependencies,
 - SLA clock behaviour,
 - document validation,
@@ -56,17 +56,18 @@ At minimum test:
 ## Migration reality
 The source repos (Digital-Permit-Platform, Compliance-Grid) were TypeScript/Next.js full-stack. All necessary business logic has been rewritten in Python and ported to the FastAPI backend. Those repositories have been deleted. Do not reference them as runtime dependencies.
 
-## Backend structure (Phase 3B)
+## Backend structure (Phase 3C)
 `backend/app/` contains:
-- `rules/` — obligation models, applicability engine, deadline, canonical, validation (pure logic)
+- `rules/` — obligation models, applicability engine, approval applicability engine, deadline, canonical, validation, **dependency models, dependency engine** (pure logic)
 - `forms/` — form models, condition evaluator (pure logic)
 - `workflow/` — status models, SLA, stage definitions, transition engine, assignments (pure logic)
 - `audit/` — audit entry/record (pure logic)
 - `auth/` — RBAC permissions, UserContext model, JWT verification, FastAPI auth dependencies
-- `core/` — config with Pydantic BaseSettings (includes JWT settings)
+- `core/` — config with Pydantic BaseSettings (includes JWT settings, storage bucket)
 - `db/` — Supabase client factory (`get_supabase()` with lru_cache)
-- `repositories/` — database access layer (base CRUD + specialized repos, including `list_all_with_filters`)
-- `api/` — FastAPI routes with auth dependencies (health, projects, approvals, applications, workflow)
+- `repositories/` — database access layer (base CRUD + specialized repos, including `documents.py`)
+- `api/` — FastAPI routes with auth dependencies (health, projects, approvals, applications, workflow, **documents**)
+- `seed/` — workbook scenario, approval rules, dependency edges, **document requirements**, expected results
 - `main.py` — FastAPI app with all routers
 
 Tests in `backend/tests/`. Run with `cd backend && python -m pytest tests/ -v`. Lint with `python -m ruff check app/ tests/`.

@@ -135,10 +135,10 @@ RegulatorySource
 Input: structured project facts + versioned rules.
 
 Output for each approval:
-- `APPLICABLE`
-- `NOT_APPLICABLE`
+- `APPLIES`
+- `DOES_NOT_APPLY`
 - `CONDITIONAL`
-- `UNKNOWN`
+- `INSUFFICIENT_DATA`
 
 Every non-trivial result must retain:
 - rule ID/version,
@@ -237,8 +237,9 @@ Both source repos are TypeScript/Next.js. Our locked stack requires Python/FastA
 - `supabase/migrations/001_initial_schema.sql` — 12 tables merging DPP + CG patterns
 
 ### Implemented (pure logic, all tested)
-- `app/rules/models.py` — Obligation, ApplicabilityCondition, DeadlineRule, EntityProfile, Instrument, Source, Frequency, Penalty, ObligationCandidate (Pydantic v2)
+- `app/rules/models.py` — Obligation, ApplicabilityCondition, DeadlineRule, EntityProfile, Instrument, Source, Frequency, Penalty, ObligationCandidate, ApprovalRule, ApplicabilityEvaluation (Pydantic v2)
 - `app/rules/engine.py` — `evaluate_applicability()` deterministic filter
+- `app/rules/applicability.py` — `evaluate_rule()`, `evaluate_approval_applicability()`, `summarize_evaluations()` — generic, data-driven approval applicability engine returning APPLIES/DOES_NOT_APPLY/CONDITIONAL/INSUFFICIENT_DATA with full traceability
 - `app/rules/deadline.py` — `compute_due_date()` with Indian fiscal year (March 31 year-end)
 - `app/rules/canonical.py` — `canonicalize()` + `version()` monotonic integer-strings
 - `app/rules/validation.py` — `validate_applicability_conditions()` semantic validation (7 allowed fields, type checks)
@@ -250,8 +251,8 @@ Both source repos are TypeScript/Next.js. Our locked stack requires Python/FastA
 - `app/auth/permissions.py` — 4 roles, 18 permissions, `has_permission()`, `has_any_permission()`
 
 ### Tests
-- 119 tests across 8 test files, all passing
-- Coverage: applicability, deadline, canonical, validation, conditions, SLA, permissions, audit, models
+- 271 tests across 10 test files, all passing
+- Coverage: applicability, approval applicability, deadline, canonical, validation, conditions, SLA, permissions, audit, models
 
 ### Not yet implemented
 - Supabase Storage for documents
@@ -471,3 +472,89 @@ Both source repos are TypeScript/Next.js. Our locked stack requires Python/FastA
 ### Checks
 - Backend: 263 passed, 4 skipped, ruff clean
 - Frontend: tsc clean, build success (21.58 kB CSS, 262.14 kB JS)
+
+## 22. Phase 4: Dependency Engine (2026-09-15)
+
+### Created
+- `backend/app/rules/dependency_models.py` — ApprovalDependency, ReadinessStatus, ApprovalReadiness, DependencyCycleError, DependencyGraph (Pydantic v2)
+- `backend/app/rules/dependency_engine.py` — `evaluate_readiness()` deterministic dependency engine with cycle detection, topological sort, stage assignment
+- `backend/app/seed/dependencies.py` — 3 verified MVP dependency edges from workbook + dependency mapping report
+- `backend/tests/test_dependency_engine.py` — 41 tests covering all acceptance criteria
+
+### Implemented
+- **Data models**: ApprovalDependency (directed prerequisite edge with source/evidence/traceability), ReadinessStatus (READY/BLOCKED/NOT_APPLICABLE/PENDING_EVALUATION), ApprovalReadiness (per-approval result with stage/blocking/trace), DependencyGraph (full evaluation result)
+- **Dependency engine**:
+  - Adjacency list construction from dependency edges
+  - Cycle detection via DFS with three-color marking
+  - Topological sort via Kahn's algorithm
+  - Stage assignment via longest-path from root (cycle-safe)
+  - Readiness evaluation in topological order
+- **Dependency semantics**:
+  - NOT_APPLICABLE prerequisite → not a blocker
+  - INSUFFICIENT_DATA/CONDITIONAL prerequisite → BLOCKED
+  - Unknown prerequisite (not in applicability) → BLOCKED
+  - Prerequisite in `obtained` set → satisfied
+  - Prerequisite not obtained → BLOCKED
+- **MVP dependency dataset** (3 edges, all explicit):
+  - A02 depends on A04 (GIDC Water requires GPCB NOC)
+  - A03 depends on A04 (GIDC Drainage requires GPCB NOC)
+  - A03 depends on A02 (GIDC Drainage requires water connection)
+  - Produces 3-stage serial chain: A04 (stage 0) → A02 (stage 1) → A03 (stage 2)
+- **Traceability**: Every readiness result includes dependency_trace with source_ref, evidence, and prerequisite_applicability
+
+### Tests (41)
+- Independent approvals run in parallel (2)
+- Prerequisite blocks dependent approval (2)
+- Prerequisite satisfied makes dependent READY (3)
+- DOES_NOT_APPLY prerequisite not a blocker (2)
+- INSUFFICIENT_DATA/CONDITIONAL prerequisite handled (3)
+- Multi-level dependency produces correct stages (2)
+- Independent branches share same stage (1)
+- Cycle detection — simple, 3-node, false positive (3)
+- Missing dependency definition (1)
+- Deterministic ordering (2)
+- Traceability — trace, count, explanation (3)
+- Integration with applicability results (2)
+- Workbook-backed scenario — blocker, unblocker, stage numbering (4)
+- Edge cases — empty deps, empty applicability, self-dependency (3)
+- Internal algorithms — adjacency, cycles, topo sort, stages (7)
+
+### Checks
+- Backend: 402 passed, 4 skipped, 23 failed (pre-existing Supabase config), ruff clean
+- New dependency engine: 41 passed, 0 failed
+- No regressions: baseline 23 failures unchanged
+
+## 23. Phase 3C implementation status (2026-09-15)
+
+### Created
+- `backend/app/seed/documents.py` — 17 document requirements from workbook Document_Register (D01-D17)
+- `backend/app/repositories/documents.py` — DocumentsRepository with requirement + document CRUD
+- `backend/app/api/documents.py` — 5 REST endpoints (list reqs, list docs, upload, get, delete)
+- `backend/tests/test_document_requirements.py` — 18 seed data + lookup + repository tests
+- `backend/tests/test_document_upload.py` — 15 upload validation + auth tests
+- `supabase/migrations/002_document_requirements.sql` — document_requirements table + document_readiness enum
+
+### Implemented
+- Document requirements per application (seeded from workbook D01-D17)
+- Document upload with server-side MIME/size validation
+- Supabase Storage integration (backend-proxied, private bucket)
+- Filename sanitization (path traversal prevention)
+- Document readiness tracking (pending/uploaded/valid/invalid/review_required)
+- Audit events for upload/delete actions
+- Frontend document checklist in applicant ApplicationDetailPage
+- Auto-seed requirements on application creation (via approval_code parameter)
+- Settings `extra = "ignore"` fix (resolved 23 pre-existing Supabase config test failures)
+
+### Checks
+- Backend: 458 passed, 4 skipped, 0 failed, ruff clean
+- Frontend: tsc clean, oxlint clean (pre-existing warnings only), vite build success
+
+### Known limitations
+- No OCR/extraction/LLM processing (deferred to later milestone)
+- No document verification/review workflow (deferred)
+- No cross-document consistency checks (deferred)
+- Storage bucket must be created manually in Supabase dashboard
+- No signed URL generation for direct download (deferred)
+
+### Next phase
+- Phase 5: Document extraction/OCR, consistency engine, SLA display
