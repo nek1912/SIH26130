@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '@/lib/api'
-import type { Application, WorkflowResult } from '@/types/api'
+import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/shared/StatusBadge'
@@ -44,6 +44,11 @@ export function ApplicantApplicationDetailPage() {
   const [error, setError] = useState('')
   const [actionLoading, setActionLoading] = useState('')
   const [actionError, setActionError] = useState('')
+  const [docRequirements, setDocRequirements] = useState<DocumentRequirement[]>([])
+  const [uploadedDocs, setUploadedDocs] = useState<UploadedDocument[]>([])
+  const [docLoading, setDocLoading] = useState(false)
+  const [docError, setDocError] = useState('')
+  const [uploadingKey, setUploadingKey] = useState('')
 
   useEffect(() => {
     if (!id) return
@@ -53,6 +58,60 @@ export function ApplicantApplicationDetailPage() {
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
   }, [id])
+
+  useEffect(() => {
+    if (!id) return
+    setDocLoading(true)
+    Promise.all([
+      api.documents.listRequirements(id),
+      api.documents.list(id),
+    ])
+      .then(([reqs, docs]) => {
+        setDocRequirements(reqs as DocumentRequirement[])
+        setUploadedDocs(docs as UploadedDocument[])
+      })
+      .catch((err) => setDocError(err.message))
+      .finally(() => setDocLoading(false))
+  }, [id])
+
+  const handleUpload = async (reqKey: string, file: File) => {
+    if (!id) return
+    setUploadingKey(reqKey)
+    setDocError('')
+    try {
+      const result = await api.documents.upload(id, reqKey, file)
+      setUploadedDocs((prev) => {
+        const filtered = prev.filter((d) => d.requirement_key !== reqKey)
+        return [result.document, ...filtered]
+      })
+      setDocRequirements((prev) =>
+        prev.map((r) => (r.requirement_key === reqKey ? result.requirement : r)),
+      )
+    } catch (err) {
+      if (err instanceof ApiError) setDocError(err.message)
+      else setDocError(err instanceof Error ? err.message : 'Upload failed')
+    } finally {
+      setUploadingKey('')
+    }
+  }
+
+  const handleDeleteDoc = async (docId: string, reqKey: string) => {
+    if (!id) return
+    try {
+      await api.documents.delete(id, docId)
+      setUploadedDocs((prev) => prev.filter((d) => d.id !== docId))
+      setDocRequirements((prev) =>
+        prev.map((r) =>
+          r.requirement_key === reqKey
+            ? { ...r, readiness: 'pending' as const, uploaded_document_id: null }
+            : r,
+        ),
+      )
+    } catch (err) {
+      if (err instanceof ApiError) setDocError(err.message)
+      else setDocError(err instanceof Error ? err.message : 'Delete failed')
+    }
+  }
 
   const handleAction = async (actionKey: string) => {
     if (!id) return
@@ -232,6 +291,97 @@ export function ApplicantApplicationDetailPage() {
               </div>
             )}
           </dl>
+        </CardContent>
+      </Card>
+
+      {/* Document Checklist */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Document Checklist</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {docLoading ? (
+            <LoadingSpinner className="py-4" />
+          ) : docError ? (
+            <div className="text-sm text-destructive">{docError}</div>
+          ) : docRequirements.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No document requirements for this application.</p>
+          ) : (
+            <div className="space-y-3">
+              {docRequirements.map((req) => {
+                const uploaded = uploadedDocs.find((d) => d.requirement_key === req.requirement_key)
+                return (
+                  <div
+                    key={req.requirement_key}
+                    className="flex items-center justify-between rounded-md border p-3"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs text-muted-foreground">{req.requirement_key}</span>
+                        <span className="text-sm font-medium truncate">{req.document_name}</span>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                            req.requirement_level === 'mandatory'
+                              ? 'bg-red-100 text-red-800'
+                              : req.requirement_level === 'conditional'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-blue-100 text-blue-800'
+                          }`}
+                        >
+                          {req.requirement_level}
+                        </span>
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-700">
+                          {req.domain}
+                        </span>
+                      </div>
+                      {uploaded ? (
+                        <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>{uploaded.original_filename}</span>
+                          <span>({(uploaded.file_size_bytes / 1024).toFixed(1)} KB)</span>
+                          <StatusBadge status={uploaded.status === 'verified' ? 'approved' : uploaded.status === 'rejected' ? 'refused' : 'submitted'} />
+                        </div>
+                      ) : (
+                        <p className="mt-1 text-xs text-muted-foreground">Not uploaded</p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 ml-4">
+                      {uploaded ? (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeleteDoc(uploaded.id, req.requirement_key)}
+                        >
+                          Remove
+                        </Button>
+                      ) : (
+                        <label className="cursor-pointer">
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept={req.accepted_mime_types?.join(',')}
+                            onChange={(e) => {
+                              const file = e.target.files?.[0]
+                              if (file) handleUpload(req.requirement_key, file)
+                            }}
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={uploadingKey === req.requirement_key}
+                            asChild
+                          >
+                            <span>
+                              {uploadingKey === req.requirement_key ? 'Uploading...' : 'Upload'}
+                            </span>
+                          </Button>
+                        </label>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

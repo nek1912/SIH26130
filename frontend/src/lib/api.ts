@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import type { DocumentRequirement, UploadedDocument, UploadResult } from '../types/api'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? ''
 
@@ -101,5 +102,38 @@ export const api = {
       request<unknown>(`/applications/${appId}/refuse${toQuery({ reason })}`, { method: 'POST' }),
     withdraw: (appId: string) =>
       request<unknown>(`/applications/${appId}/withdraw`, { method: 'POST' }),
+  },
+
+  documents: {
+    listRequirements: (appId: string) =>
+      request<DocumentRequirement[]>(`/applications/${appId}/document-requirements`),
+    list: (appId: string) =>
+      request<UploadedDocument[]>(`/applications/${appId}/documents`),
+    upload: async (appId: string, reqKey: string, file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      const { data: { session } } = await supabase.auth.getSession()
+      const headers: Record<string, string> = {}
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`
+      }
+      const res = await fetch(
+        `${API_BASE}/applications/${appId}/documents/${reqKey}/upload`,
+        { method: 'POST', headers, body: formData },
+      )
+      if (res.status === 401) {
+        window.location.href = '/login'
+        throw new ApiError(401, 'Unauthorized')
+      }
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ detail: res.statusText }))
+        throw new ApiError(res.status, body.detail ?? res.statusText)
+      }
+      return res.json() as Promise<UploadResult>
+    },
+    get: (appId: string, docId: string) =>
+      request<UploadedDocument>(`/applications/${appId}/documents/${docId}`),
+    delete: (appId: string, docId: string) =>
+      request<{ deleted: boolean }>(`/applications/${appId}/documents/${docId}`, { method: 'DELETE' }),
   },
 }

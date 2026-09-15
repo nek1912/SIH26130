@@ -123,3 +123,43 @@ export interface PaginatedResponse<T> {
   page: number
   page_size: number
 }
+
+export interface DocumentRequirement {
+  id: string
+  application_id: string
+  requirement_key: string
+  document_name: string
+  approval_id: string
+  domain: string
+  requirement_level: 'required' | 'mandatory' | 'conditional'
+  readiness: 'pending' | 'uploaded' | 'valid' | 'invalid' | 'review_required'
+  accepted_mime_types: string[] | null
+  max_size_mb: number | null
+  description: string | null
+  source_basis: string | null
+  source_url: string | null
+  document_role: string | null
+  uploaded_document_id: string | null
+  rejection_reason: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface UploadedDocument {
+  id: string
+  application_id: string
+  requirement_key: string
+  original_filename: string
+  storage_path: string
+  mime_type: string
+  file_size_bytes: number
+  status: 'pending_upload' | 'uploaded' | 'verified' | 'rejected' | 'virus_detected' | 'expired'
+  rejection_reason: string | null
+  uploaded_by_user_id: string | null
+  created_at: string
+}
+
+export interface UploadResult {
+  document: UploadedDocument
+  requirement: DocumentRequirement
+}
