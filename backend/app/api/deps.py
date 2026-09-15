@@ -13,6 +13,7 @@ from app.repositories.obligations import ObligationsRepository
 from app.repositories.project_facts import ProjectFactsRepository
 from app.repositories.projects import ProjectRepository
 from app.repositories.sources import SourcesRepository
+from app.repositories.workflow_events import WorkflowEventsRepository
 
 
 @lru_cache
@@ -68,3 +69,10 @@ def get_documents_repository(
 ) -> DocumentsRepository:
     """Get documents repository dependency."""
     return DocumentsRepository(client)
+
+
+def get_workflow_events_repository(
+    client: Client = Depends(get_db_client),
+) -> WorkflowEventsRepository:
+    """Get workflow events repository dependency."""
+    return WorkflowEventsRepository(client)
