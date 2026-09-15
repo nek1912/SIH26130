@@ -10,8 +10,8 @@ class TestRunExtractionBackground:
 
     @patch("app.extraction.background.get_supabase")
     @patch("app.extraction.background.get_settings")
-    def test_sets_status_to_running_then_succeeded(self, mock_settings, mock_supabase):
-        """Background job sets extraction_status to running then succeeded."""
+    def test_sets_status_to_running_then_completed(self, mock_settings, mock_supabase):
+        """Background job sets extraction_status to running then completed."""
         from app.extraction.background import run_extraction_background
 
         doc_id = str(uuid4())
@@ -68,16 +68,16 @@ class TestRunExtractionBackground:
         # Run the background job
         run_extraction_background(doc_id, app_id)
 
-        # Verify extraction_status was updated to "succeeded"
+        # Verify extraction_status was updated to "completed"
         doc_mock = table_mocks["documents"]
         calls = doc_mock.update.call_args_list
-        status_updates = [c for c in calls if c[0][0].get("extraction_status") == "succeeded"]
+        status_updates = [c for c in calls if c[0][0].get("extraction_status") == "completed"]
         assert len(status_updates) >= 1
 
     @patch("app.extraction.background.get_supabase")
     @patch("app.extraction.background.get_settings")
-    def test_skips_if_already_succeeded(self, mock_settings, mock_supabase):
-        """Background job skips if document already has extraction_status=succeeded."""
+    def test_skips_if_already_completed(self, mock_settings, mock_supabase):
+        """Background job skips if document already has extraction_status=completed."""
         from app.extraction.background import run_extraction_background
 
         doc_id = str(uuid4())
@@ -87,7 +87,7 @@ class TestRunExtractionBackground:
         mock_client = MagicMock()
         mock_supabase.return_value = mock_client
 
-        # Mock document with already succeeded status
+        # Mock document with already completed status
         mock_doc = MagicMock()
         mock_doc.data = [{
             "id": doc_id,
@@ -95,7 +95,7 @@ class TestRunExtractionBackground:
             "mime_type": "text/csv",
             "storage_path": "test/path.csv",
             "requirement_key": "D01",
-            "extraction_status": "succeeded",
+            "extraction_status": "completed",
         }]
 
         def side_effect(table_name):

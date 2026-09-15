@@ -508,7 +508,7 @@ export function ApplicationDetailPage() {
                       <div className="mt-2 flex items-center gap-3 text-xs">
                         <span
                           className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium ${
-                            (uploaded.extraction_status ?? extractionStatus) === 'succeeded'
+                            (uploaded.extraction_status ?? extractionStatus) === 'completed'
                               ? 'bg-green-100 text-green-800'
                               : (uploaded.extraction_status ?? extractionStatus) === 'failed'
                                 ? 'bg-red-100 text-red-800'
@@ -519,7 +519,7 @@ export function ApplicationDetailPage() {
                                     : 'bg-gray-100 text-gray-700'
                           }`}
                         >
-                          Extraction: {(uploaded.extraction_status ?? extractionStatus) === 'succeeded'
+                          Extraction: {(uploaded.extraction_status ?? extractionStatus) === 'completed'
                             ? 'Extracted'
                             : (uploaded.extraction_status ?? extractionStatus) === 'running'
                               ? 'Extracting...'

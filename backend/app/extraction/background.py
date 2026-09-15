@@ -37,8 +37,8 @@ def run_extraction_background(document_id: str, application_id: str) -> None:
             logger.warning("Document %s not found, skipping extraction", document_id)
             return
 
-        # Skip if already succeeded (idempotent)
-        if document.get("extraction_status") == "succeeded":
+        # Skip if already completed (idempotent)
+        if document.get("extraction_status") == "completed":
             logger.info("Document %s already extracted, skipping", document_id)
             return
 
@@ -120,7 +120,7 @@ def run_extraction_background(document_id: str, application_id: str) -> None:
             ).execute()
 
         # Set final status
-        final_status = "succeeded"
+        final_status = "completed"
         if extraction_result.status.value in ("failed", "unsupported"):
             final_status = extraction_result.status.value
 
