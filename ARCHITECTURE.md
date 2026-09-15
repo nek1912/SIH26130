@@ -632,5 +632,34 @@ Both source repos are TypeScript/Next.js. Our locked stack requires Python/FastA
 - No normalization (exact string comparison)
 - Storage bucket must be created manually in Supabase dashboard
 
+## 26. Phase 5 implementation status (2026-09-15)
+
+### Created
+- `backend/app/repositories/workflow_events.py` — WorkflowEventsRepository with `list_for_application()` and `create()`
+- `backend/app/extraction/background.py` — `run_extraction_background()` for FastAPI BackgroundTasks
+- `backend/tests/test_workflow_events_repo.py` — 3 repository tests
+- `backend/tests/test_workflow_events_persistence.py` — 3 persistence tests
+- `backend/tests/test_sla_api.py` — 2 SLA endpoint tests
+- `backend/tests/test_background_extraction.py` — 3 background extraction tests
+- `supabase/migrations/006_documents_extraction_status.sql` — extraction_status column on documents
+
+### Implemented
+- Workflow events persistence: optional `events_repository` parameter on `execute_transition()`, all 7 transition endpoints inject and persist events
+- SLA API endpoint: `GET /applications/{id}/sla` — loads events, approval stages, computes SLA via existing `compute_application_sla()`
+- Background extraction: runs via FastAPI BackgroundTasks on document upload, sets extraction_status (pending→running→completed/failed/unsupported), idempotent, error-safe
+- Frontend SLA card: color-coded badge (on_track/due_soon/due_today/breached) on both applicant and staff application detail pages
+- Frontend extraction status: badges for pending/running/completed/failed/unsupported with spinner animation
+
+### Checks
+- Backend: 538 passed, 4 skipped, 0 failed, ruff clean
+- Frontend: tsc clean, oxlint clean (warnings only), vite build success
+
+### Known limitations
+- No Indian holiday calendar — business days exclude weekends only
+- No SLA breach notifications (deferred)
+- No extraction retry queue (manual retry via button)
+- No OCR for image-based documents (existing limitation)
+- Background extraction runs in-process; server restart mid-extraction leaves document in "running" state
+
 ### Next phase
-- Phase 5: SLA display, background extraction
+- Phase 6: TBD
