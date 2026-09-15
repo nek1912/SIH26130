@@ -4,7 +4,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from app.api.deps import get_applications_repository
+from app.api.deps import get_applications_repository, get_documents_repository
 from app.auth.dependencies import (
     check_application_ownership,
     require_any_permission,
@@ -13,6 +13,7 @@ from app.auth.dependencies import (
 from app.auth.models import UserContext
 from app.auth.permissions import Permission
 from app.repositories.applications import ApplicationsRepository
+from app.repositories.documents import DocumentsRepository
 
 router = APIRouter()
 
@@ -77,7 +78,9 @@ async def list_applications(
 async def create_application(
     project_id: UUID,
     approval_id: UUID,
+    approval_code: str = Query(..., description="Approval code like A01, A02"),
     repo: ApplicationsRepository = Depends(get_applications_repository),
+    doc_repo: DocumentsRepository = Depends(get_documents_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
 ):
     """Create a new application."""
@@ -87,7 +90,32 @@ async def create_application(
         "status": "draft",
         "applicant_id": str(user.user_id),
     }
-    return repo.create_with_reference(data)
+    application = repo.create_with_reference(data)
+
+    # Seed document requirements from workbook
+    from app.seed.documents import get_requirements_for_approval
+
+    doc_reqs = get_requirements_for_approval(approval_code)
+    if doc_reqs:
+        requirement_records = []
+        for req in doc_reqs:
+            requirement_records.append({
+                "application_id": application["id"],
+                "requirement_key": req["requirement_key"],
+                "document_name": req["document_name"],
+                "approval_id": approval_code,
+                "domain": req["domain"],
+                "requirement_level": req["requirement_level"],
+                "readiness": "pending",
+                "accepted_mime_types": req.get("accepted_mime_types"),
+                "max_size_mb": req.get("max_size_mb"),
+                "source_basis": req.get("source_basis"),
+                "source_url": req.get("source_url"),
+                "document_role": req.get("document_role"),
+            })
+        doc_repo.create_requirements_bulk(requirement_records)
+
+    return application
 
 
 @router.get("/applications/{application_id}")
