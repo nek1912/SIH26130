@@ -56,7 +56,7 @@ At minimum test:
 ## Migration reality
 The source repos (Digital-Permit-Platform, Compliance-Grid) were TypeScript/Next.js full-stack. All necessary business logic has been rewritten in Python and ported to the FastAPI backend. Those repositories have been deleted. Do not reference them as runtime dependencies.
 
-## Backend structure (Phase 5)
+## Backend structure (Phase 6)
 `backend/app/` contains:
 - `rules/` — obligation models, applicability engine, approval applicability engine, deadline, canonical, validation, **dependency models, dependency engine** (pure logic)
 - `forms/` — form models, condition evaluator (pure logic)
@@ -66,27 +66,28 @@ The source repos (Digital-Permit-Platform, Compliance-Grid) were TypeScript/Next
 - `core/` — config with Pydantic BaseSettings (includes JWT settings, storage bucket)
 - `db/` — Supabase client factory (`get_supabase()` with lru_cache)
 - `repositories/` — database access layer (base CRUD + specialized repos, including `documents.py`, **`consistency.py`**, **`workflow_events.py`**)
-- `api/` — FastAPI routes with auth dependencies (health, projects, approvals, applications, workflow, **documents**, **extraction**, **consistency**)
+- `api/` — FastAPI routes with auth dependencies (health, projects, approvals, applications, workflow, **documents**, **extraction**, **consistency**, **orchestration**)
 - `extraction/` — extraction models, service (PDF/CSV/Excel), deterministic validation engine, **background extraction job**
 - **`consistency/`** — cross-document consistency models and deterministic comparison engine
+- **`orchestration/`** — readiness/blocking status combining all engines into per-approval assessments with explainable blockers
 - `seed/` — workbook scenario, approval rules, dependency edges, **document requirements**, **consistency rules**, expected results
 - `main.py` — FastAPI app with all routers
 
 Tests in `backend/tests/`. Run with `cd backend && python -m pytest tests/ -v`. Lint with `python -m ruff check app/ tests/`.
 
-## Frontend structure (Phase 3B)
+## Frontend structure (Phase 6)
 `frontend/src/` contains:
 - `lib/supabase.ts` — Supabase client initialization (env vars: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
-- `lib/api.ts` — Thin REST API client (fetch wrapper with auth injection, all backend endpoints mapped)
-- `types/api.ts` — TypeScript types matching backend API response shapes (14 ApplicationStatus values)
+- `lib/api.ts` — Thin REST API client (fetch wrapper with auth injection, all backend endpoints mapped including **orchestration**)
+- `types/api.ts` — TypeScript types matching backend API response shapes (14 ApplicationStatus values, **ApplicationOrchestration**, **OrchestrationStatus**)
 - `contexts/AuthContext.tsx` — Auth provider (session, role, signIn, signOut)
 - `components/ProtectedRoute.tsx` — Auth guard with role-based access
 - `components/layout/` — Sidebar, Topbar, AppLayout (responsive sidebar + topbar)
 - `components/ui/` — Button, Input, Label, Card, Badge (Tailwind v4 compatible)
 - `components/shared/` — StatusBadge (14 application statuses), LoadingSpinner
 - `pages/auth/LoginPage.tsx` — Email/password login
-- `pages/applicant/` — ProjectList, ProjectCreate, ProjectDetail (with facts editing), ApplicationList, ApplicationSubmit, ApplicationDetail (with status timeline)
-- `pages/staff/` — QueuePage (real data, filters, pagination), ApplicationDetail (with workflow actions)
+- `pages/applicant/` — ProjectList, ProjectCreate, ProjectDetail (with facts editing), ApplicationList, ApplicationSubmit, ApplicationDetail (with status timeline, **readiness card**)
+- `pages/staff/` — QueuePage (real data, filters, pagination), ApplicationDetail (with workflow actions, **readiness card**)
 - `app.css` — Tailwind v4 CSS-first config with OKLCH design tokens
 
 Run frontend checks: `cd frontend && npx tsc --noEmit && npx oxlint && npx vite build`

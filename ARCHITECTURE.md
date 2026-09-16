@@ -662,4 +662,37 @@ Both source repos are TypeScript/Next.js. Our locked stack requires Python/FastA
 - Background extraction runs in-process; server restart mid-extraction leaves document in "running" state
 
 ### Next phase
-- Phase 6: TBD
+- Phase 6: Orchestration / Readiness (see below)
+
+## 27. Phase 6 implementation status (2026-09-16)
+
+### Created
+- `backend/app/orchestration/__init__.py` — orchestration module
+- `backend/app/orchestration/models.py` — OrchestrationStatus, BlockerType, BlockerDetail, DocumentReadinessSummary, ApprovalOrchestration, NextAction, ApplicationOrchestration (Pydantic v2)
+- `backend/app/orchestration/service.py` — `orchestrate_application()` and `orchestrate_application_full()` deterministic orchestration service
+- `backend/app/api/orchestration.py` — GET /applications/{id}/orchestration endpoint
+- `backend/tests/test_orchestration_service.py` — 17 orchestration service tests
+- `backend/tests/test_orchestration_api.py` — 3 API endpoint tests
+
+### Implemented
+- **Orchestration models**: OrchestrationStatus (7 states: READY, BLOCKED_BY_DEPENDENCY, BLOCKED_BY_DOCUMENTS, REVIEW_REQUIRED, INSUFFICIENT_DATA, COMPLETE, NOT_APPLICABLE), BlockerType (8 types), BlockerDetail with full traceability, DocumentReadinessSummary, ApprovalOrchestration, NextAction, ApplicationOrchestration
+- **Orchestration service**: Pure deterministic function combining applicability + dependency + documents + extraction + validation + consistency + SLA into per-approval readiness with explainable blockers
+- **Status priority**: NOT_APPLICABLE < READY < REVIEW_REQUIRED < INSUFFICIENT_DATA < BLOCKED_BY_DOCUMENTS < BLOCKED_BY_DEPENDENCY
+- **Document readiness**: Mandatory docs missing/invalid → blocker; conditional docs → warning; extraction/validation status tracked
+- **Next action**: Highest-priority actionable item across all approvals (upload_document > validate_document > fix_extraction > review_document > consistency_review > sla_attention > complete)
+- **API endpoint**: GET /applications/{id}/orchestration with auth (VIEW_OWN/VIEW_TEAM/VIEW_ALL), ownership checks
+- **Frontend**: Readiness/Next Action card on both staff and applicant application detail pages with color-coded status badge, blockers list, per-approval summary (staff only)
+
+### Checks
+- Backend: 558 passed, 4 skipped, 0 failed, ruff clean
+- Frontend: tsc clean, oxlint clean (warnings only), vite build success
+
+### Known limitations
+- Per-approval document requirements use seed data, not DB-loaded requirements
+- No OCR for image-based documents (existing limitation)
+- No auto-triggering of consistency checks on extraction completion
+- No notification system for SLA breaches (existing limitation)
+- Stage number is computed but not yet used for workflow gating
+
+### Next phase
+- Phase 7: TBD
