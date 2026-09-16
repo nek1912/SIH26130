@@ -31,7 +31,7 @@ from app.rules.dependency_models import (
     ReadinessStatus,
 )
 from app.rules.models import ApprovalRule, ApplicabilityEvaluation
-from app.seed.documents import get_requirements_for_approval
+
 
 # Status priority for worst-case aggregation (higher = worse).
 _STATUS_PRIORITY: dict[OrchestrationStatus, int] = {
@@ -79,7 +79,7 @@ def _compute_document_readiness(
     Returns:
         (readiness_label, document_summaries, blockers, doc_dicts)
     """
-    reqs = get_requirements_for_approval(approval_id)
+    reqs = [r for r in document_requirements if approval_id in r.get("approval_ids", [])]
 
     # Build lookup maps
     uploaded_map: dict[str, dict[str, Any]] = {
@@ -531,12 +531,16 @@ def orchestrate_application_full(
     status_summary = ", ".join(f"{count} {status}" for status, count in status_counts.items())
     explanation = f"Application {application_id}: {len(approvals)} approvals evaluated. Status distribution: {status_summary}. Total blockers: {total_blockers}."
 
-    # Determine stage number (max stage across all approvals that are not applicable)
-    stage_numbers = [
-        orch.status
-        for orch in approvals.values()
-        if orch.status != OrchestrationStatus.NOT_APPLICABLE
+    # Determine stage number from dependency graph
+    applicability_results_map = {aid: orch.applicability_result for aid, orch in approvals.items()}
+    dep_graph = evaluate_readiness(dependencies, applicability_results_map, obtained=obtained_approvals)
+    stages = [
+        dep_graph.readiness[aid].stage
+        for aid in all_approval_ids
+        if aid in dep_graph.readiness
+        and dep_graph.readiness[aid].applicability != "does_not_apply"
     ]
+    stage_number = max(stages) if stages else None
 
     return ApplicationOrchestration(
         application_id=application_id,
@@ -544,6 +548,6 @@ def orchestrate_application_full(
         approvals=approvals,
         total_blockers=total_blockers,
         next_action=next_action_model,
-        stage_number=None,
+        stage_number=stage_number,
         explanation=explanation,
     )
