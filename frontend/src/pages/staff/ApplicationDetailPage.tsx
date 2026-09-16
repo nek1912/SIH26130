@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '@/lib/api'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument, ExtractionSummary, ConsistencyResult, SlaInfo } from '@/types/api'
+import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument, ExtractionSummary, ConsistencyResult, SlaInfo, ApplicationOrchestration } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -57,6 +57,7 @@ export function ApplicationDetailPage() {
   const [consistency, setConsistency] = useState<ConsistencyResult | null>(null)
   const [consistencyLoading, setConsistencyLoading] = useState(false)
   const [sla, setSla] = useState<SlaInfo | null>(null)
+  const [orchestration, setOrchestration] = useState<ApplicationOrchestration | null>(null)
   const [docRequirements, setDocRequirements] = useState<DocumentRequirement[]>([])
   const [uploadedDocs, setUploadedDocs] = useState<UploadedDocument[]>([])
   const [extractionSummary, setExtractionSummary] = useState<ExtractionSummary[]>([])
@@ -83,6 +84,11 @@ export function ApplicationDetailPage() {
   useEffect(() => {
     if (!id) return
     api.applications.getSla(id).then(setSla).catch(() => {})
+  }, [id])
+
+  useEffect(() => {
+    if (!id) return
+    api.orchestration.get(id).then(setOrchestration).catch(() => {})
   }, [id])
 
   useEffect(() => {
@@ -365,6 +371,89 @@ export function ApplicationDetailPage() {
                       : 'Breached'}
               </span>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Readiness / Next Action */}
+      {orchestration && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Readiness / Next Action</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                  orchestration.overall_status === 'READY'
+                    ? 'bg-green-100 text-green-800'
+                    : orchestration.overall_status === 'BLOCKED_BY_DEPENDENCY' || orchestration.overall_status === 'BLOCKED_BY_DOCUMENTS'
+                      ? 'bg-red-100 text-red-800'
+                      : orchestration.overall_status === 'REVIEW_REQUIRED'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                {orchestration.overall_status.replace(/_/g, ' ')}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {orchestration.total_blockers} blocker{orchestration.total_blockers !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            <p className="text-sm text-muted-foreground">{orchestration.explanation}</p>
+
+            {orchestration.next_action && (
+              <div className="rounded-md bg-blue-50 p-3 text-sm">
+                <p className="font-medium text-blue-800">Next Action</p>
+                <p className="text-blue-700">{orchestration.next_action.description}</p>
+                {orchestration.next_action.affected_approval_id && (
+                  <p className="mt-1 text-xs text-blue-600">
+                    Affected approval: <span className="font-mono">{orchestration.next_action.affected_approval_id}</span>
+                  </p>
+                )}
+              </div>
+            )}
+
+            {Object.entries(orchestration.approvals).length > 0 && (
+              <details open>
+                <summary className="cursor-pointer text-sm font-medium">
+                  Per-Approval Summary ({Object.keys(orchestration.approvals).length})
+                </summary>
+                <div className="mt-2 space-y-2">
+                  {Object.entries(orchestration.approvals).map(([key, approval]) => {
+                    if (approval.status === 'NOT_APPLICABLE') return null
+                    return (
+                      <div key={key} className="rounded-md border p-3 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs text-muted-foreground">{approval.approval_id}</span>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                              approval.status === 'READY'
+                                ? 'bg-green-100 text-green-800'
+                                : approval.status === 'BLOCKED_BY_DEPENDENCY' || approval.status === 'BLOCKED_BY_DOCUMENTS'
+                                  ? 'bg-red-100 text-red-800'
+                                  : approval.status === 'REVIEW_REQUIRED'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : 'bg-gray-100 text-gray-800'
+                            }`}
+                          >
+                            {approval.status.replace(/_/g, ' ')}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">{approval.explanation}</p>
+                        <div className="mt-1 flex gap-3 text-xs text-muted-foreground">
+                          <span>Documents: {approval.document_readiness}</span>
+                          {approval.blockers.length > 0 && (
+                            <span className="text-red-600">{approval.blockers.length} blocker{approval.blockers.length !== 1 ? 's' : ''}</span>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </details>
+            )}
           </CardContent>
         </Card>
       )}
