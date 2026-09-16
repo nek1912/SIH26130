@@ -10,6 +10,7 @@ from app.api import (
     documents,
     extraction,
     health,
+    orchestration,
     projects,
     workflow,
 )
@@ -37,6 +38,7 @@ app.include_router(documents.router, tags=["documents"])
 app.include_router(extraction.router, tags=["extraction"])
 app.include_router(workflow.router, tags=["workflow"])
 app.include_router(consistency.router, tags=["consistency"])
+app.include_router(orchestration.router, tags=["orchestration"])
 
 
 @app.get("/")
