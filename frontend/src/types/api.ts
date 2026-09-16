@@ -256,3 +256,64 @@ export interface ConsistencyResult {
   checked_at: string
   rule_version: string
 }
+
+export type OrchestrationStatus =
+  | 'READY'
+  | 'BLOCKED_BY_DEPENDENCY'
+  | 'BLOCKED_BY_DOCUMENTS'
+  | 'REVIEW_REQUIRED'
+  | 'INSUFFICIENT_DATA'
+  | 'COMPLETE'
+  | 'NOT_APPLICABLE'
+
+export interface BlockerDetail {
+  blocker_type: string
+  description: string
+  affected_approval_id: string | null
+  affected_document_key: string | null
+  source_ref: string
+  evidence: string
+  action_required: string
+}
+
+export interface DocumentReadinessSummary {
+  requirement_key: string
+  document_name: string
+  readiness: string
+  extraction_status: string | null
+  validation_outcome: string | null
+  blocking: boolean
+  reason: string
+}
+
+export interface ApprovalOrchestration {
+  approval_id: string
+  status: OrchestrationStatus
+  applicability_result: string
+  dependency_readiness: string
+  document_readiness: string
+  consistency_outcome: string | null
+  sla_state: string | null
+  blockers: BlockerDetail[]
+  documents: DocumentReadinessSummary[]
+  explanation: string
+  next_action: string
+}
+
+export interface NextAction {
+  action_type: string
+  description: string
+  affected_approval_id: string | null
+  affected_document_key: string | null
+  link_section: string
+}
+
+export interface ApplicationOrchestration {
+  application_id: string
+  overall_status: OrchestrationStatus
+  approvals: Record<string, ApprovalOrchestration>
+  total_blockers: number
+  next_action: NextAction | null
+  stage_number: number | null
+  explanation: string
+}

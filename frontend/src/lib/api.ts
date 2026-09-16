@@ -8,6 +8,7 @@ import type {
   ExtractionSummary,
   ConsistencyResult,
   SlaInfo,
+  ApplicationOrchestration,
 } from '../types/api'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? ''
@@ -179,5 +180,10 @@ export const api = {
       if (!res.ok) throw new ApiError(res.status, `Get consistency failed: ${res.status}`)
       return res.json()
     },
+  },
+
+  orchestration: {
+    get: (appId: string) =>
+      request<ApplicationOrchestration>(`/applications/${appId}/orchestration`),
   },
 }
