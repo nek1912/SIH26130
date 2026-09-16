@@ -11,15 +11,11 @@ from __future__ import annotations
 
 from app.orchestration.models import (
     ApplicationOrchestration,
-    ApprovalOrchestration,
     OrchestrationStatus,
 )
 from app.orchestration.service import orchestrate_application, orchestrate_application_full
-from app.rules.dependency_models import ApprovalDependency
 from app.seed.approvals import load_approval_authorities, load_approval_rules
 from app.seed.dependencies import load_approval_dependencies
-
-
 
 # Shared fixtures
 _FULL_FACTS = {
@@ -137,7 +133,11 @@ class TestOrchestrationStatusComputation:
 
     def test_not_applicable_when_does_not_apply(self):
         """Applicability does_not_apply = NOT_APPLICABLE."""
-        facts = {"state": "Gujarat", "industry_type": "textile manufacturing", "plot_area_sqm": 12000}
+        facts = {
+            "state": "Gujarat",
+            "industry_type": "textile manufacturing",
+            "plot_area_sqm": 12000,
+        }
         result = _call_orchestrate("A01", facts=facts)
         assert result.status == OrchestrationStatus.NOT_APPLICABLE
 

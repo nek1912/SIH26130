@@ -27,11 +27,9 @@ from app.rules.dependency_engine import evaluate_readiness
 from app.rules.dependency_models import (
     ApprovalDependency,
     ApprovalReadiness,
-    DependencyGraph,
     ReadinessStatus,
 )
-from app.rules.models import ApprovalRule, ApplicabilityEvaluation
-
+from app.rules.models import ApplicabilityEvaluation, ApprovalRule
 
 # Status priority for worst-case aggregation (higher = worse).
 _STATUS_PRIORITY: dict[OrchestrationStatus, int] = {
@@ -207,9 +205,17 @@ def _compute_document_readiness(
     # Determine overall document readiness label
     if all(mandatory_results):
         label = "all_valid"
-    elif any(s.readiness == "missing" for s in summaries if _is_mandatory_next(reqs, s.requirement_key)):
+    elif any(
+        s.readiness == "missing"
+        for s in summaries
+        if _is_mandatory_next(reqs, s.requirement_key)
+    ):
         label = "missing"
-    elif any(s.readiness == "invalid" for s in summaries if _is_mandatory_next(reqs, s.requirement_key)):
+    elif any(
+        s.readiness == "invalid"
+        for s in summaries
+        if _is_mandatory_next(reqs, s.requirement_key)
+    ):
         label = "invalid"
     elif any(s.readiness == "review_required" for s in summaries):
         label = "review_required"
@@ -388,7 +394,10 @@ def orchestrate_application(
                 affected_approval_id=approval_id,
                 affected_document_key=None,
                 source_ref="consistency_engine",
-                evidence=f"Consistency outcome: {getattr(consistency_result, 'outcome', 'unknown')}",
+                evidence=(
+                    f"Consistency outcome: "
+                    f"{getattr(consistency_result, 'outcome', 'unknown')}"
+                ),
                 action_required="Review consistency findings",
             )
         )
@@ -438,14 +447,25 @@ def orchestrate_application(
         applicability_eval, dep_readiness, doc_readiness_label, status, all_blockers
     )
 
+    dep_readiness_val = (
+        dep_readiness.readiness.value if dep_readiness else "pending_evaluation"
+    )
+    consistency_val = (
+        getattr(consistency_result, "outcome", None)
+        if consistency_result else None
+    )
+    sla_val = (
+        getattr(sla_info, "state", None) if sla_info else None
+    )
+
     return ApprovalOrchestration(
         approval_id=approval_id,
         status=status,
         applicability_result=applicability_result,
-        dependency_readiness=dep_readiness.readiness.value if dep_readiness else "pending_evaluation",
+        dependency_readiness=dep_readiness_val,
         document_readiness=doc_readiness_label,
-        consistency_outcome=getattr(consistency_result, "outcome", None) if consistency_result else None,
-        sla_state=getattr(sla_info, "state", None) if sla_info else None,
+        consistency_outcome=consistency_val,
+        sla_state=sla_val,
         blockers=all_blockers,
         documents=doc_summaries,
         explanation=explanation,
@@ -528,12 +548,22 @@ def orchestrate_application_full(
     status_counts: dict[str, int] = {}
     for orch in approvals.values():
         status_counts[orch.status.value] = status_counts.get(orch.status.value, 0) + 1
-    status_summary = ", ".join(f"{count} {status}" for status, count in status_counts.items())
-    explanation = f"Application {application_id}: {len(approvals)} approvals evaluated. Status distribution: {status_summary}. Total blockers: {total_blockers}."
+    status_summary = ", ".join(
+        f"{count} {status}" for status, count in status_counts.items()
+    )
+    explanation = (
+        f"Application {application_id}: {len(approvals)} approvals evaluated. "
+        f"Status distribution: {status_summary}. "
+        f"Total blockers: {total_blockers}."
+    )
 
     # Determine stage number from dependency graph
-    applicability_results_map = {aid: orch.applicability_result for aid, orch in approvals.items()}
-    dep_graph = evaluate_readiness(dependencies, applicability_results_map, obtained=obtained_approvals)
+    applicability_results_map = {
+        aid: orch.applicability_result for aid, orch in approvals.items()
+    }
+    dep_graph = evaluate_readiness(
+        dependencies, applicability_results_map, obtained=obtained_approvals
+    )
     stages = [
         dep_graph.readiness[aid].stage
         for aid in all_approval_ids
