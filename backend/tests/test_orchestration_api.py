@@ -4,19 +4,42 @@ from __future__ import annotations
 from unittest.mock import MagicMock, patch
 from uuid import uuid4
 
+import pytest
 from fastapi.testclient import TestClient
+
+from app.auth.dependencies import get_current_user
+from app.auth.models import SystemRole, UserContext
+from app.main import app
+
+
+@pytest.fixture(autouse=True)
+def _clear_overrides():
+    """Reset dependency overrides between tests."""
+    yield
+    app.dependency_overrides.clear()
 
 
 class TestOrchestrationEndpoint:
     """Test GET /applications/{id}/orchestration."""
 
+    def _make_user(self) -> UserContext:
+        return UserContext(
+            user_id=uuid4(),
+            email="test@test.com",
+            role=SystemRole.ADMIN,
+            raw_claims={},
+        )
+
     def _make_client(self):
         """Create a test client with mocked dependencies."""
         from app.api.deps import get_db_client
-        from app.main import app
 
         client = MagicMock()
         app.dependency_overrides[get_db_client] = lambda: client
+
+        user = self._make_user()
+        app.dependency_overrides[get_current_user] = lambda: user
+
         return TestClient(app), client
 
     @patch("app.api.orchestration.orchestrate_application_full")
@@ -77,11 +100,17 @@ class TestOrchestrationEndpoint:
             headers={"Authorization": "Bearer test-token"},
         )
 
-        assert response.status_code in (200, 401, 403)
+        assert response.status_code == 200
+
+        data = response.json()
+        assert "application_id" in data
+        assert "overall_status" in data
+        assert "approvals" in data
+        assert "total_blockers" in data
 
     def test_orchestration_endpoint_returns_401(self):
         """Orchestration endpoint returns 401 without auth token."""
-        test_client, _ = self._make_client()
+        test_client = TestClient(app)
         app_id = str(uuid4())
 
         response = test_client.get(f"/applications/{app_id}/orchestration")
@@ -105,5 +134,4 @@ class TestOrchestrationEndpoint:
             headers={"Authorization": "Bearer test-token"},
         )
 
-        # Should be 404 or 401 depending on auth
-        assert response.status_code in (404, 401, 403)
+        assert response.status_code == 404
