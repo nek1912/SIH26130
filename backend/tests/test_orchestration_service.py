@@ -18,7 +18,7 @@ from app.orchestration.service import orchestrate_application, orchestrate_appli
 from app.rules.dependency_models import ApprovalDependency
 from app.seed.approvals import load_approval_authorities, load_approval_rules
 from app.seed.dependencies import load_approval_dependencies
-from app.seed.documents import DOCUMENT_REQUIREMENTS
+
 
 
 # Shared fixtures
@@ -116,7 +116,8 @@ class TestOrchestrationStatusComputation:
         """Approval blocked by unmet prerequisite = BLOCKED_BY_DEPENDENCY."""
         result = _call_orchestrate("A03", obtained=set())
         assert result.status == OrchestrationStatus.BLOCKED_BY_DEPENDENCY
-        assert "blocked" in result.dependency_readiness.lower()
+        assert result.dependency_readiness == "blocked"
+        assert result.next_action == "complete"
 
     def test_insufficient_data_when_facts_missing(self):
         """Missing project facts = INSUFFICIENT_DATA."""
@@ -153,6 +154,8 @@ class TestOrchestrationStatusComputation:
         # A03: depends on A04 and A02, with both obtained -> READY
         r_a03 = _call_orchestrate("A03", obtained={"A04", "A02"})
         assert r_a03.status == OrchestrationStatus.READY
+        assert r_a03.dependency_readiness == "ready"
+        assert len(r_a03.blockers) == 0
 
 
 # ============================================================
@@ -267,6 +270,7 @@ class TestApplicationOrchestration:
         """Picks highest priority next action across all approvals."""
         doc_reqs = [
             _make_doc_req("D05", ["A04"], level="required"),
+            _make_doc_req("D01", ["A01"], level="required"),
         ]
         result = orchestrate_application_full(
             application_id="APP-TEST",
@@ -274,7 +278,7 @@ class TestApplicationOrchestration:
             approval_rules=_rules(),
             approval_authorities=_authorities(),
             dependencies=_deps(),
-            all_approval_ids=["A04"],
+            all_approval_ids=["A04", "A01"],
             document_requirements=doc_reqs,
             uploaded_documents=[],
             extraction_results=[],
@@ -285,6 +289,7 @@ class TestApplicationOrchestration:
         )
         assert result.next_action is not None
         assert result.next_action.action_type == "upload_document"
+        assert result.next_action.affected_approval_id in ("A04", "A01")
 
 
 # ============================================================
