@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '@/lib/api'
-import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument, ExtractionSummary, ConsistencyResult, SlaInfo } from '@/types/api'
+import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument, ExtractionSummary, ConsistencyResult, SlaInfo, ApplicationOrchestration } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/shared/StatusBadge'
@@ -55,6 +55,7 @@ export function ApplicantApplicationDetailPage() {
   const [consistency, setConsistency] = useState<ConsistencyResult | null>(null)
   const [consistencyLoading, setConsistencyLoading] = useState(false)
   const [sla, setSla] = useState<SlaInfo | null>(null)
+  const [orchestration, setOrchestration] = useState<ApplicationOrchestration | null>(null)
 
   useEffect(() => {
     if (!id) return
@@ -90,6 +91,11 @@ export function ApplicantApplicationDetailPage() {
   useEffect(() => {
     if (!id) return
     api.applications.getSla(id).then(setSla).catch(() => {})
+  }, [id])
+
+  useEffect(() => {
+    if (!id) return
+    api.orchestration.get(id).then(setOrchestration).catch(() => {})
   }, [id])
 
   const handleRunConsistency = async () => {
@@ -336,6 +342,69 @@ export function ApplicantApplicationDetailPage() {
                       : 'Breached'}
               </span>
             </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Next Steps / Readiness */}
+      {orchestration && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Next Steps</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                  orchestration.overall_status === 'READY'
+                    ? 'bg-green-100 text-green-800'
+                    : orchestration.overall_status === 'BLOCKED_BY_DEPENDENCY' || orchestration.overall_status === 'BLOCKED_BY_DOCUMENTS'
+                      ? 'bg-red-100 text-red-800'
+                      : orchestration.overall_status === 'REVIEW_REQUIRED'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                {orchestration.overall_status.replace(/_/g, ' ')}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {orchestration.total_blockers} blocker{orchestration.total_blockers !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            <p className="text-sm text-muted-foreground">{orchestration.explanation}</p>
+
+            {orchestration.next_action && (
+              <div className="rounded-md bg-blue-50 p-3 text-sm">
+                <p className="font-medium text-blue-800">Next Action</p>
+                <p className="text-blue-700">{orchestration.next_action.description}</p>
+                {orchestration.next_action.affected_approval_id && (
+                  <p className="mt-1 text-xs text-blue-600">
+                    Affected approval: <span className="font-mono">{orchestration.next_action.affected_approval_id}</span>
+                  </p>
+                )}
+              </div>
+            )}
+
+            {orchestration.total_blockers > 0 && (
+              <div className="space-y-2">
+                {Object.entries(orchestration.approvals).map(([key, approval]) => {
+                  if (approval.blockers.length === 0) return null
+                  return (
+                    <div key={key} className="space-y-1">
+                      {approval.blockers.map((blocker, idx) => (
+                        <div key={idx} className="rounded-md bg-red-50 p-3 text-sm">
+                          <p className="text-red-800">{blocker.description}</p>
+                          {blocker.action_required && (
+                            <p className="mt-1 text-xs text-red-600">{blocker.action_required}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
