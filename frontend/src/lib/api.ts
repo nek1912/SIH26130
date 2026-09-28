@@ -9,6 +9,17 @@ import type {
   ConsistencyResult,
   SlaInfo,
   ApplicationOrchestration,
+  WhatIfResponse,
+  ChangeDescriptor,
+  ImpactRehearseResponse,
+  HandoffListResponse,
+  HandoffRecord,
+  Source,
+  SourceChunk,
+  RegulatoryExplanation,
+  SourceStatus,
+  SupportScheme,
+  ProjectIncentiveAssessment,
 } from '../types/api'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? ''
@@ -185,5 +196,86 @@ export const api = {
   orchestration: {
     get: (appId: string) =>
       request<ApplicationOrchestration>(`/applications/${appId}/orchestration`),
+    whatIf: (appId: string, factOverrides: Record<string, unknown>, includeUnchanged = false) =>
+      request<WhatIfResponse>(`/applications/${appId}/orchestration/what-if`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fact_overrides: factOverrides, include_unchanged: includeUnchanged }),
+      }),
+  },
+
+  regulatory: {
+    listSources: (limit = 100, offset = 0) =>
+      request<Source[]>(`/sources${toQuery({ limit, offset })}`),
+    getSource: (id: string) =>
+      request<{ source: Source; chunks: SourceChunk[] }>(`/sources/${id}`),
+    getSourceStatus: () =>
+      request<SourceStatus>('/sources/status'),
+    seedSources: () =>
+      request<{ sources_seeded: number; chunks_seeded: number; total_sources: number; total_chunks: number }>(
+        '/sources/seed', { method: 'POST' },
+      ),
+    explain: (query: string, limit = 5) =>
+      request<RegulatoryExplanation>('/regulatory/explain', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, limit }),
+      }),
+    explainApproval: (approvalId: string, applicability = 'unknown', reason = '') =>
+      request<RegulatoryExplanation>(
+        `/regulatory/approval/${approvalId}/explanation${toQuery({ applicability, reason })}`,
+      ),
+    orchestrationCitations: (appId: string, approvalId: string, explanation = '') =>
+      request<RegulatoryExplanation>(
+        `/regulatory/orchestration/${appId}/citations${toQuery({ approval_id: approvalId, explanation })}`,
+      ),
+    rehearseChange: (applicationId: string, change: ChangeDescriptor) =>
+      request<ImpactRehearseResponse>('/regulatory/changes/rehearse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ application_id: applicationId, change }),
+      }),
+  },
+
+  incentives: {
+    list: (category?: string) =>
+      request<SupportScheme[]>(`/incentives${toQuery({ category })}`),
+    get: (schemeId: string) =>
+      request<SupportScheme>(`/incentives/${schemeId}`),
+    assess: (projectFacts: Record<string, unknown>, schemeIds?: string[]) =>
+      request<ProjectIncentiveAssessment>('/incentives/assess', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_facts: projectFacts, scheme_ids: schemeIds }),
+      }),
+  },
+
+  handoffs: {
+    list: (appId: string) =>
+      request<HandoffListResponse>(`/applications/${appId}/handoffs`),
+    initiate: (appId: string, approvalCode: string) =>
+      request<HandoffRecord>(`/applications/${appId}/handoffs/initiate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ approval_code: approvalCode }),
+      }),
+    recordSubmission: (appId: string, handoffId: string, externalReference: string, note?: string) =>
+      request<HandoffRecord>(`/applications/${appId}/handoffs/${handoffId}/record-submission`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ external_reference: externalReference, applicant_note: note ?? null }),
+      }),
+    reportStatus: (appId: string, handoffId: string, toStatus: string, note?: string) =>
+      request<HandoffRecord>(`/applications/${appId}/handoffs/${handoffId}/report-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to_status: toStatus, applicant_note: note ?? null }),
+      }),
+    verify: (appId: string, handoffId: string, verifiedStatus: string) =>
+      request<HandoffRecord>(`/applications/${appId}/handoffs/${handoffId}/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ verified_status: verifiedStatus }),
+      }),
   },
 }

@@ -16,8 +16,6 @@ export type ApplicationStatus =
   | 'returned'
   | 'cancelled'
 
-export type ApplicabilityResult = 'APPLICABLE' | 'NOT_APPLICABLE' | 'CONDITIONAL' | 'UNKNOWN'
-
 export interface Project {
   id: string
   name: string
@@ -63,13 +61,6 @@ export interface Obligation {
   source_refs: unknown[]
   version: string
   confidence: number
-}
-
-export interface ObligationApplicabilityResponse {
-  obligation: Obligation
-  result: ApplicabilityResult
-  triggered_conditions: unknown[]
-  evaluation_timestamp: string
 }
 
 export interface Application {
@@ -258,13 +249,13 @@ export interface ConsistencyResult {
 }
 
 export type OrchestrationStatus =
-  | 'READY'
-  | 'BLOCKED_BY_DEPENDENCY'
-  | 'BLOCKED_BY_DOCUMENTS'
-  | 'REVIEW_REQUIRED'
-  | 'INSUFFICIENT_DATA'
-  | 'COMPLETE'
-  | 'NOT_APPLICABLE'
+  | 'ready'
+  | 'blocked_by_dependency'
+  | 'blocked_by_documents'
+  | 'review_required'
+  | 'insufficient_data'
+  | 'complete'
+  | 'not_applicable'
 
 export interface BlockerDetail {
   blocker_type: string
@@ -274,6 +265,11 @@ export interface BlockerDetail {
   source_ref: string
   evidence: string
   action_required: string
+  // Structured G0-R5 evidence traceability (backend BlockerDetail).
+  // Present only on INSUFFICIENT_DATA blockers built from evidence gaps.
+  evidence_id?: string | null
+  evidence_status?: string | null
+  unresolved_question?: string | null
 }
 
 export interface DocumentReadinessSummary {
@@ -315,5 +311,248 @@ export interface ApplicationOrchestration {
   total_blockers: number
   next_action: NextAction | null
   stage_number: number | null
+  explanation: string
+}
+
+// ── What-If Recalculation (stateless, backend is source of truth) ──
+
+export interface WhatIfRequest {
+  fact_overrides: Record<string, unknown>
+  include_unchanged?: boolean
+}
+
+export interface ApprovalDiff {
+  approval_id: string
+  baseline_applicability: string
+  whatif_applicability: string
+  baseline_status: string
+  whatif_status: string
+  baseline_dependency: string
+  whatif_dependency: string
+  added_blockers: BlockerDetail[]
+  removed_blockers: BlockerDetail[]
+  baseline_explanation: string
+  whatif_explanation: string
+}
+
+export interface WhatIfComparison {
+  changed_approvals: ApprovalDiff[]
+  unchanged_approvals: string[]
+  added_blockers: BlockerDetail[]
+  removed_blockers: BlockerDetail[]
+  overall_baseline: string
+  overall_whatif: string
+  next_action_baseline: NextAction | null
+  next_action_whatif: NextAction | null
+  no_change: boolean
+}
+
+export interface WhatIfResponse {
+  application_id: string
+  baseline: ApplicationOrchestration
+  what_if: ApplicationOrchestration
+  diff: WhatIfComparison
+  applied_overrides: Record<string, unknown>
+  note: string
+}
+
+// ── Regulatory Change Rehearsal (stateless, staff-only) ──
+
+export type ChangeKind =
+  | 'RULE_CHANGE'
+  | 'DOCUMENT_REQUIREMENT_CHANGE'
+  | 'DEPENDENCY_CHANGE'
+  | 'EVIDENCE_STATUS_CHANGE'
+  | 'SOURCE_METADATA_CHANGE'
+
+export type ImpactClassification = 'RESULT_CHANGED' | 'SOURCE_RELEVANT' | 'NO_IMPACT'
+
+export interface ChangeDescriptor {
+  change_kind: ChangeKind
+  source_id?: string | null
+  rule_id?: string | null
+  requirement_key?: string | null
+  evidence_id?: string | null
+  old_value?: Record<string, unknown> | null
+  new_value?: Record<string, unknown> | null
+  old_status?: string | null
+  new_status?: string | null
+}
+
+export interface ProjectImpact {
+  classification: ImpactClassification
+  affected_approvals: string[]
+  affected_rule_ids: string[]
+  source_ids: string[]
+  baseline_overall: string
+  new_overall: string
+  diffs: ApprovalDiff[]
+  baseline_results: Record<string, { status: string; applicability: string; dependency: string }>
+  new_results: Record<string, { status: string; applicability: string; dependency: string }>
+  reason: string
+  evidence_caveats: string[]
+  change: ChangeDescriptor
+}
+
+export interface ImpactRehearseResponse extends ProjectImpact {
+  application_id: string
+}
+
+// ── Manual Government Handoff (no integration; all statuses reported/verified) ──
+
+export type HandoffStatus =
+  | 'handed_off'
+  | 'submitted_externally'
+  | 'under_external_review'
+  | 'approved_external'
+  | 'rejected_external'
+  | 'returned_for_correction'
+
+export interface HandoffRecord {
+  id: string
+  application_id: string
+  approval_code: string
+  authority: string
+  external_system: string
+  portal_url: string
+  portal_kind: 'portal' | 'reference'
+  status: HandoffStatus
+  external_reference: string | null
+  submitted_at: string | null
+  last_external_update_at: string | null
+  applicant_note: string | null
+  reported_by: string | null
+  verification: 'user_reported' | 'staff_verified'
+  verified_by: string | null
+  verified_at: string | null
+  currently_ready?: boolean
+}
+
+export interface ReadyApprovalHandoff {
+  approval_code: string
+  authority: string
+  external_system: string
+  portal_url: string
+  portal_kind: 'portal' | 'reference'
+  document_readiness: string
+  missing_documents: string[]
+}
+
+export interface HandoffListResponse {
+  handoffs: HandoffRecord[]
+  ready_approvals: ReadyApprovalHandoff[]
+}
+
+// ── Regulatory / RAG ──
+
+export interface Source {
+  id: string
+  jurisdiction: string
+  domain: string
+  url: string
+  trust_tier: string
+  title: string
+  authority: string
+  source_type: string
+  source_class: string
+  notes: string
+  checked_date: string
+}
+
+export interface SourceChunk {
+  id: string
+  source_id: string
+  chunk_text: string
+  chunk_index: number
+  metadata: Record<string, unknown>
+}
+
+export interface Citation {
+  source_id: string
+  title: string
+  authority: string
+  url: string
+  source_type: string
+  excerpt: string
+  relevance_rank: number
+}
+
+export type EvidenceState = 'sufficient' | 'insufficient' | 'partial'
+
+export interface RegulatoryExplanation {
+  answer: string
+  citations: Citation[]
+  evidence_state: EvidenceState
+  query: string
+  approval_id: string | null
+  application_id: string | null
+}
+
+export interface SourceStatus {
+  source_count: number
+  chunk_count: number
+}
+
+// ── Incentive Schemes ──
+
+export type SchemeCategory =
+  | 'capital_subsidy'
+  | 'interest_subsidy'
+  | 'tax_concession'
+  | 'infrastructure'
+  | 'msme_support'
+  | 'quality_certification'
+  | 'energy'
+  | 'employment'
+  | 'general'
+
+export type RelevanceState =
+  | 'potentially_relevant'
+  | 'not_relevant'
+  | 'conditional'
+  | 'insufficient_data'
+
+export interface RequiredInfo {
+  field_name: string
+  description: string
+  source_ref: { source_id: string; citation_span: string } | null
+}
+
+export interface SchemeBenefit {
+  description: string
+  source_ref: { source_id: string; citation_span: string } | null
+}
+
+export interface SupportScheme {
+  id: string
+  name: string
+  authority: string
+  category: SchemeCategory
+  description: string
+  eligibility_conditions: unknown[]
+  required_info: RequiredInfo[]
+  benefits: SchemeBenefit[]
+  source_refs: { source_id: string; citation_span: string }[]
+  version: string
+  active: boolean
+}
+
+export interface SchemeRelevance {
+  scheme_id: string
+  scheme_name: string
+  relevance: RelevanceState
+  reason: string
+  triggered_conditions: string[]
+  missing_info: string[]
+  source_refs: { source_id: string; citation_span: string }[]
+}
+
+export interface ProjectIncentiveAssessment {
+  project_id: string
+  assessments: SchemeRelevance[]
+  relevant_count: number
+  conditional_count: number
+  insufficient_count: number
+  not_relevant_count: number
   explanation: string
 }
