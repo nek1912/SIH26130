@@ -1,19 +1,19 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { api, ApiError } from '@/lib/api'
-import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument, ExtractionSummary, ConsistencyResult, SlaInfo, ApplicationOrchestration } from '@/types/api'
+import { api } from '@/lib/api'
+import { getErrorMessage } from '@/lib/errors'
+import { formatDateTime } from '@/lib/format'
+import type { WorkflowResult } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
-import { RegulatoryAssistant } from '@/pages/shared/RegulatoryAssistant'
-import { IncentiveSchemes } from '@/pages/shared/IncentiveSchemes'
 import { SLACard } from '@/pages/shared/SLACard'
-import { DocumentChecklist } from '@/pages/shared/DocumentChecklist'
-import { ConsistencyPanel } from '@/pages/shared/ConsistencyPanel'
 import { OrchestrationPanel } from '@/pages/shared/OrchestrationPanel'
 import { WhatIfPanel } from '@/pages/shared/WhatIfPanel'
 import { HandoffPanel } from '@/pages/shared/HandoffPanel'
+import { useApplicationDetailData } from '@/pages/shared/useApplicationDetailData'
+import { DetailPageHeader, DetailBottomSections } from '@/pages/shared/ApplicationDetailShared'
 
 const STAGE_ORDER = [
   { key: 'draft', label: 'Draft' },
@@ -46,88 +46,29 @@ const WITHDRAW_STATUSES = new Set(['submitted', 'under_review', 'awaiting_inspec
 export function ApplicantApplicationDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [application, setApplication] = useState<Application | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const {
+    application,
+    setApplication,
+    loading,
+    error,
+    docRequirements,
+    uploadedDocs,
+    extractionSummary,
+    docLoading,
+    docError,
+    refreshDocs,
+    consistency,
+    consistencyLoading,
+    consistencyError,
+    runConsistency,
+    sla,
+    setSla,
+    orchestration,
+    setOrchestration,
+    projectFacts,
+  } = useApplicationDetailData(id)
   const [actionLoading, setActionLoading] = useState('')
   const [actionError, setActionError] = useState('')
-  const [docRequirements, setDocRequirements] = useState<DocumentRequirement[]>([])
-  const [uploadedDocs, setUploadedDocs] = useState<UploadedDocument[]>([])
-  const [extractionSummary, setExtractionSummary] = useState<ExtractionSummary[]>([])
-  const [docLoading, setDocLoading] = useState(false)
-  const [docError, setDocError] = useState('')
-  const [consistency, setConsistency] = useState<ConsistencyResult | null>(null)
-  const [consistencyLoading, setConsistencyLoading] = useState(false)
-  const [consistencyError, setConsistencyError] = useState('')
-  const [sla, setSla] = useState<SlaInfo | null>(null)
-  const [orchestration, setOrchestration] = useState<ApplicationOrchestration | null>(null)
-  const [projectFacts, setProjectFacts] = useState<Record<string, unknown> | null>(null)
-
-  useEffect(() => {
-    if (!id) return
-    api.applications
-      .get(id)
-      .then((data) => setApplication(data as Application))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [id])
-
-  const refreshDocs = useCallback(() => {
-    if (!id) return
-    setDocLoading(true)
-    Promise.all([
-      api.documents.listRequirements(id),
-      api.documents.list(id),
-      api.documents.getExtractionSummary(id),
-    ])
-      .then(([reqs, docs, summary]) => {
-        setDocRequirements(reqs as DocumentRequirement[])
-        setUploadedDocs(docs as UploadedDocument[])
-        setExtractionSummary(summary as ExtractionSummary[])
-      })
-      .catch((err) => setDocError(err.message))
-      .finally(() => setDocLoading(false))
-  }, [id])
-
-  useEffect(() => { if (id) refreshDocs() }, [id, refreshDocs])
-
-  useEffect(() => {
-    if (!id) return
-    api.consistency.get(id).then(setConsistency).catch(() => {})
-  }, [id])
-
-  useEffect(() => {
-    if (!id) return
-    api.applications.getSla(id).then(setSla).catch(() => {})
-  }, [id])
-
-  useEffect(() => {
-    if (!id) return
-    api.orchestration.get(id).then(setOrchestration).catch(() => {})
-  }, [id])
-
-  useEffect(() => {
-    if (!application?.project_id) return
-    api.projects
-      .getFacts(application.project_id)
-      .then((data) => setProjectFacts(data as Record<string, unknown>))
-      .catch(() => {})
-  }, [application?.project_id])
-
-  const handleRunConsistency = async () => {
-    if (!id) return
-    setConsistencyLoading(true)
-    setConsistencyError('')
-    try {
-      const result = await api.consistency.check(id)
-      setConsistency(result)
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Consistency check failed'
-      setConsistencyError(msg)
-    } finally {
-      setConsistencyLoading(false)
-    }
-  }
 
   const handleAction = async (actionKey: string) => {
     if (!id) return
@@ -146,8 +87,7 @@ export function ApplicantApplicationDetailPage() {
       api.applications.getSla(id).then(setSla).catch(() => {})
       api.orchestration.get(id).then(setOrchestration).catch(() => {})
     } catch (err) {
-      if (err instanceof ApiError) setActionError(err.message)
-      else setActionError(err instanceof Error ? err.message : 'Action failed')
+      setActionError(getErrorMessage(err, 'Action failed'))
     } finally {
       setActionLoading('')
     }
@@ -174,13 +114,11 @@ export function ApplicantApplicationDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Application {application.reference_number}</h1>
-          <p className="font-mono text-xs text-muted-foreground">{application.id}</p>
-        </div>
-        <Button variant="outline" onClick={() => navigate(-1)}>Back</Button>
-      </div>
+      <DetailPageHeader
+        referenceNumber={application.reference_number}
+        objectId={application.id}
+        onBack={() => navigate(-1)}
+      />
 
       {actionError && (
         <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{actionError}</div>
@@ -287,10 +225,10 @@ export function ApplicantApplicationDetailPage() {
           <CardTitle className="text-base">Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <dl className="grid grid-cols-2 gap-3 text-sm">
+          <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
             <div>
               <dt className="text-muted-foreground">Created</dt>
-              <dd>{new Date(application.created_at).toLocaleString()}</dd>
+              <dd>{formatDateTime(application.created_at)}</dd>
             </div>
             {application.current_stage && (
               <div>
@@ -301,7 +239,7 @@ export function ApplicantApplicationDetailPage() {
             {application.assigned_officer_id && (
               <div>
                 <dt className="text-muted-foreground">Assigned Officer</dt>
-                <dd className="font-mono text-xs">{application.assigned_officer_id}</dd>
+                <dd className="break-all font-mono text-xs">{application.assigned_officer_id}</dd>
               </div>
             )}
             {application.decision_outcome && (
@@ -320,31 +258,21 @@ export function ApplicantApplicationDetailPage() {
         </CardContent>
       </Card>
 
-      <DocumentChecklist
+      <DetailBottomSections
         applicationId={id!}
-        requirements={docRequirements}
+        approvalId={application.approval_id}
+        projectFacts={projectFacts}
+        docRequirements={docRequirements}
         uploadedDocs={uploadedDocs}
         extractionSummary={extractionSummary}
-        loading={docLoading}
-        error={docError}
-        onRefresh={refreshDocs}
-      />
-
-      <ConsistencyPanel
+        docLoading={docLoading}
+        docError={docError}
+        onRefreshDocs={refreshDocs}
         consistency={consistency}
-        loading={consistencyLoading}
-        error={consistencyError}
-        onRunCheck={handleRunConsistency}
+        consistencyLoading={consistencyLoading}
+        consistencyError={consistencyError}
+        onRunConsistency={runConsistency}
       />
-
-      <RegulatoryAssistant
-        approvalId={application.approval_id}
-        applicationId={application.id}
-      />
-
-      {projectFacts && (
-        <IncentiveSchemes projectFacts={projectFacts} />
-      )}
     </div>
   )
 }

@@ -8,6 +8,7 @@ import { ApprovalDiffList } from '@/pages/shared/ApprovalDiffList'
 import { classificationBadge, statusBadge } from '@/pages/shared/statusBadges'
 import { Disclosure } from '@/components/shared/Disclosure'
 import { Select } from '@/components/ui/select'
+import { TextInput } from '@/components/ui/textInput'
 
 interface ChangeImpactPanelProps {
   applicationId: string
@@ -118,24 +119,24 @@ export function ChangeImpactPanel({ applicationId }: ChangeImpactPanelProps) {
             </label>
 
             {kind === 'SOURCE_METADATA_CHANGE' && (
-              <input
-                className="w-40 rounded-md border px-2 py-1 text-sm"
+              <TextInput
+                className="w-40"
                 placeholder="source_id, e.g. S07"
                 value={sourceId}
                 onChange={(e) => setSourceId(e.target.value)}
               />
             )}
             {kind === 'RULE_CHANGE' && (
-              <input
-                className="w-48 rounded-md border px-2 py-1 text-sm"
+              <TextInput
+                className="w-48"
                 placeholder="rule_id, e.g. R-EIA-001"
                 value={ruleId}
                 onChange={(e) => setRuleId(e.target.value)}
               />
             )}
             {kind === 'DOCUMENT_REQUIREMENT_CHANGE' && (
-              <input
-                className="w-48 rounded-md border px-2 py-1 text-sm"
+              <TextInput
+                className="w-48"
                 placeholder="requirement_key, e.g. D15"
                 value={requirementKey}
                 onChange={(e) => setRequirementKey(e.target.value)}
@@ -143,8 +144,8 @@ export function ChangeImpactPanel({ applicationId }: ChangeImpactPanelProps) {
             )}
             {kind === 'EVIDENCE_STATUS_CHANGE' && (
               <div className="flex flex-wrap items-center gap-2 text-sm">
-                <input
-                  className="w-48 rounded-md border px-2 py-1 text-sm"
+                <TextInput
+                  className="w-48"
                   placeholder="evidence_id, e.g. G0R5-FIRE-R25"
                   value={evidenceId}
                   onChange={(e) => setEvidenceId(e.target.value)}

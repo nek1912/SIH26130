@@ -1,22 +1,22 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api, ApiError } from '@/lib/api'
+import { getErrorMessage } from '@/lib/errors'
+import { formatDateTime } from '@/lib/format'
 import { useAuth } from '@/contexts/AuthContext'
-import type { Application, WorkflowResult, DocumentRequirement, UploadedDocument, ExtractionSummary, ConsistencyResult, SlaInfo, ApplicationOrchestration } from '@/types/api'
+import type { WorkflowResult } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
-import { RegulatoryAssistant } from '@/pages/shared/RegulatoryAssistant'
-import { IncentiveSchemes } from '@/pages/shared/IncentiveSchemes'
 import { SLACard } from '@/pages/shared/SLACard'
-import { DocumentChecklist } from '@/pages/shared/DocumentChecklist'
-import { ConsistencyPanel } from '@/pages/shared/ConsistencyPanel'
 import { OrchestrationPanel } from '@/pages/shared/OrchestrationPanel'
 import { ChangeImpactPanel } from '@/pages/shared/ChangeImpactPanel'
 import { HandoffPanel } from '@/pages/shared/HandoffPanel'
+import { useApplicationDetailData } from '@/pages/shared/useApplicationDetailData'
+import { DetailPageHeader, DetailBottomSections } from '@/pages/shared/ApplicationDetailShared'
 
 interface WorkflowAction {
   key: string
@@ -55,89 +55,30 @@ export function ApplicationDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { role } = useAuth()
   const navigate = useNavigate()
-  const [application, setApplication] = useState<Application | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
   const [actionLoading, setActionLoading] = useState('')
   const [reason, setReason] = useState('')
   const [actionError, setActionError] = useState('')
-  const [consistency, setConsistency] = useState<ConsistencyResult | null>(null)
-  const [consistencyLoading, setConsistencyLoading] = useState(false)
-  const [consistencyError, setConsistencyError] = useState('')
-  const [sla, setSla] = useState<SlaInfo | null>(null)
-  const [orchestration, setOrchestration] = useState<ApplicationOrchestration | null>(null)
-  const [docRequirements, setDocRequirements] = useState<DocumentRequirement[]>([])
-  const [uploadedDocs, setUploadedDocs] = useState<UploadedDocument[]>([])
-  const [extractionSummary, setExtractionSummary] = useState<ExtractionSummary[]>([])
-  const [docLoading, setDocLoading] = useState(false)
-  const [docError, setDocError] = useState('')
-  const [projectFacts, setProjectFacts] = useState<Record<string, unknown> | null>(null)
-
-  useEffect(() => {
-    if (!id) return
-    api.applications
-      .get(id)
-      .then((data) => setApplication(data as Application))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [id])
-
-  useEffect(() => {
-    if (!id) return
-    api.consistency.get(id).then(setConsistency).catch(() => {})
-  }, [id])
-
-  useEffect(() => {
-    if (!id) return
-    api.applications.getSla(id).then(setSla).catch(() => {})
-  }, [id])
-
-  useEffect(() => {
-    if (!id) return
-    api.orchestration.get(id).then(setOrchestration).catch(() => {})
-  }, [id])
-
-  useEffect(() => {
-    if (!application?.project_id) return
-    api.projects
-      .getFacts(application.project_id)
-      .then((data) => setProjectFacts(data as Record<string, unknown>))
-      .catch(() => {})
-  }, [application?.project_id])
-
-  const refreshDocs = useCallback(() => {
-    if (!id) return
-    setDocLoading(true)
-    Promise.all([
-      api.documents.listRequirements(id),
-      api.documents.list(id),
-      api.documents.getExtractionSummary(id),
-    ])
-      .then(([reqs, docs, summary]) => {
-        setDocRequirements(reqs as DocumentRequirement[])
-        setUploadedDocs(docs as UploadedDocument[])
-        setExtractionSummary(summary as ExtractionSummary[])
-      })
-      .catch((err) => setDocError(err.message))
-      .finally(() => setDocLoading(false))
-  }, [id])
-
-  useEffect(() => { if (id) refreshDocs() }, [id, refreshDocs])
-
-  const handleRunConsistency = async () => {
-    if (!id) return
-    setConsistencyLoading(true)
-    setConsistencyError('')
-    try {
-      const result = await api.consistency.check(id)
-      setConsistency(result)
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Consistency check failed'
-      setConsistencyError(msg)
-    } finally {
-      setConsistencyLoading(false)
-    }
-  }
+  const {
+    application,
+    setApplication,
+    loading,
+    error,
+    docRequirements,
+    uploadedDocs,
+    extractionSummary,
+    docLoading,
+    docError,
+    refreshDocs,
+    consistency,
+    consistencyLoading,
+    consistencyError,
+    runConsistency,
+    sla,
+    setSla,
+    orchestration,
+    setOrchestration,
+    projectFacts,
+  } = useApplicationDetailData(id)
 
   const handleAction = async (action: WorkflowAction) => {
     if (!id) return
@@ -160,7 +101,7 @@ export function ApplicationDetailPage() {
         else if (err.status === 422) setActionError(`Validation: ${detail}`)
         else setActionError(detail)
       } else {
-        setActionError(err instanceof Error ? err.message : 'Action failed')
+        setActionError(getErrorMessage(err, 'Action failed'))
       }
     } finally {
       setActionLoading('')
@@ -181,13 +122,11 @@ export function ApplicationDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Application {application.reference_number}</h1>
-          <p className="font-mono text-xs text-muted-foreground">{application.id}</p>
-        </div>
-        <Button variant="outline" onClick={() => navigate(-1)}>Back</Button>
-      </div>
+      <DetailPageHeader
+        referenceNumber={application.reference_number}
+        objectId={application.id}
+        onBack={() => navigate(-1)}
+      />
 
       {(error || actionError) && (
         <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
@@ -285,52 +224,42 @@ export function ApplicationDetailPage() {
           <CardTitle className="text-base">Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <dl className="grid grid-cols-2 gap-3 text-sm">
+          <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
             <div>
               <dt className="text-muted-foreground">Project</dt>
-              <dd className="font-mono text-xs">{application.project_id}</dd>
+              <dd className="break-all font-mono text-xs">{application.project_id}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Approval</dt>
-              <dd className="font-mono text-xs">{application.approval_id}</dd>
+              <dd className="break-all font-mono text-xs">{application.approval_id}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Applicant</dt>
-              <dd className="font-mono text-xs">{application.applicant_id}</dd>
+              <dd className="break-all font-mono text-xs">{application.applicant_id}</dd>
             </div>
             <div>
               <dt className="text-muted-foreground">Created</dt>
-              <dd>{new Date(application.created_at).toLocaleString()}</dd>
+              <dd>{formatDateTime(application.created_at)}</dd>
             </div>
           </dl>
         </CardContent>
       </Card>
 
-      <DocumentChecklist
+      <DetailBottomSections
         applicationId={id!}
-        requirements={docRequirements}
+        approvalId={application.approval_id}
+        projectFacts={projectFacts}
+        docRequirements={docRequirements}
         uploadedDocs={uploadedDocs}
         extractionSummary={extractionSummary}
-        loading={docLoading}
-        error={docError}
-        onRefresh={refreshDocs}
-      />
-
-      <ConsistencyPanel
+        docLoading={docLoading}
+        docError={docError}
+        onRefreshDocs={refreshDocs}
         consistency={consistency}
-        loading={consistencyLoading}
-        error={consistencyError}
-        onRunCheck={handleRunConsistency}
+        consistencyLoading={consistencyLoading}
+        consistencyError={consistencyError}
+        onRunConsistency={runConsistency}
       />
-
-      <RegulatoryAssistant
-        approvalId={application.approval_id}
-        applicationId={application.id}
-      />
-
-      {projectFacts && (
-        <IncentiveSchemes projectFacts={projectFacts} />
-      )}
     </div>
   )
 }

@@ -8,6 +8,7 @@ import { ApprovalDiffList } from '@/pages/shared/ApprovalDiffList'
 import { statusBadge } from '@/pages/shared/statusBadges'
 import { Disclosure } from '@/components/shared/Disclosure'
 import { Select } from '@/components/ui/select'
+import { TextInput } from '@/components/ui/textInput'
 
 interface WhatIfPanelProps {
   applicationId: string
@@ -121,8 +122,8 @@ export function WhatIfPanel({ applicationId }: WhatIfPanelProps) {
                       </option>
                     ))}
                   </Select>
-                  <input
-                    className="w-40 rounded-md border px-2 py-1 text-sm"
+                  <TextInput
+                    className="w-40"
                     placeholder={spec?.hint ?? 'value'}
                     value={row.raw}
                     disabled={row.asUnknown}

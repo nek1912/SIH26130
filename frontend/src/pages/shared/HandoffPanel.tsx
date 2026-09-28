@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { badgeVariantClasses } from '@/components/ui/badgeVariants'
 import { Select } from '@/components/ui/select'
+import { TextInput } from '@/components/ui/textInput'
 
 interface HandoffPanelProps {
   applicationId: string
@@ -174,8 +175,8 @@ export function HandoffPanel({ applicationId, staffView = false }: HandoffPanelP
 
                   {(h.status === 'handed_off' || h.status === 'returned_for_correction') && (
                     <div className="flex flex-wrap items-center gap-2">
-                      <input
-                        className="w-52 rounded-md border px-2 py-1 text-sm"
+                      <TextInput
+                        className="w-52"
                         placeholder="External reference from portal"
                         value={reference[h.id] ?? ''}
                         onChange={(e) => setReference((m) => ({ ...m, [h.id]: e.target.value }))}
