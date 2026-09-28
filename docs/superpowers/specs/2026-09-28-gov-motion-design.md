@@ -39,7 +39,7 @@ Explicitly out: cloning/building MotionVault/MotionLens now; cloning Emil/GSAP/m
 
 ```text
 .motion/MOTION.md
-  ← copied from SIH-Gov-Motion-Kit/sih-gov-motion-kit/MOTION.md (verbatim unless the implementation plan records an explicit reduction)
+  ← copied from SIH-Gov-Motion-Kit/sih-gov-motion-kit/MOTION.md verbatim; any trimming required by the approved scope must be explicitly documented in the implementation plan
   ← site-wide reusable source of truth, updated only for reusable patterns
 
 .opencode/skills/gov-motion-reference/SKILL.md
@@ -100,7 +100,7 @@ No motion is "done" without: relevant frontend checks run via the project's exis
 
 ## Section 8 — Rollout & what stays out
 
-Installs (docs + skill only): `.motion/MOTION.md`, `.opencode/skills/gov-motion-reference/SKILL.md`, `docs/motion/MOTION_SPEC.template.md` (containing spec template + audit checklist as two sections in one file), this design document. No `npm`/`pip` adds, no migrations, no API/backend changes, no frontend behavior changes. Total new tracked surface: two tracked configuration/skill files + two motion documentation artifacts, plus this design document.
+Installs (docs + skill only): `.motion/MOTION.md`, `.opencode/skills/gov-motion-reference/SKILL.md`, `docs/motion/MOTION_SPEC.template.md` (containing spec template + audit checklist as two sections in one file), plus this design document (already exists at `docs/superpowers/specs/2026-09-28-gov-motion-design.md` — implementation plan must not recreate it). No `npm`/`pip` adds, no migrations, no API/backend changes, no frontend behavior changes. Total new tracked surface: two tracked configuration/skill files + two motion documentation artifacts, plus this design document.
 
 Explicitly deferred with re-entry conditions: MotionVault/MotionLens clone + build (only if a real reference needing structural extraction appears); Emil/GSAP/motion-ref skills (only if a concrete sequencing/scroll choreography need passes the gates); any runtime lib (only via separate design passing `AGENTS.md` gate + `RULES.md` verification); `/gov-motion` command (only after the skill proves useful manually); any page animation (only via `MOTION_SPEC.md` + audit).
 
