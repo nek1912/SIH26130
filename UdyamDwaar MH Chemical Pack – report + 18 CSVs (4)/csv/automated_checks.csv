@@ -1,0 +1,21 @@
+check_id,check,result,evidence
+CHECK 01,Every deterministic rule has a resolvable source_id,PASS,96 deterministic rules; missing []
+CHECK 02,Every threshold has a locator (rules + peso_thresholds + mfs cells),PASS,missing []
+CHECK 03,Every MSIHC threshold has a locator,PASS,221 rows; missing []
+CHECK 04,Every timeline typed LEGAL / RTS/SERVICE / ADMINISTRATIVE / PORTAL,PASS,"sla Counter({'LEGAL': 18, 'RTS/SERVICE': 13, 'PORTAL': 13, 'ADMINISTRATIVE': 6}); MIDC RTS legal/portal separated=True; untyped []"
+CHECK 05,No portal/T3+ source is the sole proof of a deterministic legal rule,PASS,"violations []; guards/routing exempt ['R-015', 'R-035', 'R-047', 'R-059', 'R-074']; R-036/R-037 downgraded"
+CHECK 06,Authorities verified or explicitly marked unresolved,PASS,"{'VERIFIED': 15, 'REQUIRES_CONFIRMATION': 7}; unresolved listed in UR-17"
+CHECK 07,Draft/superseded never treated as current,PASS,"draft sources ['SRC-118', 'SRC-172', 'SRC-176'] - none sole basis of a safe rule; MH OSH rules DRAFT; MSIHC v3 table SUPERSEDED; violations []"
+CHECK 08,DNI never enters orchestration (safe list clean),PASS,leaks []; misclassified []
+CHECK 09,UNKNOWN never becomes DOES_NOT_APPLY/FALSE (text scan),PASS,hits []
+CHECK 10,"All conflicts recorded with sources, dates, legal status, resolution, status",PASS,28 conflicts; incomplete []
+CHECK 11,Incentive amounts blocked,PASS,14 components; R-059 NOT_COMPUTED
+CHECK 12,MSIHC values pass locator + effective-date validation,PASS,VERIFIED 218; check violations []; missing date/locator []
+CHECK 13,General fire renewal separate from sector-specific certificate,PASS,"classes ['CLAIMED_EXCEPTION', 'GENERAL_FIRE_APPROVAL', 'SECTOR_SPECIFIC_CERTIFICATE']"
+CHECK 14,EPR is role-driven,PASS,13 role rows; generic manufacturer -> INSUFFICIENT_DATA
+CHECK 15,Planning requires authority + site facts,PASS,"R-105 inputs planning_authority, zone, proposed_use, existing_use"
+CHECK 16,Effective-date status on every rule (temporal answer or INSUFFICIENT_DATA),PASS,"Counter({'EXACT_DATE': 61, 'YEAR_ONLY': 25, 'UNKNOWN': 19})"
+CHECK 17,Integration claims need evidence; no NO_INTEGRATION,PASS,"claims Counter({'UNKNOWN': 5, 'VERIFIED_CONDITIONAL': 1}); NO_INTEGRATION hits []"
+CHECK 18,Every source id resolves,PASS,188 sources; unresolved []
+CHECK 19,Counts generated from data,PASS,report5 and summary JSON compute every count from the tables at build time
+CHECK 20,"Every unresolved item has reason, missing evidence, next evidence, engine behaviour",PASS,19 items; incomplete []

@@ -1,0 +1,13 @@
+step,question,inputs,decision,if_insufficient,source_id,locator
+H1,Identify process generating the waste,F-HW-02 (process),Map to Schedule I process description (hw_streams.csv),INSUFFICIENT_DATA,SRC-013,Schedule I
+H2,Identify the waste stream,F-HW-02 (stream),Compare with Schedule I waste list for that process,INSUFFICIENT_DATA,SRC-013,Schedule I col 3
+H3,Listed in Schedule I?,"H1,H2",YES -> hazardous waste; code exactly as printed in Schedule I (never inferred),UNKNOWN - do not infer a code,SRC-013,Schedule I
+H4,If not listed: Schedule II characteristic test,F-HW-04 lab data,Class A TCLP > limit / Class B > limit / C1 fp < 60 C / C2 pH <=2 or >=12.5 or corrosion > 6.35 mm/yr / C3 reactive -> hazardous,INSUFFICIENT_DATA (lab data required),SRC-120,Schedule II
+H5,Schedule III/IV (import-export / recyclables) relevance,trade facts,Only if import/export or utilisation,UNKNOWN,SRC-013,Schedules III-VI
+H6,Hazardous waste determination,"H3,H4",HAZARDOUS / NOT_HAZARDOUS (only if listed-test negative AND lab tests negative) / INSUFFICIENT_DATA,INSUFFICIENT_DATA,SRC-013;SRC-120,r.3(17)
+H7,Storage,hazardous = TRUE,Storage <= 90 days (extendable per rules) - CMP-003,-,SRC-013,r.8
+H8,Authorisation,hazardous = TRUE,Form 1 application -> Form 2 authorisation (APR-010); utilisation r.9 (APR-054),-,SRC-013,"r.6, r.9"
+H9,Manifest,off-site transfer,"Form 10 manifest, 7 copies (CMP-004)",-,SRC-013,r.19
+H10,Transport,off-site transfer,Transport per HOWM r.18 + CMVR r.129-137 where Table III goods (CMP-024),-,SRC-013;SRC-102,r.18; CMVR r.131
+H11,Disposal / utilisation,hazardous = TRUE,TSDF / authorised utiliser / co-processing as authorised,UNKNOWN (facility availability site-specific),SRC-013,"r.4, r.9"
+H12,Records and returns,hazardous = TRUE,Form 3 records; Form 4 annual return (CMP-001/002),-,SRC-013,r.20

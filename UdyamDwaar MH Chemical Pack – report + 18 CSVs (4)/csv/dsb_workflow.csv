@@ -1,0 +1,7 @@
+item_id,question,finding,source_ids,final_status
+DSB-01,Operative statute,"Boilers Act 2025 (in force 01-05-2025, v3)",SRC-034,VERIFIED
+DSB-02,State rules,Maharashtra Boiler Rules 1962 continue under s.45(2)(a) until replaced (v3),SRC-034;SRC-141,VERIFIED_CONDITIONAL
+DSB-03,Online channel,Directorate delivers online services through lms.mahaonline.gov.in,SRC-165,VERIFIED_CONDITIONAL
+DSB-04,"Does the LMS workflow implement the 2025 Act (forms, notifications, rules)?","UNKNOWN - DSB acts page now lists Boilers Act 2025, Boiler Attendants Rules 2025 and BOE Rules 2025 alongside IBR 1950 / MH Boiler Rules 1962 (SRC-141); Labour Dept DSB page still lists Boilers Act 1923 (SRC-186); online services page cites only MRTPS Act 2015 (SRC-187). No evidence that LMS forms implement the 2025 Act -> PORTAL_LEGACY / WORKFLOW_CONFIRMATION_REQUIRED. Portal is NOT concluded to be legally invalid.",SRC-165;SRC-141;SRC-186;SRC-187,UNKNOWN
+DSB-05,RTS for boiler services,Labour Dept RTS page lists DSB services (T3); notified RTS instrument text not read,SRC-136,REQUIRES_OFFICIAL_CONFIRMATION
+DSB-06,Portal service time limits for boiler services,22 services with RTS time limits (registration 43/50 days; renewal of certificate 17 days; approvals 23 days) under MH Right to Public Service Act 2015 - PORTAL evidence only; notified RTS instrument not read,SRC-187,REQUIRES_OFFICIAL_CONFIRMATION

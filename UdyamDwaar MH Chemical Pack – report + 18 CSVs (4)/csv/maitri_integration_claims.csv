@@ -1,0 +1,7 @@
+claim_id,claim,evidence,source_ids,INTEGRATION_STATUS
+MIC-01,Service listed on MAITRI,UNKNOWN per approval (maitri_service_matrix),SRC-142,UNKNOWN
+MIC-02,Application submission through MAITRI,UNKNOWN - no service specification read,SRC-142,UNKNOWN
+MIC-03,Document upload via MAITRI,UNKNOWN,SRC-142,UNKNOWN
+MIC-04,Status tracking / real-time tracking,MAITRI site text claims 'real-time application tracking' generally (T3 statement); no per-service evidence,SRC-142,UNKNOWN
+MIC-05,API / data exchange with UdyamDwaar,No public API specification located,SRC-142,UNKNOWN
+MIC-06,Deep link to public MAITRI page,A hyperlink is not an integration claim,SRC-142,VERIFIED_CONDITIONAL

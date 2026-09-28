@@ -1,14 +1,13 @@
-"""Supabase client factory."""
+"""Database client factory — local PostgreSQL via psycopg pool."""
 
 from functools import lru_cache
 
-from supabase import Client, create_client
-
 from app.core.config import get_settings
+from app.db.postgres import PostgresDB, create_pool
 
 
 @lru_cache
-def get_supabase() -> Client:
-    """Get cached Supabase client."""
+def get_db() -> PostgresDB:
+    """Get cached local PostgreSQL database handle."""
     settings = get_settings()
-    return create_client(settings.supabase_url, settings.supabase_key)
+    return PostgresDB(create_pool(settings.database_url))

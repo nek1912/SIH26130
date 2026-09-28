@@ -1,0 +1,10 @@
+field,definition,source_ids,final_status
+planning_authority_type,Enum per R-080; UNKNOWN allowed,SRC-124;SRC-123,VERIFIED_CONDITIONAL
+planning_authority_id,F-LOC-05 (named body); UNKNOWN -> UNKNOWN,SRC-124;SRC-123,VERIFIED_CONDITIONAL
+applicable_regulation,UDCPR if not in Reg.1.1 exclusions (R-082) else own DCR (UNKNOWN which),SRC-124;SRC-123,VERIFIED_CONDITIONAL
+industrial_use_class,Input fact; zone permissibility REQUIRES_OFFICIAL_CONFIRMATION,SRC-124;SRC-123,VERIFIED_CONDITIONAL
+building_permission,PS-03,SRC-124;SRC-123,VERIFIED_CONDITIONAL
+commencement,PS-03 (2.7.1 validity),SRC-124;SRC-123,VERIFIED_CONDITIONAL
+completion,PS-05,SRC-124;SRC-123,VERIFIED_CONDITIONAL
+occupancy,PS-06,SRC-124;SRC-123,VERIFIED_CONDITIONAL
+fire_interface,PS-08 / R-078 / R-099,SRC-124;SRC-123,VERIFIED_CONDITIONAL

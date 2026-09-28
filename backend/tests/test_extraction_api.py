@@ -73,10 +73,10 @@ class TestDocumentsRepositoryExtraction:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        mock_client.table.return_value.insert.return_value \
-            .execute.return_value.data = [
-            {"id": "field-1", "field_name": "page_count"},
-        ]
+        mock_client.insert_one.return_value = {
+            "id": "field-1",
+            "field_name": "page_count",
+        }
         repo = DocumentsRepository(mock_client)
         result = repo.create_extracted_field(
             {"document_id": "doc-1", "field_name": "page_count", "field_value": 5}
@@ -89,9 +89,7 @@ class TestDocumentsRepositoryExtraction:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        chain = mock_client.table.return_value.select.return_value
-        chain = chain.eq.return_value.order.return_value
-        chain.execute.return_value.data = [
+        mock_client.fetch_all.return_value = [
             {"id": "field-1", "field_name": "page_count"},
         ]
         repo = DocumentsRepository(mock_client)
@@ -104,10 +102,10 @@ class TestDocumentsRepositoryExtraction:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        mock_client.table.return_value.insert.return_value \
-            .execute.return_value.data = [
-            {"id": "result-1", "status": "completed"},
-        ]
+        mock_client.insert_one.return_value = {
+            "id": "result-1",
+            "status": "completed",
+        }
         repo = DocumentsRepository(mock_client)
         result = repo.create_extraction_result(
             {"document_id": "doc-1", "status": "completed"}
@@ -120,11 +118,10 @@ class TestDocumentsRepositoryExtraction:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        chain = mock_client.table.return_value.select.return_value
-        chain = chain.eq.return_value
-        chain.execute.return_value.data = [
-            {"id": "result-1", "status": "completed"},
-        ]
+        mock_client.fetch_one.return_value = {
+            "id": "result-1",
+            "status": "completed",
+        }
         repo = DocumentsRepository(mock_client)
         result = repo.get_extraction_result_for_document("doc-1")
         assert result is not None
@@ -136,10 +133,10 @@ class TestDocumentsRepositoryExtraction:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        mock_client.table.return_value.insert.return_value \
-            .execute.return_value.data = [
-            {"id": "val-1", "outcome": "VALID"},
-        ]
+        mock_client.insert_one.return_value = {
+            "id": "val-1",
+            "outcome": "VALID",
+        }
         repo = DocumentsRepository(mock_client)
         result = repo.create_validation_result(
             {"document_id": "doc-1", "outcome": "VALID"}
@@ -152,9 +149,7 @@ class TestDocumentsRepositoryExtraction:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        chain = mock_client.table.return_value.select.return_value
-        chain = chain.eq.return_value.order.return_value
-        chain.execute.return_value.data = [
+        mock_client.fetch_all.return_value = [
             {"id": "finding-1", "rule_id": "LAND-001"},
         ]
         repo = DocumentsRepository(mock_client)
@@ -167,9 +162,7 @@ class TestDocumentsRepositoryExtraction:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        chain = mock_client.table.return_value.update.return_value
-        chain = chain.eq.return_value.eq.return_value
-        chain.execute.return_value.data = [
+        mock_client.update_where.return_value = [
             {"id": "req-1", "extraction_status": "completed"},
         ]
         repo = DocumentsRepository(mock_client)
@@ -182,9 +175,7 @@ class TestDocumentsRepositoryExtraction:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        chain = mock_client.table.return_value.update.return_value
-        chain = chain.eq.return_value.eq.return_value
-        chain.execute.return_value.data = [
+        mock_client.update_where.return_value = [
             {"id": "req-1", "validation_outcome": "VALID"},
         ]
         repo = DocumentsRepository(mock_client)

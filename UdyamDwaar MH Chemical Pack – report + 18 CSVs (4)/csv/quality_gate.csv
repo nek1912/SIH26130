@@ -1,0 +1,10 @@
+gate_id,check,v2_wording,v3_result,evidence
+QG-01,Implemented deterministic rules have an authoritative source,'PASS - Every threshold/SLA/authority sourced',PARTIAL - every implemented deterministic threshold/SLA has a source; unresolved thresholds/SLA/authorities remain explicitly UNKNOWN/REQUIRES_CONFIRMATION. Some workflow/list rules rest on T3 official portals or guidance (see implementation_safe_rules.source_basis),implementation_safe_rules.csv
+QG-02,Unresolved items,-,PARTIAL - bounded in requires_confirmation.csv and do_not_implement.csv,closure_matrix.csv
+QG-03,Unresearched domains,-,FAIL/PENDING: MIDC RTS legal list (UNK-037); battery/plastic/used-oil EPR roles (UNK-040); UDCPR completion/occupancy provisions; MFS industrial-occupancy order contents,closure_matrix.csv
+QG-04,Portal capability,-,"UNKNOWN where not evidenced (maitri_fields.csv, portals.csv)",maitri_fields.csv
+QG-05,Legal SLA,-,UNKNOWN where no statute/RTS notification located; portal SLAs labelled PORTAL,sla.csv
+QG-06,UNKNOWN never converted to FALSE,-,"PASS - all new rules define UNKNOWN/INSUFFICIENT_DATA/CONDITIONAL branches; edge tests ET-116, ET-117, ET-120, ET-127, ET-129",edge_tests.csv
+QG-07,Draft vs current vs transitional separated,-,"PASS - DRAFT (MH OSH rules, GW Rules 2018, GCR 2026 amendment), TRANSITIONAL_SAVED (s.143, s.45), PORTAL_LEGACY labelled",labour_matrix.csv; boiler_lifecycle.csv
+QG-08,Chemical-specific branches,'Chemical-specific branches are now researched',Chemical-specific branches have been screened and several have been researched to conditional applicability; implementation details and some regimes remain unresolved.,chem_specific_branches.csv
+QG-09,PESO,'GCR r.44 and SMPV text are T5' (v2),PESO petroleum rules supported where based on primary Petroleum Act text; GCR/SMPV decision branches remain confirmation-gated.,peso_gating.csv

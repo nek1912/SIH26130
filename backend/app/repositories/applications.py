@@ -15,23 +15,16 @@ class ApplicationsRepository(BaseRepository):
 
     def get_by_project(self, project_id: UUID) -> list[dict[str, Any]]:
         """Get all applications for a project."""
-        result = (
-            self.client.table(self.table_name)
-            .select("*")
-            .eq("project_id", str(project_id))
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM applications WHERE project_id = %s",
+            (str(project_id),),
         )
-        return result.data
 
     def get_by_status(self, status: str) -> list[dict[str, Any]]:
         """Get applications by status."""
-        result = (
-            self.client.table(self.table_name)
-            .select("*")
-            .eq("status", status)
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM applications WHERE status = %s", (status,)
         )
-        return result.data
 
     def list_all_with_filters(
         self,
@@ -46,34 +39,42 @@ class ApplicationsRepository(BaseRepository):
 
         Returns (items, total_count).
         """
-        query = self.client.table(self.table_name).select("*", count="exact")
-
+        clauses: list[str] = []
+        params: list[Any] = []
         if status:
-            query = query.in_("status", status)
+            placeholders = ", ".join(["%s"] * len(status))
+            clauses.append(f"status IN ({placeholders})")
+            params.extend(status)
         if assigned_to:
-            query = query.eq("assigned_officer_id", assigned_to)
+            clauses.append("assigned_officer_id = %s")
+            params.append(assigned_to)
         if applicant_id:
-            query = query.eq("applicant_id", applicant_id)
+            clauses.append("applicant_id = %s")
+            params.append(applicant_id)
+        where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+
+        total_row = self.client.fetch_one(
+            f"SELECT COUNT(*) AS n FROM applications {where}", tuple(params)
+        )
+        total = int(total_row["n"]) if total_row else 0
 
         offset = (page - 1) * page_size
-        query = query.order("created_at", desc=True).range(offset, offset + page_size - 1)
-
-        result = query.execute()
-        items = result.data or []
-        total = result.count if result.count is not None else len(items)
+        items = self.client.fetch_all(
+            f"SELECT * FROM applications {where} "
+            "ORDER BY created_at DESC LIMIT %s OFFSET %s",
+            tuple(params) + (page_size, offset),
+        )
         return items, total
 
     def get_approval_stages(self, approval_id: str) -> list[dict[str, Any]] | None:
         """Load workflow stages from the approval's workflow_definition."""
-        result = (
-            self.client.table("approvals")
-            .select("workflow_definition")
-            .eq("id", approval_id)
-            .execute()
+        row = self.client.fetch_one(
+            "SELECT workflow_definition FROM approvals WHERE id = %s",
+            (approval_id,),
         )
-        if not result.data:
+        if not row:
             return None
-        wf_def = result.data[0].get("workflow_definition")
+        wf_def = row.get("workflow_definition")
         if not wf_def:
             return None
         return wf_def.get("stages", [])

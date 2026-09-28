@@ -1,0 +1,15 @@
+pt_id,substance_or_item,quantity,unit,condition,licence_or_consequence,authority,rule_no,effective_date,source_ids,final_status
+PT-01,Compressed gas cylinders - flammable non-toxic (own use),25 cylinders OR 200 kg (whichever less),cylinders / kg,"own use, not for sale, at a time",No licence (r.44(b)(i)); above -> Form E/F licence,PESO,GCR r.44(b)(i),2016-11-22,SRC-169,VERIFIED_CONDITIONAL
+PT-02,Non-flammable non-toxic gas cylinders (own use),200,cylinders,"own use, at a time",No licence (r.44(b)(ii)),PESO,GCR r.44(b)(ii),2016-11-22,SRC-169,VERIFIED_CONDITIONAL
+PT-03,Toxic gas cylinders (own use),5,cylinders,"own use, at a time",No licence (r.44(b)(iii)),PESO,GCR r.44(b)(iii),2016-11-22,SRC-169,VERIFIED_CONDITIONAL
+PT-04,Dissolved acetylene cylinders (own use),25,cylinders,"own use, at a time",No licence (r.44(b)(iv)),PESO,GCR r.44(b)(iv),2016-11-22,SRC-169,VERIFIED_CONDITIONAL
+PT-05,LPG (r.44(c)),100,kg,"'own use, distribution or sale from a sales room belonging to the dealer' - scope ambiguous",UNKNOWN,PESO,GCR r.44(c),2016-11-22,SRC-169,UNKNOWN
+PT-06,Form F storage for sale/trading; Form G CNG - District Authority NOC,-,-,not own use; not part of a filling plant,DA NOC required (r.48),District Authority,GCR r.48(1)-(3); G.S.R.315(E),2026-04-28,SRC-169;SRC-173,VERIFIED_CONDITIONAL
+PT-07,Pressure vessel (SMPV),1000,litres water capacity,compressed gas >1 atm gauge at max working temp (55 C if uninsulated); not in r.2(xxxvii) exclusion list,Storage licence LS-1A/LS-1B (r.45),PESO,"SMPV r.2(ix), r.2(xxxvii), r.45",2016-12-01,SRC-174,REQUIRES_OFFICIAL_CONFIRMATION
+PT-08,SMPV processing-plant exemption,16,hours of gas feed requirement,vessel forming part of processing plant per r.3,Rules not applicable to such vessels (as printed),PESO,SMPV r.3,2016-12-01,SRC-174,REQUIRES_OFFICIAL_CONFIRMATION
+PT-09,SMPV large storage siting,50 t or 100 m3,tonnes / m3,storage exceeding threshold,500 m surroundings + HAZOP in plan (vs 100 m otherwise),PESO,SMPV r.46(1)(i)(c),2016-12-01,SRC-174,REQUIRES_OFFICIAL_CONFIRMATION
+PT-10,SMPV District Authority NOC,-,-,new licence except non-toxic non-flammable storage and LS-2,NOC required before 05-06-2026; OMITTED from 05-06-2026,District Authority,SMPV r.47; G.S.R.448(E) rule 4,2026-06-05 (omission),SRC-174;SRC-177,VERIFIED
+PT-11,Petroleum licence validity,3,years (max),other than Form III/XVII,Renewal (r.148),PESO,"Petroleum Rules r.142(2), r.148",2002-03-18,SRC-117,VERIFIED_CONDITIONAL
+PT-12,GCR licence validity (E/F/G),10,years (max),-,Renewal (r.55),PESO,"GCR r.51(2), r.55(2)",2016-11-22,SRC-169,VERIFIED_CONDITIONAL
+PT-13,SMPV licence validity (LS-1A/1B),5,years (max),-,Renewal (r.55),PESO,"SMPV r.51(1), r.55(2)",2016-12-01,SRC-174,VERIFIED_CONDITIONAL
+PT-14,Petroleum Class A small-quantity exemption (SOP),30,litres,SOP only,DO NOT IMPLEMENT (CON-014),PESO,none in T1,-,SRC-017;SRC-117,DO_NOT_IMPLEMENT_YET

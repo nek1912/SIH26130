@@ -1,0 +1,53 @@
+id,applies_to,rule_or_record,source_ids,source_tiers,locator,final_status,reason
+APR-002,APR-002,Prior EC - item 5(e) Petrochemical based processing,SRC-001,,,REQUIRES_OFFICIAL_CONFIRMATION,Scope boundary vs 5(f) must be decided by appraisal authority
+APR-005,APR-005,"EC for industrial estate - item 7(c) (estate developer, not unit)",SRC-001,,,REQUIRES_OFFICIAL_CONFIRMATION,Whether a given MIDC estate holds estate EC = UNKNOWN per estate
+APR-018,APR-018,Shops & Establishments intimation (<10 workers),SRC-027,,,REQUIRES_OFFICIAL_CONFIRMATION,Relevance to a factory establishment not verified
+APR-021,APR-021,BOCW establishment registration (construction phase),SRC-031,,,REQUIRES_OFFICIAL_CONFIRMATION,OSH Code s.2(1)(h): 'building or other construction work' excludes construction work related to a factory or mine and own-residence work <= Rs 50 lakh. Whether construction of a new chemical factory building falls in the exclusion is NOT resolved by 
+APR-041,APR-041,Occupancy certificate (non-MIDC),-,,,REQUIRES_OFFICIAL_CONFIRMATION,No official source captured for sequencing
+APR-046,APR-046,Electrical installation approval / energisation,SRC-041;SRC-042,,,REQUIRES_OFFICIAL_CONFIRMATION,RTS notification cites superseded CEA 2010 regs
+APR-047,APR-047,Lift erection permission and lift licence,SRC-041;SRC-083;SRC-084,,,REQUIRES_OFFICIAL_CONFIRMATION,Lift registration on MAITRI (SRC-070)
+APR-050,APR-050,CETP membership / discharge arrangement,-,,,UNKNOWN,Do not assume CETP availability
+APR-051,APR-051,Permission to draw water from river/public tanks,SRC-070,,,REQUIRES_OFFICIAL_CONFIRMATION,
+APR-055,APR-055,Insecticide manufacturing licence,SRC-100,,,REQUIRES_OFFICIAL_CONFIRMATION,EIA 5(b) separately applies to technical-grade production
+APR-056,APR-056,Drug (bulk drug/API) manufacturing licence,SRC-101;SRC-070,,,REQUIRES_OFFICIAL_CONFIRMATION,Form numbering not re-extracted
+APR-059,APR-059,Explosives licence (manufacture/possession),SRC-107,,,REQUIRES_OFFICIAL_CONFIRMATION,Classification of a substance as explosive is an expert/PESO input
+CMP-007,CMP-007,CTO validity / renewal (valid-until-cancelled vs MPCB auto-renewal 5/10/15 yrs),SRC-006;SRC-069;SRC-079,,,REQUIRES_OFFICIAL_CONFIRMATION,
+CMP-010,CMP-010,MSIHC safety audit and updating safety report,SRC-016,,,REQUIRES_OFFICIAL_CONFIRMATION,
+CMP-011,CMP-011,MSIHC on-site emergency plan and mock drills,SRC-016,,,REQUIRES_OFFICIAL_CONFIRMATION,
+CMP-013,CMP-013,Factory annual/half-yearly returns under MFR 1963 / OSH Code,SRC-021;SRC-023,,,REQUIRES_OFFICIAL_CONFIRMATION,
+CMP-015,CMP-015,Gas cylinder / petroleum licence renewal,SRC-018,,,REQUIRES_OFFICIAL_CONFIRMATION,
+CMP-016,CMP-016,Single integrated labour return (Maharashtra),SRC-070,,,UNKNOWN,
+GSR-02,APR-008,Integrated Consent + authorisation (single-step) under Waste Management Rules,SRC-151,T2;T1,Gazette para 7,REQUIRES_OFFICIAL_CONFIRMATION,Display as central provision; portal integration UNKNOWN
+GSR-11,APR-008,Expansion/amendment CTO timelines 90/60/30 days,SRC-151,T2;T1,Gazette para 8 table,REQUIRES_OFFICIAL_CONFIRMATION,Use only with category mapping confirmed
+R-005,APR-001,Prior Environmental Clearance - Schedule item 5(f) Synthetic organic chemicals,SRC-001,T1,Specific Condition note,REQUIRES_OFFICIAL_CONFIRMATION,Scope of coverage (which units) must be read from the estate EC; do not auto-exempt
+R-006,APR-002,Prior EC - item 5(e) Petrochemical based processing,SRC-001,T1,Item 5(e),REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-010,APR-005,"EC for industrial estate - item 7(c) (estate developer, not unit)",SRC-001,T1,Item 7(c),REQUIRES_OFFICIAL_CONFIRMATION,Informational
+R-022,APR-015;APR-016,Factory plan approval,SRC-081;SRC-030,T1;T3,s.2(1)(w),REQUIRES_OFFICIAL_CONFIRMATION,"s.2(1)(w) proviso: where a State law in force immediately before the Code specified a different number, the State number prevails until amended. The Maharashtra"
+R-023,APR-016,Factory registration & licence (MAH/Hazardous vs other),SRC-029,T3,Service list,REQUIRES_OFFICIAL_CONFIRMATION,'Hazardous process' criterion not encoded - UNKNOWN
+R-025,APR-018,Shops & Establishments intimation (<10 workers),SRC-027,T5 (T2 circular copy on private site),Circular,REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-034,APR-028,SMPV(U) licence (LS-1A) and prior approval,SRC-174;SRC-177,T1,SMPV(U) 2016 r.2(ix) compressed gas; r.2(xxxvii) pressure vessel (>1000 L water capacity + exclusion list); r.3 processing-plant exemption,REQUIRES_OFFICIAL_CONFIRMATION,"v5: official Gazette text read (definitions). 2018/2019/2021/2025 (374(E), 422(E)) amendments not read; 2026 amendment (448(E)) read - does not alter definition"
+R-036,APR-030;APR-031;APR-033,MIDC combined building permission + provisional fire NOC,SRC-043;SRC-044,T3,-,REQUIRES_OFFICIAL_CONFIRMATION,Portal evidence only (PORTAL_SERVICE_EXISTS). Legal basis cited as 'MIDC DCR' but the regulation text is not in the source register.
+R-037,APR-032,MIDC occupancy certificate,SRC-044,T3,-,REQUIRES_OFFICIAL_CONFIRMATION,Portal evidence only (PORTAL_SERVICE_EXISTS). Legal basis cited as 'MIDC DCR' but the regulation text is not in the source register.
+R-038,APR-034;APR-035,MIDC water connection,SRC-043,T3,-,REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-039,APR-036;APR-042,MIDC tree felling permission,SRC-043;SRC-070,T3,-,REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-040,APR-037,MIDC change in manufacturing activity,SRC-043,T3,-,REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-042,APR-039;APR-040,Provisional fire NOC (non-MIDC),SRC-048,T3,"MFPLSM Act s.3(1), Schedule-I; with R-078/R-079/R-099",REQUIRES_OFFICIAL_CONFIRMATION,"Applicability: Schedule-I lists Industrial (G-1/G-2/G-3), Storage (H) and Hazardous (J) buildings with rows starting at 'up to 500 m2' -> industrial buildings a"
+R-048,APR-046,Electrical installation approval / energisation,SRC-042;SRC-041,T1;T2,RTS table,REQUIRES_OFFICIAL_CONFIRMATION,Central Government notified 11 kV as self-certification voltage for its jurisdiction; each State may notify its own (PIB 05-08-2024). No Maharashtra notificatio
+R-049,APR-047,Lift erection permission and lift licence,SRC-041,T2,RTS table,REQUIRES_OFFICIAL_CONFIRMATION,Goods-lift/hoist coverage not verified
+R-051,APR-049,AAI height clearance NOC,SRC-063,T3,-,REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-052,APR-050,CETP membership / discharge arrangement,-,-,-,UNKNOWN,F-WAT-04 UNKNOWN -> UNKNOWN; never assume
+R-053,APR-051,Permission to draw water from river/public tanks,SRC-070,T3,-,REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-057,INC-*,MSME_CLASS ,SRC-061,T1,GR MSME definition para,REQUIRES_OFFICIAL_CONFIRMATION,If either input UNKNOWN -> UNKNOWN (do not classify on investment alone)
+R-063,APR-009,Consent to Operate (Water & Air Acts),SRC-006,T1 (Gazette copy hosted by MPCB - see notes),para 8 table Sl.3,REQUIRES_OFFICIAL_CONFIRMATION,Column-to-category mapping (presumably Red/Orange/Green) UNK-031
+R-068,APR-056,Drug (bulk drug/API) manufacturing licence,SRC-101,T1,Part VII,REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-069,APR-059,Explosives licence (manufacture/possession),SRC-107,T3,FAQ,REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-074,APR-001,Prior Environmental Clearance - Schedule item 5(f) Synthetic organic chemicals,SRC-001,T1,5(f); 8(a),UNKNOWN,"UNK-010. v5 official-source check: SC Vanashakti 05-08-2025 (Note 1 of 8(a) quashed - R-007), MoEF circular 06-02-2007 (committee routing only), OM 11-12-2025 ("
+R-090,APR-021,BOCW establishment registration (construction phase),SRC-081,T1,s.2(1)(h),REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+R-097,CND-024,MH_GW_DEEP_WELL_PROHIBITION ,SRC-166;SRC-131;SRC-132,T1,"MWRRA Prohibition Order 31-07-2015 paras 1-4; watershed list p.2; village annexure 24-04-2015; Act s.2 (deep well), s.8(1)",REQUIRES_OFFICIAL_CONFIRMATION,v5: primary order located (T1). Order is 'until further orders'; no revocation/modification located but currency after 2015 and the complete village list are no
+R-098,CND-025,MATHADI ,SRC-128,T1,s.1(4A); footnotes,REQUIRES_OFFICIAL_CONFIRMATION,REQUIRES_CONFIRMATION
+S1-TOX,APR-012,Schedule 1 s.no.- Toxic classes,SRC-156;SRC-157;SRC-155,T1;T4,Sch 1 Part I (a),REQUIRES_OFFICIAL_CONFIRMATION,"SRC-167 p.740 prints Extremely toxic oral '>5', highly toxic inhalation '<0.5-2.0' - signs internally contradictory; official text ambiguous -> kept blocked, no"
+S2-18,APR-012,Schedule 2 s.no.18 Ethylene oxide,SRC-167;SRC-155,T1,"SRC-167 Sch 2 s.no.18 (p.746-747); footnote 4: 'Inserted entries 12 to 27 by Rule 11 of the MSIHC (Amendment) Rules, 199",VERIFIED_CONDITIONAL,EO col 4 printed '501' - engine must not use until confirmed
+S3P1-111,APR-012,Schedule 3 s.no.111 Ethyleneimine,SRC-154;SRC-155,T1,Sch 3 Part I s.no.111 (Gazette 27-11-1989 pp.33-38; consolidated pp.755-760),REQUIRES_OFFICIAL_CONFIRMATION,SRC-167 also prints 5 t with no amendment footnote; original gazette 50 t; no amending instrument in the chain (SRC-168) touches it -> kept blocked (CON-023)
+EPR-OIL,EPR,Used oil EPR,SRC-162;SRC-184,T2;T3,paras 1-2,REQUIRES_OFFICIAL_CONFIRMATION,"CONDITIONAL - only if producer/importer role TRUE; mere lubricant user: no obligation shown (UNKNOWN, not FALSE)"
+SWM-RDF,EPR,Solid-fuel substitution by RDF/SCF,SRC-160,T1,r.11 table,REQUIRES_OFFICIAL_CONFIRMATION,CONDITIONAL on F-FUEL solid AND distance fact
+FR-03,APR-040,Unresolved sector exception for chemical units: MFS Office Order 10-12-2025 para,SRC-148;SRC-117,T1;T2,"Office Order 10-12-2025 para 3(III) (statement, not a rule citation)",REQUIRES_OFFICIAL_CONFIRMATION,No rule text requiring MFS renewal located (sector_specific_certificates SSC-05)

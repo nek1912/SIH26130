@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.deps import get_approvals_repository, get_obligations_repository
-from app.auth.dependencies import require_permission
+from app.auth.dependencies import get_current_user, require_permission
 from app.auth.models import UserContext
 from app.auth.permissions import Permission
 from app.repositories.approvals import ApprovalsRepository
@@ -48,6 +48,49 @@ async def get_approval(
     if not approval:
         raise HTTPException(status_code=404, detail="Approval not found")
     return approval
+
+
+@router.post("/approvals/seed")
+async def seed_approvals(
+    _user: UserContext = Depends(get_current_user),
+    repo: ApprovalsRepository = Depends(get_approvals_repository),
+) -> dict[str, int]:
+    """Seed the canonical A01–A18 approval catalog.
+
+    Idempotent: skips codes that already exist with matching name and
+    authority. A same-code row with a different name/authority fails
+    loudly (409) instead of being re-identified — human mapping is
+    required (see docs/approval-identity-verification.md).
+    """
+    from app.seed.approval_catalog import load_approval_catalog
+
+    created = 0
+    skipped = 0
+    for record in load_approval_catalog():
+        existing = repo.get_by_code(record["code"])
+        if not existing:
+            repo.create(record)
+            created += 1
+            continue
+        if (
+            existing.get("name") != record["name"]
+            or existing.get("authority") != record["authority"]
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    f"Approval code {record['code']} already exists with a "
+                    "different name/authority; human mapping required "
+                    "(see docs/approval-identity-verification.md)."
+                ),
+            )
+        skipped += 1
+
+    return {
+        "approvals_seeded": created,
+        "approvals_skipped": skipped,
+        "total_catalog": len(load_approval_catalog()),
+    }
 
 
 @router.get("/obligations")

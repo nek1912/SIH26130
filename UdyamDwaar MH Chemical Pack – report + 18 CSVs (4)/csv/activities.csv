@@ -1,0 +1,27 @@
+activity_id,activity,regulatory_reason,triggers,fact_ids,record_state,final_status
+ACT-001,Secure land in MIDC estate (allotment),Only MIDC allottees can obtain MIDC building permission/OC; estate may hold estate-level EC (EIA SC),APR-029,F-LOC-01;F-LOC-03,ACTIVE,VERIFIED_CONDITIONAL
+ACT-002,Secure land outside MIDC (private/other estate),MPCB requires building permission from competent planning authority before CTE outside industrial areas,APR-038;APR-041,F-LOC-01;F-LOC-02;F-LOC-05,ACTIVE,VERIFIED_CONDITIONAL
+ACT-003,Construct buildings / sheds,EIA 8(a) built-up trigger; building permission; fire NOC; BOCW during construction,APR-003;APR-030;APR-038;APR-039;APR-021,F-BLD-01;F-LAB-05,ACTIVE,VERIFIED_CONDITIONAL
+ACT-004,Fell trees on site,Tree felling permission (MIDC service / urban Tree Authority),APR-036;APR-042,F-SITE-01;F-LOC-01;F-LOC-06,ACTIVE,VERIFIED_CONDITIONAL
+ACT-005,"Synthesise organic chemicals (unit processes: reaction, distillation, etc.)",EIA 5(f)/5(e)/5(b) product scope; MPCB Red category (111.1/111.2 etc.); MSIHC Sch 4 chemical installation,APR-001;APR-002;APR-006;APR-008;APR-009,F-PRD-01;F-PRD-02;F-PRD-03;F-MPCB-01,ACTIVE,VERIFIED_CONDITIONAL
+ACT-006,Formulate / blend only (no synthesis),"Different CPCB sector codes (e.g. 117.4 paint blending Orange, 144 resin physical blending Green, 123.3 pharma formulation Orange); may fall outside 5(f)",APR-008;APR-009,F-PRD-03;F-MPCB-01,ACTIVE,VERIFIED_CONDITIONAL
+ACT-007,Store/handle hazardous chemicals (MSIHC Sch 1/2/3),Threshold-based obligations under MSIHC; MAH status feeds EIA small-unit exception and DISH licence category,APR-012;CMP-010,F-HAZ-01;F-HAZ-02,ACTIVE,VERIFIED_CONDITIONAL
+ACT-008,"Store petroleum solvents (e.g., methanol, acetone, toluene)","Petroleum Rules licensing by class, quantity, bulk/non-bulk, receptacle size",APR-026,F-PET-01;F-PET-02;F-PET-03;F-PET-04,ACTIVE,VERIFIED_CONDITIONAL
+ACT-009,Store compressed gas in cylinders,Gas Cylinders Rules storage licence subject to exemptions,APR-027,F-GAS-01;F-GAS-02,ACTIVE,VERIFIED_CONDITIONAL
+ACT-010,Store compressed/liquefied gas in pressure vessels,SMPV(U) Rules licence and prior approval,APR-028,F-PV-01;F-PV-02,ACTIVE,VERIFIED_CONDITIONAL
+ACT-011,Generate steam (boiler),Boilers Act 2025 registration and annual certificate,APR-023;CMP-009,F-BLR-01;F-BLR-02;F-BLR-03,ACTIVE,VERIFIED_CONDITIONAL
+ACT-012,Burn fuel (boiler/thermic fluid heater/furnace) or run DG set,Fuel TPD in EIA small-unit test; MPCB consent covers fuel; change in fuel requires fresh consent (MPCB 25-08-2025),APR-008;APR-053,F-PRC-02;F-PRC-04,ACTIVE,VERIFIED_CONDITIONAL
+ACT-013,Generate and treat/discharge industrial effluent,Water Act consent; CETP/ZLD/discharge route; MIDC drainage connection,APR-008;APR-009;APR-035;APR-050,F-WAT-02;F-WAT-03;F-WAT-04,ACTIVE,VERIFIED_CONDITIONAL
+ACT-014,Emit process/fuel emissions to air,Air Act consent,APR-008;APR-009,F-MPCB-01,ACTIVE,VERIFIED_CONDITIONAL
+ACT-015,"Generate, store, transport, dispose hazardous waste",HOWM authorisation; storage limit; returns; manifests,APR-010;CMP-001;CMP-002;CMP-003;CMP-004,F-HW-01;F-HW-02,ACTIVE,VERIFIED_CONDITIONAL
+ACT-016,Recover spent solvent / use HW as resource,HOWM rule 9 utilisation authorisation; CPCB sector 76 (Red),APR-054,F-HW-03,ACTIVE,VERIFIED_CONDITIONAL
+ACT-017,Draw water (MIDC supply / groundwater / surface water),MIDC water connection; CGWA NOC; WRD permission,APR-034;APR-043;APR-051,F-WAT-01;F-WAT-05;F-WAT-06;F-WAT-07,ACTIVE,VERIFIED_CONDITIONAL
+ACT-018,Dewater during construction,CGWA NOC before commencement,APR-044,F-WAT-08,ACTIVE,VERIFIED_CONDITIONAL
+ACT-019,Obtain electricity connection / energise HT installation,Licensee connection; electrical inspection above notified voltage,APR-045;APR-046,F-ELE-01;F-ELE-02;F-ELE-03,ACTIVE,VERIFIED_CONDITIONAL
+ACT-020,Install lifts/goods lifts,Lift erection permission and licence,APR-047,F-LFT-01,ACTIVE,VERIFIED_CONDITIONAL
+ACT-021,Employ workers (factory),Factory threshold; OSH Code registration,APR-015;APR-016;APR-017,F-LAB-01;F-LAB-02,ACTIVE,VERIFIED_CONDITIONAL
+ACT-022,Engage contract labour,Principal employer registration / contractor licence,APR-019;APR-020,F-LAB-03;F-LAB-04,ACTIVE,VERIFIED_CONDITIONAL
+ACT-023,Sell pre-packaged commodities,Legal Metrology packer registration (CONDITIONAL - rule text not researched),APR-048,F-OTH-01,ACTIVE,VERIFIED_CONDITIONAL
+ACT-024,Build tall structures/stacks near aerodrome,AAI height NOC (CONDITIONAL),APR-049,F-OTH-02,ACTIVE,VERIFIED_CONDITIONAL
+ACT-025,Expand capacity / change product mix / fuel / process,EIA para 7(ii); MPCB amendment vs fresh consent; MIDC change in manufacturing activity,APR-052;APR-053;APR-037,F-EXP-01;F-EXP-02,ACTIVE,VERIFIED_CONDITIONAL
+ACT-026,Apply for State incentives,IISP 2025 eligibility; PSI instrument required,INC-*,F-INC-01..F-INC-08,ACTIVE,VERIFIED_CONDITIONAL

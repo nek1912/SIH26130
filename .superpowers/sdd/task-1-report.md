@@ -1,70 +1,41 @@
-# Task 1 Report: Database Migration — workflow_events + extraction_status
+# Task 1: Create Orchestration Data Models — Report
 
-## Status: BLOCKED — Critical Schema Conflicts
+## What I Implemented
 
-The SQL in the task brief cannot be applied as-is. Two conflicts with the existing migration chain will cause failures.
+Created two files in `backend/app/orchestration/`:
 
----
+1. **`__init__.py`** — Module docstring only.
+2. **`models.py`** — All 7 types specified in the brief:
+   - `OrchestrationStatus` (StrEnum) — 7 values
+   - `BlockerType` (StrEnum) — 8 values
+   - `BlockerDetail` (BaseModel)
+   - `DocumentReadinessSummary` (BaseModel)
+   - `ApprovalOrchestration` (BaseModel)
+   - `NextAction` (BaseModel)
+   - `ApplicationOrchestration` (BaseModel)
 
-## Conflict 1: `workflow_events` table already exists
+Conventions followed: `from __future__ import annotations`, `from enum import StrEnum`, Pydantic BaseModel, no comments added.
 
-The table is created in `001_initial_schema.sql` (lines 254–265):
+## Test Results
 
-```sql
-create table workflow_events (
-  id                uuid primary key default gen_random_uuid(),
-  application_id    uuid not null references applications(id) on delete cascade,
-  from_stage        text,
-  to_stage          text not null,
-  action            text not null,
-  performed_by_id   uuid,
-  metadata          jsonb,
-  created_at        timestamptz not null default now()
-);
+Import verification passed:
 ```
-
-The task brief's `CREATE TABLE workflow_events` will fail with "relation already exists."
-
-**Column name mismatch:**
-| Brief wants | 001 has | Python code uses |
-|---|---|---|
-| `from_status` | `from_stage` | `from_stage` (engine.py:176) |
-| `to_status` | `to_stage` | `to_stage` (engine.py:177) |
-| `performed_by` (NOT NULL UUID) | `performed_by_id` (nullable UUID) | `performed_by` (engine.py:179) |
-
-The Python `WorkflowEvent` dataclass and SLA code are aligned with the 001 schema (`from_stage`/`to_stage`), not the brief.
-
----
-
-## Conflict 2: `extraction_status` on `documents` — type mismatch
-
-The brief adds `extraction_status TEXT DEFAULT 'pending'` to `documents`.
-
-However, migration 003 already creates an `extraction_status` enum type:
-```sql
-create type extraction_status as enum ('pending', 'completed', 'failed', 'unsupported');
+python -c "from app.orchestration.models import OrchestrationStatus, ApplicationOrchestration; print('OK')"
 ```
+Output: `OK`
 
-This enum is used on `document_requirements.extraction_status` and `extraction_results.status`, but NOT on the `documents` table itself.
+## Files Changed
 
-Adding a raw `TEXT` column named `extraction_status` to `documents` creates a naming collision risk and inconsistent typing with the existing enum.
+- `backend/app/orchestration/__init__.py` (created)
+- `backend/app/orchestration/models.py` (created)
 
----
+## Self-Review Findings
 
-## Recommendation
+- All field names and types match the brief exactly.
+- StrEnum values match the brief (lowercase_with_underscores convention, consistent with existing `ApplicationStatus` enum).
+- No business logic included — models are pure data definitions as required.
+- No issues found.
 
-The plan needs to be revised before this migration can be created. Options:
+## Issues / Concerns
 
-1. **If workflow_events is already correct** in 001: Skip the CREATE TABLE entirely. The existing table matches the Python code. Only add the index if needed.
-
-2. **If the column rename is desired** (`from_stage` → `from_status`): This requires updating the Python `WorkflowEvent` dataclass, SLA code, and engine code to match. That's a larger scope change.
-
-3. **For extraction_status on documents**: Use the existing `extraction_status` enum type (not `TEXT`) for consistency, or clarify why a TEXT column is preferred.
-
----
-
-## Files involved
-- `supabase/migrations/001_initial_schema.sql` — existing workflow_events table (lines 254–265)
-- `supabase/migrations/003_document_extraction.sql` — extraction_status enum (line 5)
-- `backend/app/workflow/engine.py` — WorkflowEvent dataclass (line 170–181)
-- `backend/app/workflow/sla.py` — SLA computation reads `toStage` from events (line 139)
+None.

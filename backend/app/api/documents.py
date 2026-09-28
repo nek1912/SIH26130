@@ -155,18 +155,15 @@ async def upload_document(
     if not is_valid:
         raise HTTPException(status_code=400, detail=error)
 
-    # Upload to Supabase Storage
-    from app.core.config import get_settings
-    from app.db.client import get_supabase
+    # Upload to local document storage (see app/storage for the adapter
+    # boundary; a future object store can replace it without touching
+    # document-domain logic).
+    from app.storage import get_storage
 
-    settings = get_settings()
     storage_path = f"applications/{application_id}/{requirement_key}/{filename}"
 
     try:
-        client = get_supabase()
-        client.storage.from_(settings.supabase_storage_bucket).upload(
-            storage_path, content, {"content-type": content_type}
-        )
+        storage_path = get_storage().save(storage_path, content)
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -265,16 +262,13 @@ async def delete_document(
     if document.get("application_id") != application_id:
         raise HTTPException(status_code=404, detail="Document not found for this application")
 
-    # Delete from storage
-    from app.core.config import get_settings
-    from app.db.client import get_supabase
+    # Delete from storage (best-effort cleanup)
+    from app.storage import get_storage
 
-    settings = get_settings()
-    client = get_supabase()
     storage_path = document.get("storage_path", "")
     if storage_path:
         try:
-            client.storage.from_(settings.supabase_storage_bucket).remove([storage_path])
+            get_storage().delete(storage_path)
         except Exception:
             pass  # Best-effort storage cleanup
 

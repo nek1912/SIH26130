@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@chncaesar/opencode-plugin-memory": "^0.1.1"
+  }
+}

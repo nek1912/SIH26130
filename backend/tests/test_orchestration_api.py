@@ -32,20 +32,49 @@ class TestOrchestrationEndpoint:
 
     def _make_client(self):
         """Create a test client with mocked dependencies."""
-        from app.api.deps import get_db_client
+        from app.api.deps import (
+            get_applications_repository,
+            get_consistency_repository,
+            get_documents_repository,
+            get_project_facts_repository,
+            get_workflow_events_repository,
+        )
+        from app.repositories.applications import ApplicationsRepository
+        from app.repositories.consistency import ConsistencyRepository
+        from app.repositories.documents import DocumentsRepository
+        from app.repositories.project_facts import ProjectFactsRepository
+        from app.repositories.workflow_events import WorkflowEventsRepository
 
-        client = MagicMock()
-        app.dependency_overrides[get_db_client] = lambda: client
+        app_repo = MagicMock(spec=ApplicationsRepository)
+        facts_repo = MagicMock(spec=ProjectFactsRepository)
+        facts_repo.get_by_project.return_value = None
+        docs_repo = MagicMock(spec=DocumentsRepository)
+        docs_repo.list_documents_for_application.return_value = []
+        events_repo = MagicMock(spec=WorkflowEventsRepository)
+        events_repo.list_for_application.return_value = []
+        consistency_repo = MagicMock(spec=ConsistencyRepository)
+        consistency_repo.get_latest_result.return_value = None
+        app.dependency_overrides[get_applications_repository] = lambda: app_repo
+        app.dependency_overrides[get_project_facts_repository] = (
+            lambda: facts_repo
+        )
+        app.dependency_overrides[get_documents_repository] = lambda: docs_repo
+        app.dependency_overrides[get_workflow_events_repository] = (
+            lambda: events_repo
+        )
+        app.dependency_overrides[get_consistency_repository] = (
+            lambda: consistency_repo
+        )
 
         user = self._make_user()
         app.dependency_overrides[get_current_user] = lambda: user
 
-        return TestClient(app), client
+        return TestClient(app), app_repo
 
     @patch("app.api.orchestration.orchestrate_application_full")
     def test_orchestration_endpoint_returns_200(self, mock_orchestrate):
         """Orchestration endpoint returns 200 with valid application."""
-        test_client, db_client = self._make_client()
+        test_client = TestClient(app)
         app_id = str(uuid4())
         project_id = str(uuid4())
 
@@ -61,39 +90,17 @@ class TestOrchestrationEndpoint:
         }
         mock_orchestrate.return_value = mock_orch_result
 
-        # Mock application
-        mock_app = MagicMock()
-        mock_app.data = [{
+        # Mock application (persisted GJ identity resolves the GJ pack)
+        test_client, app_repo = self._make_client()
+        app_repo.get_by_id.return_value = {
             "id": app_id,
             "project_id": project_id,
             "approval_id": "A01",
+            "approval_code": "A01",
             "status": "under_review",
-        }]
-
-        # Mock project facts
-        mock_facts = MagicMock()
-        mock_facts.data = [{
-            "id": str(uuid4()),
-            "project_id": project_id,
-            "project_name": "Test Project",
-        }]
-
-        # Mock documents (empty)
-        mock_docs = MagicMock()
-        mock_docs.data = []
-
-        def side_effect(table_name):
-            m = MagicMock()
-            if table_name == "applications":
-                m.select.return_value.eq.return_value.execute.return_value = mock_app
-            elif table_name == "project_facts":
-                m.select.return_value.eq.return_value.execute.return_value = mock_facts
-            elif table_name == "documents":
-                chain = m.select.return_value.eq.return_value.order
-                chain.return_value.execute.return_value = mock_docs
-            return m
-
-        db_client.table.side_effect = side_effect
+            "jurisdiction": "IN-GJ",
+            "pack_version": "gj-legacy-unversioned",
+        }
 
         response = test_client.get(
             f"/applications/{app_id}/orchestration",
@@ -119,15 +126,14 @@ class TestOrchestrationEndpoint:
 
     def test_orchestration_endpoint_returns_404(self):
         """Orchestration endpoint returns 404 for non-existent application."""
-        test_client, db_client = self._make_client()
+        test_client, _ = self._make_client()
         app_id = str(uuid4())
 
-        mock_app = MagicMock()
-        mock_app.data = []
+        from app.api.deps import get_applications_repository
 
-        table_mock = MagicMock()
-        db_client.table.return_value = table_mock
-        table_mock.select.return_value.eq.return_value.execute.return_value = mock_app
+        app_repo = MagicMock()
+        app_repo.get_by_id.return_value = None
+        app.dependency_overrides[get_applications_repository] = lambda: app_repo
 
         response = test_client.get(
             f"/applications/{app_id}/orchestration",

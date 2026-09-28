@@ -9,7 +9,7 @@ class TestWorkflowEventsRepository:
     """Test workflow events repository operations."""
 
     def _make_repo(self):
-        """Create a repository with a mocked Supabase client."""
+        """Create a repository with a mocked PostgresDB handle."""
         from app.repositories.workflow_events import WorkflowEventsRepository
 
         client = MagicMock()
@@ -27,15 +27,11 @@ class TestWorkflowEventsRepository:
             "metadata": {},
         }
 
-        mock_result = MagicMock()
-        mock_result.data = [{"id": str(uuid4()), **event_data}]
-        client.table.return_value.insert.return_value.execute.return_value = (
-            mock_result
-        )
+        client.insert_one.return_value = {"id": str(uuid4()), **event_data}
 
         result = repo.create(event_data)
 
-        client.table.assert_called_with("workflow_events")
+        assert client.insert_one.call_args[0][0] == "workflow_events"
         assert result["to_status"] == "submitted"
         assert result["action"] == "submit"
 
@@ -44,8 +40,7 @@ class TestWorkflowEventsRepository:
         repo, client = self._make_repo()
         app_id = str(uuid4())
 
-        mock_result = MagicMock()
-        mock_result.data = [
+        client.fetch_all.return_value = [
             {
                 "id": "1",
                 "application_id": app_id,
@@ -59,12 +54,11 @@ class TestWorkflowEventsRepository:
                 "created_at": "2026-09-11T10:00:00",
             },
         ]
-        chain = client.table.return_value.select.return_value.eq.return_value
-        chain.order.return_value.execute.return_value = mock_result
 
         events = repo.list_for_application(app_id)
 
-        client.table.assert_called_with("workflow_events")
+        sql = client.fetch_all.call_args[0][0]
+        assert "ORDER BY created_at" in sql
         assert len(events) == 2
         assert events[0]["action"] == "submit"
 
@@ -73,10 +67,7 @@ class TestWorkflowEventsRepository:
         repo, client = self._make_repo()
         app_id = str(uuid4())
 
-        mock_result = MagicMock()
-        mock_result.data = []
-        chain = client.table.return_value.select.return_value.eq.return_value
-        chain.order.return_value.execute.return_value = mock_result
+        client.fetch_all.return_value = []
 
         events = repo.list_for_application(app_id)
         assert events == []

@@ -1,0 +1,319 @@
+change_id,table,record_id,field,OLD_VALUE,NEW_VALUE,REASON,SOURCE_ID,EXACT_LOCATOR,CONFIDENCE,change_type
+CHG-001,approvals,APR-003,trigger_summary,"Built-up area >=20,000 and <1,50,000 m2; industrial sheds excluded per schedule note; GC not applicable","Built-up area >=20,000 and <1,50,000 m2, where built-up = covered area on all floors incl. basement and service areas. NO industrial-shed exclusion: Note 1 (industrial shed/school/college/hostel) inserted by S.O.523(E) 29-01-2025 was quashed by the Supreme Court on 05-08-2025. GC not applicable.",v1 applied an industrial-shed exclusion. The consolidated EIA text (footnote 98) and the SC judgment show Note 1 was quashed.,SRC-001;SRC-090;SRC-091,EIA Sch item 8(a) definition of built-up area and footnote 98; Vanashakti W.P.(C) 116/2025 operative para,HIGH,CORRECTION
+CHG-002,approvals,APR-003,confidence,MEDIUM,"HIGH (threshold) / UNKNOWN (interaction with 5(f), UNK-010)",Threshold now verified against T1 text,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-003,approvals,APR-003,implement_status,REQUIRES_OFFICIAL_CONFIRMATION,SAFE (threshold) - combination with 5(f) must return UNKNOWN,Exclusion removed; logic safe,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-004,rules,R-007,condition,EC_8A := F-BLD-01 >= 20000 AND F-BLD-01 < 150000 AND F-BLD-02 == FALSE,EC_8A := F-BLD-01 >= 20000 AND F-BLD-01 < 150000,Industrial-shed exclusion removed (quashed),SRC-001;SRC-090,Item 8(a); footnote 98,HIGH,CORRECTION
+CHG-005,rules,R-007,facts,F-BLD-01;F-BLD-02,F-BLD-01,F-BLD-02 no longer an input,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-006,rules,R-007,confidence,MEDIUM,HIGH,Verified against T1,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-007,rules,R-007,notes,Industrial-shed exclusion: F-BLD-02 UNKNOWN -> UNKNOWN,Built-up = built-up or covered area on all floors incl. basement and other service areas. Industrial sheds count (Note 1 of 29-01-2025 quashed 05-08-2025). Footnote 99: 2016/2018 notifications on building projects marked 'not in force'.,Replace note that referenced the exclusion,SRC-001,Item 8(a) definition; footnotes 98-99,HIGH,CORRECTION
+CHG-008,facts,F-BLD-02,record_state,ACTIVE,DEPRECATED,Industrial-shed exclusion no longer exists (8(a) Note 1 quashed by the Supreme Court on 05-08-2025). The fact must not be used by any rule.,SRC-001;SRC-090,Footnote 98,HIGH,DEPRECATION
+CHG-009,activities,ACT-003,fact_ids,F-BLD-01;F-BLD-02;F-LAB-05,F-BLD-01;F-LAB-05,F-BLD-02 deprecated,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-010,edge_tests,ET-001,inputs,built_up=19999; shed=FALSE,built_up=19999,Shed input removed with the quashed exclusion,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-011,edge_tests,ET-002,inputs,built_up=20000; shed=FALSE,built_up=20000,Shed input removed with the quashed exclusion,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-012,edge_tests,ET-003,inputs,built_up=20001; shed=FALSE,built_up=20001 (all industrial shed),Shed input removed with the quashed exclusion,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-013,edge_tests,ET-003,rationale,,Industrial sheds are not excluded after 05-08-2025,Shed input removed with the quashed exclusion,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-014,edge_tests,ET-004,inputs,built_up=20000; shed=UNKNOWN,built_up=UNKNOWN,Shed input removed with the quashed exclusion,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-015,edge_tests,ET-004,rationale,Exclusion unresolved,Unknown area never becomes FALSE,Shed input removed with the quashed exclusion,SRC-001,Item 8(a),HIGH,CORRECTION
+CHG-016,rules,R-002,source_locator,Item 5(f) col 3/4 condition,"Item 5(f) column 5 (inserted by S.O.1223(E) 27-03-2020; footnote 76): 'water consumption <25 m3/day, fuel consumption <25 TPD and not covered in the category of MAH units as per MSIHC Rules 1989'",Exact locator,SRC-001,Item 5(f) col 5; footnote 76,HIGH,CORRECTION
+CHG-017,rules,R-021,condition,MAH := SITE_NOTIFICATION == TRUE,"MAH := EXISTS c: (industrial activity AND qty(c) >= Sch3 col3(c)) OR (isolated storage AND qty(c) >= Sch2 col3(c)); for Sch3 Part II classes use the TOTAL quantity of all substances of that class; quantities aggregated per Sch2/Sch3 note (a)-(b) (same occupier, installations <500 m apart, connected pipelines within 500 m, other sites within 500 m, storage vehicles); any UNKNOWN qty/mapping -> UNKNOWN",v1 equated MAH with 'site notification'. Rule 2(ja) defines MAH installations directly by column 3 of Schedules 2 and 3.,SRC-016,"r.2(ja); r.2(n)(iii); Sch 2 notes (a),(b); Sch 3 notes (a),(b)",HIGH,CORRECTION
+CHG-018,rules,R-021,source_locator,Rule 2,"r.2(ja), r.2(n), Sch 2 & 3 notes",Exact locator,SRC-016,r.2(ja),HIGH,CORRECTION
+CHG-019,rules,R-021,confidence,MEDIUM,HIGH,Verified text,SRC-016,r.2(ja),HIGH,CORRECTION
+CHG-020,rules,R-054,condition,EC_EXPANSION_EXEMPT := F-EXP-01 AND F-EXP-02 == FALSE AND certificate uploaded on PARIVESH,"EC_EXPANSION_EXEMPT := F-EXP-01 AND item IN {2,3,4,5} AND F-EXP-02 == FALSE AND empanelled-auditor certificate uploaded on PARIVESH and sent to SPCB (Appendix XIII) AND OCMS >=95% uptime connected to CPCB/SPCB AND NOT (category change B2->A or B2->B1); else Form I under 7(ii)(a)",Add the conditions of para 7(ii)(b) (S.O.908(E) 02-03-2021),SRC-001,Para 7(ii)(a)-(b),HIGH,CORRECTION
+CHG-021,rules,R-054,confidence,MEDIUM,HIGH,Verified,SRC-001,Para 7(ii)(b),HIGH,CORRECTION
+CHG-022,approvals,APR-052,confidence,MEDIUM,HIGH,Para 7(ii)(b) conditions extracted,SRC-001,Para 7(ii)(b),HIGH,CORRECTION
+CHG-023,approvals,APR-011,legal_basis,GSR 62/63(E) 23-01-2026,G.S.R. 62(E)/63(E) 23-01-2026 (Gazette 27-01-2026) para 7 (substituted): single-step procedure for consent under s.21 Air Act / s.25 Water Act along with authorisation under Waste Management Rules,v1 relied on PIB summary (T3); Gazette text now read,SRC-006,GSR 62 para 7; GSR 63 para 7,HIGH,CORRECTION
+CHG-024,approvals,APR-011,source_ids,SRC-005;SRC-006,SRC-006;SRC-079,Primary source substituted,SRC-006,GSR 62 para 7,HIGH,CORRECTION
+CHG-025,approvals,APR-011,confidence,LOW,HIGH (central text) / UNKNOWN (MPCB operational implementation),Text verified; MPCB workflow not verified,SRC-006;SRC-079,para 7,HIGH,CORRECTION
+CHG-026,approvals,APR-011,notes,Operative Maharashtra procedure not verified,MPCB web notice 22-04-2026 only circulates the Gazette; no MPCB operational order found. Do not show as available service until MPCB/UCAMS workflow is verified.,MPCB page read,SRC-079,page,HIGH,CORRECTION
+CHG-027,rules,R-016,condition,"DEEMED_CTE := F-INC-01 IN {MICRO,SMALL} AND F-LOC-02 == TRUE AND self-certified Form I","DEEMED_CTE (central text) := F-INC-01 IN {MICRO,SMALL} AND F-LOC-10 == TRUE (industrial estate/area notified by State/UT or local body) AND self-certified Form-I submitted; no Red/Orange/Green restriction in the text; MPCB implementation UNKNOWN -> engine returns CONDITIONAL, never 'granted'","Gazette text read; v1 used PIB and the EIA notified-area fact F-LOC-02, which is a different legal concept",SRC-006,GSR 62 para 6(7) and para 10(iii) (new 10(7)); GSR 63 same,HIGH,CORRECTION
+CHG-028,rules,R-016,facts,F-INC-01;F-LOC-02,F-INC-01;F-LOC-10,Separate fact for consent-guideline notified estate,SRC-006,para 6(7),HIGH,CORRECTION
+CHG-029,rules,R-016,source_id,SRC-005,SRC-006,T1 replaces T3,SRC-006,para 6(7),HIGH,CORRECTION
+CHG-030,rules,R-016,source_locator,PIB summary,"GSR 62(E) para 6(7), para 10(7); GSR 63(E) same",Exact locator,SRC-006,para 6(7),HIGH,CORRECTION
+CHG-031,rules,R-016,confidence,LOW,HIGH (text) / UNKNOWN (MH implementation),,SRC-006,,HIGH,CORRECTION
+CHG-032,rules,R-016,effective_from,2026-01-23,2026-01-27,Guidelines in force on Gazette publication (para 1(2)); Gazette No.61 dated 27-01-2026,SRC-006,para 1(2); masthead,HIGH,CORRECTION
+CHG-033,compliance,CMP-007,frequency_deadline,UNKNOWN,"Central text (in force 27-01-2026): CTO valid till cancelled (para 4(3)); State may fix one-time CTO fee for 5-25 yrs, re-payable after the paid period (para 5(1)). MPCB 13-08-2025 auto-renewal (5/10/15 yrs) predates it. MPCB implementation: UNKNOWN",Gazette read,SRC-006;SRC-069;SRC-079,"GSR 62 paras 4(3), 5(1), 13(i), 15",HIGH,CORRECTION
+CHG-034,compliance,CMP-007,source_ids,SRC-005;SRC-006;SRC-069,SRC-006;SRC-069;SRC-079,,SRC-006,,HIGH,CORRECTION
+CHG-035,approvals,APR-009,notes,Validity regime (valid-until-cancelled vs fixed/auto-renewal) = UNKNOWN in Maharashtra (UNK-001),"CTO validity after 27-01-2026: central text 'valid till cancelled' + State one-time fee; MPCB implementation UNKNOWN (UNK-001, CON-006). CTO for expansion/amendment outer limit 90/60/30 days (GSR 62 para 8 Sl.3; column mapping to Red/Orange/Green UNK-031).",Record verified central amendment,SRC-006,"paras 4(3), 5(1), 8",HIGH,CORRECTION
+CHG-036,rules,R-015,notes,"Practical convention (most stringent) recorded separately as CONVENTION, not rule. Fuel: most polluting fuel; DG set -> higher category per directions",No multi-code aggregation rule found in CPCB directions 12-02-2025 or MPCB adoption circular 23-06-2025. Engine must return UNKNOWN for units with >1 sector code; the 'maximum category' convention must NOT be implemented.,Classification of UNKNOWN,SRC-011;SRC-010,whole documents (no aggregation clause found),MEDIUM,CORRECTION
+CHG-037,compliance,CMP-004,obligation,HW transport: Form 9 info to transporter; Form 8 labels; manifest; NOC of both SPCBs for inter-state final disposal; prior intimation for recycling/transit,HW transport: sender prepares 7 copies of manifest Form 10 (copy 1 to SPCB; copies 5 and 7 by receiver to SPCBs; copy 6 to sender); Form 8 labels / Form 9 transporter information as per v1 (not re-verified),Manifest detail from r.19(1),SRC-013,r.19(1),HIGH,CORRECTION
+CHG-038,approvals,APR-012,legal_basis,"MSIHC Rules 1989 r.7-10, 13; Sch 2, 3, 4, 5","MSIHC Rules 1989: r.4 (general duty - chemicals meeting Sch 1 Part I criteria or Sch 1 Part II; isolated storage >= Sch 2 col 3); r.5 (major accident notice within 48 h); r.6 (r.7-15 apply to industrial activity with Sch 3 chemical >= col 3, or isolated storage with Sch 2 chemical >= col 3; r.10-12 only at col 4); r.7 (approval + Sch 7 report >=3 months before; authority acts within 60 days); r.8 (further report forthwith on change); r.10 (safety report >=90 days before; annual safety audit; report within 30 days); r.11 (update >=90 days before modification; every 3 years); r.12 (additional info within 90 days); r.13 on-site plan; r.14 off-site plan (District Collector); Sch 4 installations; Sch 5 authorities",Complete rule-by-rule audit (v1 was summary-level),SRC-016,r.4-r.14; Sch 2-5,HIGH,CORRECTION
+CHG-039,approvals,APR-012,authority_id,AUT-005 (factory); others per Sch 5,Per Sch 5: AUT-005 (Chief Inspector of Factories) for installations/storages under factory law; AUT-003 (SPCB) for isolated storage not so covered; AUT-008 (Chief Controller of Explosives) for PESO-licensed installations; District Collector for off-site plan,Sch 5 read,SRC-016,"Sch 5 S.No.3, 4, 8, 9",HIGH,CORRECTION
+CHG-040,approvals,APR-012,confidence,MEDIUM,HIGH,Text verified,SRC-016,,HIGH,CORRECTION
+CHG-041,approvals,APR-012,implement_status,REQUIRES_OFFICIAL_CONFIRMATION,SAFE (logic) - chemical-to-schedule mapping must be supplied; aggregation per notes; no sum-of-ratios,,SRC-016,Sch 2/3 notes,HIGH,CORRECTION
+CHG-042,rules,R-019,condition,SITE_NOTIFICATION := EXISTS c IN F-HAZ-01: qty(c) >= col3(c),SITE_NOTIFICATION (r.7) := r.6 activity := (industrial activity in a Sch 4 installation AND EXISTS c: agg_qty(c) >= Sch3 col3(c)) OR (isolated storage AND EXISTS c: agg_qty(c) >= Sch2 col3(c)); UNKNOWN if any mapping/qty unknown,Distinguish industrial activity (Sch 3) and isolated storage (Sch 2); require Sch 4 installation for industrial activity (r.2(h)),SRC-016,"r.2(h),(i); r.6(1); r.7(1)",HIGH,CORRECTION
+CHG-043,rules,R-019,confidence,MEDIUM,HIGH,,SRC-016,,HIGH,CORRECTION
+CHG-044,rules,R-020,condition,SAFETY_REPORT := EXISTS c: qty(c) >= col4(c),SAFETY_REPORT (r.10-12) := (industrial activity AND EXISTS c: agg_qty(c) >= Sch3 col4(c)) OR (isolated storage AND EXISTS c: agg_qty(c) >= Sch2 col4(c)),Column 4 applies only to r.10-12 (r.6(1)),SRC-016,"r.6(1)(a),(b); r.10(1)",HIGH,CORRECTION
+CHG-045,rules,R-020,confidence,MEDIUM,HIGH,,SRC-016,,HIGH,CORRECTION
+CHG-046,compliance,CMP-010,frequency_deadline,Per rule 10(4) (periodicity not re-extracted),Annual fresh safety audit by independent expert; auditor report + comments to authority within 30 days of audit (r.10); further safety report every 3 years and before material modification (>=90 days) (r.11); additional info within 90 days of notice (r.12),Periodicity now extracted,SRC-016,"r.10, r.11, r.12",HIGH,CORRECTION
+CHG-047,compliance,CMP-010,confidence,MEDIUM,HIGH,,SRC-016,,HIGH,CORRECTION
+CHG-048,compliance,CMP-011,trigger,Rule 10-12 activity,r.6 activity (>= column 3) - rules 7 to 15 incl. r.13 on-site plan apply at column 3; v1 wrongly tied it to r.10-12 (column 4),"r.6(1): rules 7-15 apply at col 3 & 4, only r.10-12 restricted to col 4",SRC-016,r.6(1),HIGH,CORRECTION
+CHG-049,rules,R-030,condition,PET_EXEMPT_B := F-PET-01=='B' AND F-PET-02 <= 2500 AND F-PET-03=='NON_BULK' AND F-PET-04 <= 1000,PET_EXEMPT_B := F-PET-01=='B' AND F-PET-02 <= 2500 (total at any one place) AND F-PET-04 <= 1000 (no receptacle > 1000 L),"Petroleum Act s.7(i) test is total quantity and max receptacle; 'non-bulk' is SOP wording, not an element of the Act test (CON-012)",SRC-092;SRC-017,Petroleum Act s.7(i),HIGH,CORRECTION
+CHG-050,rules,R-030,source_id,SRC-017,SRC-092;SRC-017,T1 added,SRC-092,s.7(i),HIGH,CORRECTION
+CHG-051,rules,R-030,source_locator,SOP exemptions,Petroleum Act 1934 s.7(i); PESO SOP exemptions table,,SRC-092,s.7(i),HIGH,CORRECTION
+CHG-052,rules,R-031,condition,PET_EXEMPT_C := F-PET-01=='C' AND F-PET-02 <= 45000,PET_EXEMPT_C := F-PET-01=='C' AND F-PET-02 <= 45000 (total at any one place) AND stored/transported per rules under s.4,Add the s.7(ii) proviso,SRC-092,s.7(ii),HIGH,CORRECTION
+CHG-053,rules,R-031,source_id,SRC-017,SRC-092;SRC-017,,SRC-092,s.7(ii),HIGH,CORRECTION
+CHG-054,rules,R-031,source_locator,SOP exemptions,Petroleum Act 1934 s.7(ii),,SRC-092,s.7(ii),HIGH,CORRECTION
+CHG-055,rules,R-029,notes,Receptacle conditions apply,Class A small-quantity exemption (<=30 L) sourced only from PESO SOP (T3); Petroleum Rules 2002 text not retrieved. Class A import always needs a licence (Act s.3(2)).,Tier flag,SRC-017;SRC-092,SOP; Act s.3(2),MEDIUM,CORRECTION
+CHG-056,rules,R-033,condition,GCR_LICENCE := NOT exempt under r.44; LPG exempt if F-GAS-02 <= 100 (own use),"GCR_EXEMPT := own use AND not for sale AND for every gas group: flammable non-toxic cylinders <=25 AND gas <=200 kg (whichever less); non-flammable non-toxic cylinders <=200; toxic cylinders <=5; dissolved acetylene cylinders <=25 (r.44(b)); LPG <=100 kg per r.44(c) (clause wording ambiguous - see notes); gas group (toxic/flammable) is an input fact, never inferred",Full r.44 limits extracted; v1 had LPG only,SRC-093;SRC-019;SRC-018,GCR 2016 r.44(a)-(c),MEDIUM,CORRECTION
+CHG-057,rules,R-033,source_id,SRC-019,SRC-093;SRC-019;SRC-018,,SRC-093,r.44,MEDIUM,CORRECTION
+CHG-058,rules,R-033,notes,Other gases' exemption limits UNKNOWN -> result UNKNOWN,"Text from T5-hosted copies; the Tier-1 PESO PDF was not retrieved, so status is REQUIRES_OFFICIAL_CONFIRMATION before deterministic use. Does not aggregate across gas groups (the rule does not say it does).",,SRC-093,r.44,MEDIUM,CORRECTION
+CHG-059,rules,R-034,condition,SMPV := EXISTS v IN F-PV-01: v.water_capacity_L > 1000 AND v.is_process_vessel == FALSE AND gas is compressed/liquefied,"SMPV := EXISTS v IN F-PV-01: v.water_capacity_L > 1000 AND gas is 'compressed gas' (>1 atm gauge at max working temp; 55 C if uninsulated) AND v not in the r.2 exclusion list (reactors, heat exchangers, evaporators, air receivers, autoclaves, steam vessels etc.) AND v not part of a processing plant (r.3)",Add r.3 processing-plant exemption and compressed-gas definition,SRC-094;SRC-020,"r.2(ix),(xxxvii); r.3; r.45",MEDIUM,CORRECTION
+CHG-060,rules,R-034,source_id,SRC-020,SRC-094;SRC-020,,SRC-094,"r.2, r.3",MEDIUM,CORRECTION
+CHG-061,approvals,APR-015,legal_basis,Factories Act 1948 s.6 + MFR 1963 (operative via OSH Code s.143 savings); OSH Code 2020,"OSH Code 2020 (whole Code in force 21-11-2025, S.O.5321(E)); DISH RTS service (page updated 01-09-2026) still cites Factories Act 1948 + MFR 1963 = PORTAL LEGACY SERVICE, presumed to run under OSH s.143 savings (inference)",Classify per OSH commencement,SRC-080;SRC-081;SRC-088;SRC-021,S.O.5321(E); DISH RTS rows 1-6,HIGH,CORRECTION
+CHG-062,approvals,APR-016,legal_basis,Factories Act 1948 s.6 + MFR 1963 (saved); OSH Code 2020,Same as APR-015: OSH Code in force; licence service is a PORTAL LEGACY SERVICE under saved Factories Act/MFR 1963 (inference from s.143); Maharashtra OSH (Factories and Other Ports) Rules 2026 are DRAFT (06-05-2026),Classify per OSH commencement,SRC-080;SRC-088;SRC-109,,HIGH,CORRECTION
+CHG-063,rules,R-022,condition,FACTORY := (F-LAB-02 == TRUE AND F-LAB-01 >= 20) OR (F-LAB-02 == FALSE AND F-LAB-01 >= 40),"FACTORY_BY_HEADCOUNT := (F-LAB-02 == TRUE AND F-LAB-01 >= 20) OR (F-LAB-02 == FALSE AND F-LAB-01 >= 40) [F-LAB-01 = max on any day of preceding 12 months]; if FACTORY_BY_HEADCOUNT == FALSE -> result CONDITIONAL (not FALSE) because hazardous-process notifications may cover smaller units (coverage under OSH Code UNKNOWN, UNK-030)",Numbers verified in OSH s.2(1)(w) and DISH FAQ; FALSE outcome must not be final,SRC-081;SRC-030,OSH s.2(1)(w); DISH FAQ,HIGH,CORRECTION
+CHG-064,rules,R-022,source_id,SRC-022;SRC-030,SRC-081;SRC-030,T1 added; SRC-022 (T5) removed,SRC-081,s.2(1)(w),HIGH,CORRECTION
+CHG-065,rules,R-022,notes,Pre-21-11-2025 Factories Act thresholds were 10/20 - do not apply to current determinations,"s.2(1)(w) proviso: where a State law in force immediately before the Code specified a different number, the State number prevails until amended. The Maharashtra pre-Code number is unverified (UNK-029); DISH FAQ gives 20/40, so both sources give the same values.",,SRC-081;SRC-030,s.2(1)(w) proviso,MEDIUM,CORRECTION
+CHG-066,rules,R-024,source_id,SRC-027,SRC-081;SRC-027,T1 added,SRC-081,s.3,MEDIUM,CORRECTION
+CHG-067,rules,R-024,source_locator,Circular para,OSH s.3(1): apply electronically within 60 days of applicability; 'establishment' threshold of 10 workers in s.2(1) definition,,SRC-081,s.3(1),MEDIUM,CORRECTION
+CHG-068,rules,R-026,condition,PE_REG := F-LAB-03 >= 50,PE_REG := F-LAB-03 >= 50 (contract labour on any day of preceding 12 months) AND work not only intermittent/casual (s.45(2)),Exact s.45 text,SRC-081,"s.45(1)(i), 45(2)",HIGH,CORRECTION
+CHG-069,rules,R-026,source_id,SRC-026,SRC-081;SRC-026,,SRC-081,s.45,HIGH,CORRECTION
+CHG-070,rules,R-026,confidence,MEDIUM,HIGH,,SRC-081,s.45,HIGH,CORRECTION
+CHG-071,rules,R-027,condition,CONTRACTOR_LIC := F-LAB-04 == TRUE AND contractor_workers >= 50,CONTRACTOR_LIC := F-LAB-04 == TRUE AND contractor_workers >= 50 on any day of preceding 12 months (s.45(1)(ii) manpower supply contractor),Exact s.45 text,SRC-081,s.45(1)(ii),HIGH,CORRECTION
+CHG-072,rules,R-027,source_id,SRC-026,SRC-081;SRC-026,,SRC-081,s.45,HIGH,CORRECTION
+CHG-073,rules,R-027,confidence,MEDIUM,HIGH,,SRC-081,s.45,HIGH,CORRECTION
+CHG-074,edge_tests,ET-017,expected,FACTORY=FALSE,FACTORY_BY_HEADCOUNT=FALSE; overall=CONDITIONAL (hazardous-process notification coverage UNKNOWN),Never finalise FALSE for a chemical unit,SRC-081;SRC-030,s.2(1)(w); DISH FAQ,HIGH,CORRECTION
+CHG-075,approvals,APR-023,trigger_summary,"Vessel meets 'boiler' definition (exclusions: <25 L, <1 kg/cm2, water <100 C - to be confirmed from Act text)","Boilers Act 2025 s.2(c): a pressure vessel generating steam for use external to itself is a 'boiler' unless (i) capacity < 25 L (feed check valve to main steam stop valve), or (ii) design gauge pressure AND working gauge pressure < 1 kg/cm2, or (iii) water heated below 100 C; s.1(4) exclusions (railway locomotives, vessels, armed forces, hospital sterilisers <=100 L)",v1 used a secondary explainer (T5); Gazette text now read,SRC-034,s.1(4); s.2(c),HIGH,CORRECTION
+CHG-076,approvals,APR-023,legal_basis,Boilers Act 2025 (in force 01-05-2025); IBR 1950,"Boilers Act 2025 (in force 01-05-2025); final rules incl. Boiler Operation Engineers' Rules 2025 (G.S.R.705(E), superseding 2021 rules) and Boilers (Appeal and Revision) Rules 2025; Maharashtra services run under MRTPS Act 2015 via LMS (PORTAL LEGACY SERVICE - neither 1923 nor 2025 Act cited)",Classify,SRC-032;SRC-034;SRC-085;SRC-086;SRC-087,,HIGH,CORRECTION
+CHG-077,approvals,APR-023,source_ids,SRC-032;SRC-034;SRC-037,SRC-032;SRC-034;SRC-085;SRC-087;SRC-088,SRC-037 (T5) removed as basis,SRC-034,,HIGH,CORRECTION
+CHG-078,rules,R-028,condition,BOILER := F-BLR-01 >= 25 AND F-BLR-02 >= 1 AND F-BLR-03 >= 100,BOILER := F-BLR-04 == TRUE (steam generated for external use) AND F-BLR-01 >= 25 AND NOT (F-BLR-05 < 1 AND F-BLR-02 < 1) AND NOT (F-BLR-03 < 100); any UNKNOWN operand that could flip the result -> UNKNOWN,Definition from Gazette; v1 used one pressure fact and a T5 source,SRC-034,s.2(c)(i)-(iii),HIGH,CORRECTION
+CHG-079,rules,R-028,facts,F-BLR-01;F-BLR-02;F-BLR-03,F-BLR-01;F-BLR-02;F-BLR-03;F-BLR-04;F-BLR-05,Design pressure and steam-for-external-use facts added,SRC-034,s.2(c),HIGH,CORRECTION
+CHG-080,rules,R-028,threshold,>=25 ; >=1 ; >=100,>=25 ; NOT(design<1 AND working<1) ; NOT(<100),,SRC-034,s.2(c),HIGH,CORRECTION
+CHG-081,rules,R-028,source_id,SRC-037,SRC-034,T1 replaces T5,SRC-034,s.2(c),HIGH,CORRECTION
+CHG-082,rules,R-028,source_locator,Definition (secondary),Boilers Act 2025 s.2(c),,SRC-034,s.2(c),HIGH,CORRECTION
+CHG-083,rules,R-028,confidence,LOW,HIGH,,SRC-034,,HIGH,CORRECTION
+CHG-084,edge_tests,ET-052,expected,FALSE / TRUE (pending official boundary),"24 L -> BOILER=FALSE (excluded, <25 L); 25 L -> TRUE if other limbs TRUE",Boundary now from Gazette,SRC-034,s.2(c)(i),HIGH,CORRECTION
+CHG-085,sla,SLA-013,sla_value,50,43 (boiler made in MH) / 50 (made outside MH) per mahaboiler; 50 per Labour RTS page,Two official pages differ - preserved (CON-008),SRC-087;SRC-088,services tables,HIGH,CORRECTION
+CHG-086,sla,SLA-013,conflict_id,CON-004,CON-008,,SRC-087;SRC-088,,HIGH,CORRECTION
+CHG-087,sla,SLA-014,sla_value,7,7 (Labour RTS page) / 17** (mahaboiler),Two official pages differ - preserved,SRC-087;SRC-088,,HIGH,CORRECTION
+CHG-088,sla,SLA-014,conflict_id,CON-004,CON-008,,SRC-087;SRC-088,,HIGH,CORRECTION
+CHG-089,approvals,APR-047,legal_basis,Maharashtra Lifts Act 1939 (operative per CEI RTS); 2017 Act not commenced,"Bombay Lifts Act 1939 services per CEI RTS notification 2018 (T2). Maharashtra Lifts, Escalators and Moving Walks Act 2017 (Mah. XV of 2018): 'has not come into force till 1st January 2019' (Govt Printing text) and no later commencement notification found; L.A. Bill VII of 2026 would amend it. Under the 2017 Act s.2(l), hoists/lifts covered under the Factories Act are excluded.",Commencement status now evidenced,SRC-041;SRC-083;SRC-084,"2017 Act footnote 2, s.2(l)",HIGH,CORRECTION
+CHG-090,approvals,APR-047,source_ids,SRC-041;SRC-038,SRC-041;SRC-083;SRC-084,,SRC-083,,HIGH,CORRECTION
+CHG-091,conditional_regs,CND-024,why,Rules appear draft; role vs CGWA for industry unresolved,Mah. GW Act 2009 (Mah. XXVI of 2013) s.1(3) commences on notified date (notification not found); s.8(1) directs the State Authority to prohibit deep-wells for industrial usage in notified and non-notified areas; s.8(2) regulation in notified areas. MWRRA prohibition orders (>60 m in 80 watersheds) exist. Operative status of the Act and Rules 2018 (draft) is REQUIRES_OFFICIAL_CONFIRMATION.,Act text read,SRC-097;SRC-053;SRC-054,s.1(3); s.8(1)-(3),HIGH,CORRECTION
+CHG-092,conditional_regs,CND-024,source_ids,SRC-053,SRC-097;SRC-053;SRC-054,,SRC-097,,HIGH,CORRECTION
+CHG-093,rules,R-048,notes,F-ELE-02 UNKNOWN -> ELEC_INSPECTION UNKNOWN for voltages <=33 kV,Central Government notified 11 kV as self-certification voltage for its jurisdiction; each State may notify its own (PIB 05-08-2024). No Maharashtra notification located -> F-ELE-02 stays UNKNOWN; 11 kV must not be used as the Maharashtra value.,,SRC-096;SRC-042,PIB text; CEA 2023 proviso,MEDIUM,CORRECTION
+CHG-094,rules,R-050,condition,LM_PACKER := F-OTH-01 == TRUE,"LM_PC_CHAPTER_II := F-OTH-01 == TRUE AND NOT (F-LM-01 > 25 kg or 25 L) AND NOT (F-LM-02 IN {INDUSTRIAL_CONSUMER, INSTITUTIONAL_CONSUMER} AND package marked 'not for retail sale'); registration duty (r.27) text not extracted -> APR-048 stays CONDITIONAL",r.3 exclusions read,SRC-095,"r.2(bb),(bc); r.3",HIGH,CORRECTION
+CHG-095,rules,R-050,facts,F-OTH-01,F-OTH-01;F-LM-01;F-LM-02,,SRC-095,r.3,HIGH,CORRECTION
+CHG-096,rules,R-050,source_id,SRC-062,SRC-095;SRC-062,,SRC-095,r.3,HIGH,CORRECTION
+CHG-097,rules,R-050,source_locator,-,LM(PC) Rules 2011 r.3 (GSR 629(E) 23-06-2017 w.e.f. 01-01-2018); r.2(bb),,SRC-095,r.3,HIGH,CORRECTION
+CHG-098,rules,R-050,confidence,LOW,HIGH (exclusions) / LOW (registration duty),,SRC-095,,HIGH,CORRECTION
+CHG-099,approvals,APR-048,legal_basis,Legal Metrology (Packaged Commodities) Rules 2011 (not researched),Legal Metrology Act 2009; LM (Packaged Commodities) Rules 2011: r.3 excludes packages >25 kg/25 L and packages for industrial/institutional consumers marked 'not for retail sale'; packer/importer registration rule not re-extracted,Read r.3,SRC-095;SRC-062,r.3,HIGH,CORRECTION
+CHG-100,approvals,APR-048,source_ids,SRC-062,SRC-095;SRC-062,,SRC-095,,HIGH,CORRECTION
+CHG-101,approvals,APR-049,legal_basis,Aircraft rules (not researched),"MoCA (Height Restrictions for Safeguarding of Aircraft Operations) Rules 2015, G.S.R.751(E) 30-09-2015; NOCAS",Instrument identified,SRC-104;SRC-063,GSR 751(E),HIGH,CORRECTION
+CHG-102,approvals,APR-049,source_ids,SRC-063,SRC-104;SRC-063,,SRC-104,,HIGH,CORRECTION
+CHG-103,approvals,APR-042,legal_basis,Maharashtra (Urban Areas) Protection & Preservation of Trees Act 1975,Maharashtra (Urban Areas) Protection and Preservation of Trees Act 1975: no felling in urban area without previous permission of the Tree Authority,Text read,SRC-103,felling prohibition section,HIGH,CORRECTION
+CHG-104,approvals,APR-042,source_ids,SRC-070,SRC-103;SRC-070,,SRC-103,,HIGH,CORRECTION
+CHG-105,compliance,CMP-014,trigger,UNKNOWN,"No blanket obligation. Environment Audit Rules 2025 (S.O.3973(E) 29-08-2025) apply where an audit is assigned by Central/State Government, CPCB/SPCB or a competent authority, or engaged by the project proponent; Registered Environment Auditors may also verify consent applications (GSR 62/63 para 6)",Rules and consent amendment read,SRC-066;SRC-006,"EAR 2025 scope; GSR 62 para 6(1),(6)",HIGH,CORRECTION
+CHG-106,compliance,CMP-014,frequency_deadline,UNKNOWN,As assigned (no fixed periodicity found),,SRC-066,,MEDIUM,CORRECTION
+CHG-107,conditional_regs,CND-012,determination,UNKNOWN,CONDITIONAL,Stage-2 classification with evidence (was UNKNOWN / not researched),SRC-107,see source,MEDIUM,CORRECTION
+CHG-108,conditional_regs,CND-012,why,"Could apply if manufacturing/storing substances classed as explosives (e.g., certain nitro compounds); not researched","Explosives Rules 2008: manufacture of any explosive needs a licensed factory, even in small quantity (PESO FAQ). Applies only if a product/intermediate is an 'explosive' - input fact, never inferred.",Stage-2 classification with evidence,SRC-107,see source,MEDIUM,CORRECTION
+CHG-109,conditional_regs,CND-012,source_ids,-,SRC-107,,SRC-107,,MEDIUM,CORRECTION
+CHG-110,conditional_regs,CND-013,determination,UNKNOWN,CONDITIONAL,Stage-2 classification with evidence (was UNKNOWN / not researched),SRC-099;SRC-108,see source,MEDIUM,CORRECTION
+CHG-111,conditional_regs,CND-013,why,Could apply if handling notified controlled substances; not researched,"NDPS RCS Order 2013: registration with NCB for manufacture/possession/sale/consumption of Schedule A controlled substances (acetic anhydride, N-acetylanthranilic acid, anthranilic acid, ephedrine, pseudoephedrine, ANPP, NPP); Schedules B/C govern export/import.",Stage-2 classification with evidence,SRC-099;SRC-108,see source,MEDIUM,CORRECTION
+CHG-112,conditional_regs,CND-013,deciding_facts,F-PRD-04,F-NDPS-01,,SRC-099;SRC-108,,MEDIUM,CORRECTION
+CHG-113,conditional_regs,CND-013,source_ids,-,SRC-099;SRC-108,,SRC-099;SRC-108,,MEDIUM,CORRECTION
+CHG-114,conditional_regs,CND-014,determination,UNKNOWN,CONDITIONAL,Stage-2 classification with evidence (was UNKNOWN / not researched),SRC-098,see source,MEDIUM,CORRECTION
+CHG-115,conditional_regs,CND-014,why,Could apply to scheduled chemicals/DOC production; not researched,"CWC declarations to NACWC: plant sites producing by synthesis >200 t/yr unscheduled discrete organic chemicals, or >30 t/yr PSF chemicals, and Schedule 2/3 activity above thresholds - highly relevant to synthetic organic units.",Stage-2 classification with evidence,SRC-098,see source,MEDIUM,CORRECTION
+CHG-116,conditional_regs,CND-014,deciding_facts,F-PRD-04,F-CWC-01;F-CWC-02;F-CWC-03,,SRC-098,,MEDIUM,CORRECTION
+CHG-117,conditional_regs,CND-014,source_ids,-,SRC-098,,SRC-098,,MEDIUM,CORRECTION
+CHG-118,conditional_regs,CND-015,determination,UNKNOWN,CONDITIONAL,Stage-2 classification with evidence (was UNKNOWN / not researched),SRC-100,see source,MEDIUM,CORRECTION
+CHG-119,conditional_regs,CND-015,why,If pesticide technical/formulation; not researched,Insecticides Act 1968 s.13: licence from the licensing officer to manufacture any insecticide (technical or formulation). Maharashtra licensing officer identity not verified.,Stage-2 classification with evidence,SRC-100,see source,MEDIUM,CORRECTION
+CHG-120,conditional_regs,CND-015,source_ids,-,SRC-100,,SRC-100,,MEDIUM,CORRECTION
+CHG-121,conditional_regs,CND-016,determination,UNKNOWN,CONDITIONAL,Stage-2 classification with evidence (was UNKNOWN / not researched),SRC-101;SRC-070,see source,MEDIUM,CORRECTION
+CHG-122,conditional_regs,CND-016,why,If bulk drug/API; FDA drug manufacturing licence integrated on MAITRI (SRC-070) but rule not researched,Drugs & Cosmetics Act / Drugs Rules 1945 Part VII manufacturing licence from Maharashtra FDA for bulk drugs/APIs; form numbering to be confirmed.,Stage-2 classification with evidence,SRC-101;SRC-070,see source,MEDIUM,CORRECTION
+CHG-123,conditional_regs,CND-016,source_ids,SRC-070,SRC-101;SRC-070,,SRC-101;SRC-070,,MEDIUM,CORRECTION
+CHG-124,conditional_regs,CND-019,determination,UNKNOWN,CONDITIONAL,Stage-2 classification with evidence (was UNKNOWN / not researched),SRC-102,see source,MEDIUM,CORRECTION
+CHG-125,conditional_regs,CND-019,why,If unit transports hazardous goods; not researched,"CMVR 1989 r.129-137: owner of goods carriage transporting dangerous/hazardous goods must comply (labels, emergency info, trained driver). Applies to the transporter/owner; consignor duties to be confirmed.",Stage-2 classification with evidence,SRC-102,see source,MEDIUM,CORRECTION
+CHG-126,conditional_regs,CND-019,source_ids,-,SRC-102,,SRC-102,,MEDIUM,CORRECTION
+CHG-127,sla,SLA-016,notes,Alt: 8 days (SRC-044); 15 days (SRC-046),"Portal list SRC-043 = 10 days; AllServicesAnon SRC-110 and planning page SRC-044 = 8 days; EoDB pre-operation SRC-046 = 15 days. RTS legal SLA not read (MIDC RTS PDF, UNK-037). All preserved in midc_sla.csv.",Conflict preserved,SRC-043;SRC-044;SRC-046;SRC-110,service tables,HIGH,CORRECTION
+CHG-128,unknowns,UNK-001,status,OPEN,PARTIALLY_RESOLVED - central text verified (CTO valid till cancelled; one-time fee 5-25 yrs set by State). MPCB 22-04-2026 notice only circulates the Gazette. MH fee schedule and treatment of existing CTOs: REQUIRES_OFFICIAL_CONFIRMATION,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-129,unknowns,UNK-002,status,OPEN,CLASSIFIED - no official aggregation rule found; engine returns UNKNOWN; REQUIRES_OFFICIAL_CONFIRMATION from MPCB,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-130,unknowns,UNK-003,status,OPEN,"PARTIALLY_RESOLVED - text verified (micro/small, notified estate, self-certified Form-I; no category restriction). MPCB workflow: REQUIRES_OFFICIAL_CONFIRMATION",Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-131,unknowns,UNK-004,status,OPEN,CLASSIFIED - site-specific fact; REQUIRES_OFFICIAL_CONFIRMATION per estate (MIDC/SEIAA records),Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-132,unknowns,UNK-005,status,OPEN,PARTIALLY_RESOLVED - Central value 11 kV (PIB); Maharashtra notification not found; REQUIRES_OFFICIAL_CONFIRMATION,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-133,unknowns,UNK-006,status,OPEN,CLASSIFIED - 2017 Act not in force as at 01-01-2019 (T1 footnote); no later commencement found; 2026 Bill pending; DO_NOT_IMPLEMENT_YET for 2017 regime,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-134,unknowns,UNK-007,status,OPEN,PARTIALLY_RESOLVED - Act in force; several final central rules notified (GSR 705(E) etc.); MH services run as PORTAL LEGACY SERVICE citing MRTPS only,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-135,unknowns,UNK-008,status,OPEN,PARTIALLY_RESOLVED - MH OSH rules still DRAFT (06-05-2026; page updated 01-09-2026); DISH RTS services cite Factories Act = PORTAL LEGACY SERVICE,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-136,unknowns,UNK-009,status,OPEN,OPEN - MAITRI site unreachable from the research environment on 26-09-2026,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-137,unknowns,UNK-010,status,OPEN,OPEN - EIA text does not address 5(f)+8(a) combination; REQUIRES_OFFICIAL_CONFIRMATION (MoEFCC/SEIAA),Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-138,unknowns,UNK-011,status,OPEN,CLASSIFIED - site/CETP-specific fact,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-139,unknowns,UNK-012,status,OPEN,PARTIALLY_RESOLVED - Act text read; commencement notification not found; REQUIRES_OFFICIAL_CONFIRMATION,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-140,unknowns,UNK-013,status,OPEN,CLASSIFIED - PSI 2025 not found on MIDC (31-07-2026) or Industries GR page (21-08-2026); DO_NOT_IMPLEMENT_YET for incentive computation,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-141,unknowns,UNK-014,status,OPEN - never infer,PARTIALLY_RESOLVED - Schedule I entries for relevant processes extracted (hw_streams.csv); unit-level mapping needs process facts; post-2016 amendments UNK-034,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-142,unknowns,UNK-015,status,OPEN,RESOLVED - r.2(ja) MAH = col 3; r.2(n)(iii) Part II total per class; 500 m grouping notes; no sum-of-ratios rule,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-143,unknowns,UNK-016,status,OPEN,RESOLVED (text) - r.44 limits extracted from T5-hosted copies; REQUIRES_OFFICIAL_CONFIRMATION on Tier-1 copy,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-144,unknowns,UNK-017,status,OPEN,OPEN - paras 9 and 10 not extracted,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-145,unknowns,UNK-019,status,OPEN,PARTIALLY_RESOLVED - contract labour s.45 threshold verified; BOCW/ISMW employer thresholds not extracted,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-146,unknowns,UNK-021,status,OPEN,RESOLVED - Boilers Act 2025 s.2(c),Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-147,unknowns,UNK-022,status,NOT_RESEARCHED,"RESOLVED (classification) - each branch now has an evidenced CONDITIONAL row (CND-012..016, 019) or remains UNKNOWN with reason (CND-017, 018, 021, 022)",Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-148,unknowns,UNK-023,status,OPEN,CLASSIFIED - conflicts preserved in conflicts.csv and midc_sla.csv,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-149,unknowns,UNK-025,status,OPEN,OPEN - MoEFCC listing shows no 2025/2026 HOWM brine-sludge amendment; only secondary source; DO_NOT_IMPLEMENT_YET,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-150,unknowns,UNK-027,status,OPEN,CLASSIFIED - Gazette notification governs,Stage-2 close/classify,see related_ids,-,MEDIUM,CORRECTION
+CHG-151,approvals,APR-055,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-100,s.13,MEDIUM,ADDITION
+CHG-152,approvals,APR-056,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-101,Part VII,MEDIUM,ADDITION
+CHG-153,approvals,APR-057,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-099,Schedule A,MEDIUM,ADDITION
+CHG-154,approvals,APR-058,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-098,declaration thresholds,MEDIUM,ADDITION
+CHG-155,approvals,APR-059,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-107,FAQ,MEDIUM,ADDITION
+CHG-156,approvals,APR-060,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-081,s.3,MEDIUM,ADDITION
+CHG-157,compliance,CMP-017,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-081,s.10,HIGH,ADDITION
+CHG-158,compliance,CMP-018,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-081,s.22(2),HIGH,ADDITION
+CHG-159,compliance,CMP-019,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-016,r.5(1),HIGH,ADDITION
+CHG-160,compliance,CMP-020,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-016,r.8,HIGH,ADDITION
+CHG-161,compliance,CMP-021,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-098,deadlines table,HIGH,ADDITION
+CHG-162,compliance,CMP-022,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-085,rules on BOE,HIGH,ADDITION
+CHG-163,compliance,CMP-023,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-016,r.14,HIGH,ADDITION
+CHG-164,rules,R-060,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-016,r.4,HIGH,ADDITION
+CHG-165,rules,R-061,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-016,notes,HIGH,ADDITION
+CHG-166,rules,R-062,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-006,para 4(3),HIGH,ADDITION
+CHG-167,rules,R-063,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-006,para 8,MEDIUM,ADDITION
+CHG-168,rules,R-064,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-001,5(f),HIGH,ADDITION
+CHG-169,rules,R-065,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-098,thresholds,HIGH,ADDITION
+CHG-170,rules,R-066,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-099,Schedule A,HIGH,ADDITION
+CHG-171,rules,R-067,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-100,s.13,HIGH,ADDITION
+CHG-172,rules,R-068,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-101,Part VII,MEDIUM,ADDITION
+CHG-173,rules,R-069,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-107,FAQ,MEDIUM,ADDITION
+CHG-174,rules,R-070,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-081,s.22(2),HIGH,ADDITION
+CHG-175,rules,R-071,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-097,s.1(3),HIGH,ADDITION
+CHG-176,rules,R-072,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-066,scope,HIGH,ADDITION
+CHG-177,rules,R-073,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-085,BOE rule,HIGH,ADDITION
+CHG-178,rules,R-074,(record),(did not exist in v1),ADDED,Stage-2 addition,SRC-001,"5(f), 8(a)",HIGH,ADDITION
+CHG-179,unknowns,UNK-029,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-180,unknowns,UNK-030,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-181,unknowns,UNK-031,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-182,unknowns,UNK-032,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-183,unknowns,UNK-033,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-184,unknowns,UNK-034,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-185,unknowns,UNK-035,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-186,unknowns,UNK-036,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-187,unknowns,UNK-037,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-188,unknowns,UNK-038,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-189,unknowns,UNK-039,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-190,unknowns,UNK-040,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-191,unknowns,UNK-041,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-192,unknowns,UNK-042,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-193,unknowns,UNK-043,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-194,unknowns,UNK-044,(record),(did not exist in v1),ADDED,Stage-2 new unknown,see related_ids,-,MEDIUM,ADDITION
+CHG-195,facts,F-LOC-09,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-196,facts,F-LOC-10,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-197,facts,F-LOC-11,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-198,facts,F-LOC-12,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-199,facts,F-LOC-13,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-200,facts,F-LOC-14,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-201,facts,F-LOC-15,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-202,facts,F-LOC-16,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-203,facts,F-LOC-17,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-204,facts,F-LOC-18,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-205,facts,F-PRD-05,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-206,facts,F-PRD-06,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-207,facts,F-HAZ-03,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-208,facts,F-GAS-03,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-209,facts,F-BLR-04,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-210,facts,F-BLR-05,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-211,facts,F-BLR-06,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-212,facts,F-LAB-07,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-213,facts,F-LAB-08,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-214,facts,F-LAB-09,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-215,facts,F-CWC-01,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-216,facts,F-CWC-02,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-217,facts,F-CWC-03,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-218,facts,F-NDPS-01,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-219,facts,F-INS-01,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-220,facts,F-DRG-01,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-221,facts,F-LM-01,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-222,facts,F-LM-02,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-223,facts,F-CHG-01,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-224,facts,F-WAT-10,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-225,facts,F-FUEL-01,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-226,facts,F-EFF-01,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-227,facts,F-INC-10,(record),(did not exist in v1),ADDED,Stage-2 fact-schema expansion,-,-,HIGH,ADDITION
+CHG-228,edge_tests,ET-056,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-229,edge_tests,ET-057,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-230,edge_tests,ET-058,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-231,edge_tests,ET-059,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-232,edge_tests,ET-060,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-233,edge_tests,ET-061,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-234,edge_tests,ET-062,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-235,edge_tests,ET-063,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-236,edge_tests,ET-064,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-237,edge_tests,ET-065,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-238,edge_tests,ET-066,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-239,edge_tests,ET-067,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-240,edge_tests,ET-068,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-241,edge_tests,ET-069,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-242,edge_tests,ET-070,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-243,edge_tests,ET-071,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-244,edge_tests,ET-072,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-245,edge_tests,ET-073,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-246,edge_tests,ET-074,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-247,edge_tests,ET-075,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-248,edge_tests,ET-076,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-249,edge_tests,ET-077,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-250,edge_tests,ET-078,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-251,edge_tests,ET-079,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-252,edge_tests,ET-080,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-253,edge_tests,ET-081,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-254,edge_tests,ET-082,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-255,edge_tests,ET-083,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-256,edge_tests,ET-084,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-257,edge_tests,ET-085,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-258,edge_tests,ET-086,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-259,edge_tests,ET-087,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-260,edge_tests,ET-088,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-261,edge_tests,ET-089,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-262,edge_tests,ET-090,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-263,edge_tests,ET-091,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-264,edge_tests,ET-092,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-265,edge_tests,ET-093,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-266,edge_tests,ET-094,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-267,edge_tests,ET-095,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-268,edge_tests,ET-096,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-269,edge_tests,ET-097,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-270,edge_tests,ET-098,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-271,edge_tests,ET-099,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-272,edge_tests,ET-100,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-273,edge_tests,ET-101,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-274,edge_tests,ET-102,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-275,edge_tests,ET-103,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-276,edge_tests,ET-104,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-277,edge_tests,ET-105,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-278,edge_tests,ET-106,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-279,edge_tests,ET-107,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-280,edge_tests,ET-108,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-281,edge_tests,ET-109,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-282,edge_tests,ET-110,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-283,edge_tests,ET-111,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-284,edge_tests,ET-112,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-285,edge_tests,ET-113,(record),(did not exist in v1),ADDED,Stage-2 edge test,see rule,-,HIGH,ADDITION
+CHG-286,sla,SLA-034,(record),(did not exist in v1),ADDED,Stage-2 SLA addition,see source_ids,-,HIGH,ADDITION
+CHG-287,sla,SLA-035,(record),(did not exist in v1),ADDED,Stage-2 SLA addition,see source_ids,-,HIGH,ADDITION
+CHG-288,sla,SLA-036,(record),(did not exist in v1),ADDED,Stage-2 SLA addition,see source_ids,-,HIGH,ADDITION
+CHG-289,sla,SLA-037,(record),(did not exist in v1),ADDED,Stage-2 SLA addition,see source_ids,-,HIGH,ADDITION
+CHG-290,sla,SLA-038,(record),(did not exist in v1),ADDED,Stage-2 SLA addition,see source_ids,-,HIGH,ADDITION
+CHG-291,sla,SLA-039,(record),(did not exist in v1),ADDED,Stage-2 SLA addition,see source_ids,-,HIGH,ADDITION
+CHG-292,dependencies,DEP-021,(record),(did not exist in v1),ADDED,Stage-2 dependency,see source_ids,-,MEDIUM,ADDITION
+CHG-293,dependencies,DEP-022,(record),(did not exist in v1),ADDED,Stage-2 dependency,see source_ids,-,MEDIUM,ADDITION
+CHG-294,dependencies,DEP-023,(record),(did not exist in v1),ADDED,Stage-2 dependency,see source_ids,-,MEDIUM,ADDITION
+CHG-295,dependencies,DEP-024,(record),(did not exist in v1),ADDED,Stage-2 dependency,see source_ids,-,MEDIUM,ADDITION
+CHG-296,dependencies,DEP-025,(record),(did not exist in v1),ADDED,Stage-2 dependency,see source_ids,-,MEDIUM,ADDITION
+CHG-297,dependencies,DEP-026,(record),(did not exist in v1),ADDED,Stage-2 dependency,see source_ids,-,MEDIUM,ADDITION
+CHG-298,sources,SRC-006,title,MPCB circular 22-04-2026 - Compliance of G.S.R. 62(E) & 63(E) dated 23-01-2026,"Gazette of India Extraordinary No.61 (27-01-2026): G.S.R. 62(E) & 63(E) 23-01-2026 - full text, as circulated by MPCB on 22-04-2026","The PDF is the Gazette itself (17 pages), not an MPCB decision",SRC-006;SRC-079,PDF masthead CG-DL-E-27012026-269608,HIGH,CORRECTION
+CHG-299,sources,SRC-005,role,Primary basis for R-016/APR-011,Supporting only (T3),Tier-1 Gazette now available,SRC-006,-,HIGH,CORRECTION
+CHG-300,sources,SRC-037,role,Basis for R-028 boiler thresholds,Not used as basis (T5),Tier-1 Act text used,SRC-034,s.2(c),HIGH,CORRECTION
+CHG-301,sources,SRC-022,role,Basis for R-022,Not used as basis (T5),Tier-1 OSH Code text used,SRC-081,s.2(1)(w),HIGH,CORRECTION
+CHG-302,regimes,REG-BLR,status,OPERATIVE (Act); rules DRAFT,OPERATIVE (Act from 01-05-2025); final central rules notified in 2025 incl. Boiler Operation Engineers' Rules (GSR 705(E)) and Appeal & Revision Rules; Maharashtra services = PORTAL LEGACY SERVICE,Final rules found,SRC-085;SRC-086;SRC-087,-,HIGH,CORRECTION
+CHG-303,regimes,REG-LIFT,status,TRANSITIONAL/UNCERTAIN,1939 Act services OPERATIVE per CEI RTS; 2017 Act NOT IN FORCE as at 01-01-2019 and no later commencement found; 2026 Bill pending,Commencement evidence,SRC-083;SRC-084;SRC-041,2017 Act footnote 2,HIGH,CORRECTION
+CHG-304,regimes,REG-GW-MH,status,Act OPERATIVE?; Rules DRAFT?,Act enacted (Mah. XXVI of 2013) - commencement under s.1(3) NOT VERIFIED; Rules 2018 DRAFT,Act text read,SRC-097;SRC-053,s.1(3),HIGH,CORRECTION
+CHG-305,regimes,REG-CONSENT,status,OPERATIVE (MH implementation of 2026 amendments PARTIAL/UNKNOWN),OPERATIVE; GSR 62/63(E) amendments in force from 27-01-2026 (central text); MH implementation UNKNOWN,Gazette read,SRC-006,para 1(2),HIGH,CORRECTION
+CHG-306,regimes,REG-CONS-2026,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-006,-,HIGH,ADDITION
+CHG-307,regimes,REG-EAR,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-066,-,HIGH,ADDITION
+CHG-308,regimes,REG-OSH-MH-DRAFT,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-109,-,HIGH,ADDITION
+CHG-309,regimes,REG-LIFT-2017,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-083;SRC-084,-,HIGH,ADDITION
+CHG-310,regimes,REG-INS,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-100,-,HIGH,ADDITION
+CHG-311,regimes,REG-DRG,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-101,-,HIGH,ADDITION
+CHG-312,regimes,REG-NDPS,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-099;SRC-108,-,HIGH,ADDITION
+CHG-313,regimes,REG-CWC,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-098,-,HIGH,ADDITION
+CHG-314,regimes,REG-EXP,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-107,-,HIGH,ADDITION
+CHG-315,regimes,REG-LM,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-095,-,HIGH,ADDITION
+CHG-316,regimes,REG-AAI,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-104,-,HIGH,ADDITION
+CHG-317,regimes,REG-TREE,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-103,-,HIGH,ADDITION
+CHG-318,regimes,REG-CMVR,(record),(did not exist in v1),ADDED,Stage-2 regime addition,SRC-102,-,HIGH,ADDITION

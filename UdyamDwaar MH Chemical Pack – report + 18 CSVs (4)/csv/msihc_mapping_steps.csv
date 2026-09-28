@@ -1,0 +1,10 @@
+step,name,logic,output_values,source_id,locator,status
+M1,CAS / name input,User supplies CAS and/or name per chemical (F-HAZ-04),list,-,-,VERIFIED
+M2,Identity resolution,"Resolve CAS -> canonical name via an external identity service; Schedules contain NO CAS numbers, so name matching needs curated synonyms",RESOLVED / UNRESOLVED(->UNKNOWN),SRC-134,Schedules (no CAS column),REQUIRES_OFFICIAL_CONFIRMATION (identity source not selected)
+M3,Schedule 2 check (isolated storage),Match to 11 Sch 2 entries,entry / none,SRC-134,Schedule 2,VERIFIED_CONDITIONAL
+M4,Schedule 3 Part I check,Match to 179 named entries,entry / none,SRC-134;SRC-016,Schedule 3 Part I,VERIFIED_CONDITIONAL
+M5,Part II class (if not named),"Derive from properties: flammable gas (bp <=20 C); highly flammable liquid (fp <21 C, bp >20 C); flammable liquid (fp <55 C under processing conditions); toxic/explosive classes per Sch 1",class / none / UNKNOWN (property missing),SRC-134,Schedule 3 Part II; Schedule 1,VERIFIED_CONDITIONAL
+M6,Property evidence,"flash point, boiling point, LD50/LC50, physical state (SDS)",values / UNKNOWN,SRC-134,Schedule 1 Part I,VERIFIED
+M7,Quantity,max quantity present at any time (t),number / UNKNOWN,SRC-016,r.2,VERIFIED
+M8,500 m aggregation,"same occupier installations within 500 m, pipelines, vehicles (R-061); Part II = total of class",aggregate t,SRC-016,Sch 2/3 notes,VERIFIED_CONDITIONAL
+M9,Rule outcome,compare aggregate with col 3 (MAH; r.4-9 incl. r.7 site notification) and col 4 (r.10-15 safety report etc.),MAH TRUE/FALSE/UNKNOWN + evidence chain,SRC-016,"r.2(ja), r.7, r.10","VERIFIED_CONDITIONAL (thresholds REQUIRES_OFFICIAL_CONFIRMATION, CON-021)"

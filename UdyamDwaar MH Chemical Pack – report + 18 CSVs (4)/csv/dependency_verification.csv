@@ -1,0 +1,15 @@
+requested_dependency,dep_id,dependency_class,evidence,source,final_status
+EC -> construction,DEP-001,EXPLICIT_LEGAL,EIA para 2 prior EC before construction/land preparation,SRC-001,VERIFIED
+CTE -> MIDC building permission,DEP-003,EXPLICIT_PORTAL,MIDC planning page: BP requires MPCB CTE (Red); acknowledgement for Orange/Green,SRC-044,VERIFIED_CONDITIONAL
+Building permission -> CTE outside notified area,DEP-008,OFFICIAL_WORKFLOW,MPCB circular 24-07-2025 (T2) directs verification of building permission before CTE,SRC-067,VERIFIED_CONDITIONAL
+CTO -> occupancy (MIDC),DEP-006,OFFICIAL_WORKFLOW,MIDC OC document list,SRC-044,VERIFIED_CONDITIONAL
+CTO -> occupancy (non-MIDC),DEP-023,UNKNOWN,Not located,-,UNKNOWN
+Fire NOC -> occupancy (MIDC),DEP-005,OFFICIAL_WORKFLOW,MIDC OC document list,SRC-044,VERIFIED_CONDITIONAL
+Fire NOC -> occupancy (non-MIDC),DEP-024,UNKNOWN,Not located,-,UNKNOWN
+Factory licence -> occupancy (MIDC),DEP-007,OFFICIAL_WORKFLOW,MIDC OC document list ('if applicable'),SRC-044,VERIFIED_CONDITIONAL
+Factory licence -> occupancy (non-MIDC),DEP-025,UNKNOWN,Not located,-,UNKNOWN
+Boiler registration -> operation,DEP-015,INFERRED,Registration section of Boilers Act 2025 not located (UNK-038),SRC-034,UNKNOWN
+PESO prior approval -> licence,DEP-014,OFFICIAL_WORKFLOW,PESO SOP (T3) prior approval before licence,SRC-020,REQUIRES_OFFICIAL_CONFIRMATION
+CETP membership -> discharge,DEP-021,UNKNOWN,No source,-,UNKNOWN
+GW NOC -> abstraction,DEP-022,EXPLICIT_LEGAL,CGWA guidelines,SRC-052,VERIFIED_CONDITIONAL
+Dewatering NOC -> dewatering,DEP-012,EXPLICIT_LEGAL,CGWA guidelines (EP Act) - NOC before dewatering,SRC-052,VERIFIED_CONDITIONAL

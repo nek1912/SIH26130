@@ -1,158 +1,90 @@
-"""Tests for background extraction job."""
+"""Tests for background extraction job (repository + storage seam)."""
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from uuid import uuid4
+
+from app.repositories.documents import DocumentsRepository
+
+
+def _make_repo(doc):
+    repo = MagicMock(spec=DocumentsRepository)
+    repo.get_document.return_value = doc
+    repo.get_extraction_result_for_document.return_value = None
+    return repo
+
+
+def _make_storage(content: bytes | Exception = b"a,b\n1,2\n"):
+    storage = MagicMock()
+    if isinstance(content, Exception):
+        storage.read.side_effect = content
+    else:
+        storage.read.return_value = content
+    return storage
+
+
+def _doc(doc_id, app_id, **over):
+    row = {
+        "id": doc_id,
+        "application_id": app_id,
+        "mime_type": "text/csv",
+        "storage_path": "test/path.csv",
+        "requirement_key": "D01",
+        "extraction_status": "pending",
+    }
+    row.update(over)
+    return row
 
 
 class TestRunExtractionBackground:
     """Test the background extraction job."""
 
-    @patch("app.extraction.background.get_supabase")
-    @patch("app.extraction.background.get_settings")
-    def test_sets_status_to_running_then_completed(self, mock_settings, mock_supabase):
+    def test_sets_status_to_running_then_completed(self):
         """Background job sets extraction_status to running then completed."""
         from app.extraction.background import run_extraction_background
 
         doc_id = str(uuid4())
         app_id = str(uuid4())
+        repo = _make_repo(_doc(doc_id, app_id))
+        storage = _make_storage()
 
-        # Mock settings and storage
-        mock_settings.return_value.supabase_storage_bucket = "documents"
-        mock_client = MagicMock()
-        mock_supabase.return_value = mock_client
-        mock_client.storage.from_.return_value.download.return_value = b"test content"
+        run_extraction_background(doc_id, app_id, repo=repo, storage=storage)
 
-        # Mock document record
-        mock_doc = MagicMock()
-        mock_doc.data = [{
-            "id": doc_id,
-            "application_id": app_id,
-            "mime_type": "text/csv",
-            "storage_path": "test/path.csv",
-            "requirement_key": "D01",
-            "extraction_status": "pending",
-        }]
+        statuses = [
+            c[0][1]
+            for c in repo.set_document_extraction_status.call_args_list
+        ]
+        assert "running" in statuses
+        assert "completed" in statuses
+        assert repo.create_extraction_result.called
 
-        # Mock extraction result
-        mock_extraction = MagicMock()
-        mock_extraction.data = None  # No existing result
-
-        # Mock requirement
-        mock_req = MagicMock()
-        mock_req.data = [{"requirement_key": "D01", "domain": "environment"}]
-
-        # Track mocks per table so we can assert on them
-        table_mocks: dict[str, MagicMock] = {}
-
-        def side_effect(table_name):
-            m = MagicMock()
-            table_mocks[table_name] = m
-            if table_name == "documents":
-                m.select.return_value.eq.return_value.execute.return_value = mock_doc
-                m.update.return_value.execute.return_value = MagicMock()
-            elif table_name == "extraction_results":
-                m.select.return_value.eq.return_value.execute.return_value = mock_extraction
-                m.insert.return_value.execute.return_value = MagicMock()
-                m.delete.return_value.eq.return_value.execute.return_value = MagicMock()
-            elif table_name == "extracted_fields":
-                m.delete.return_value.eq.return_value.execute.return_value = MagicMock()
-                m.insert.return_value.execute.return_value = MagicMock()
-            elif table_name == "document_requirements":
-                m.select.return_value.eq.return_value.execute.return_value = mock_req
-                m.update.return_value.eq.return_value.execute.return_value = MagicMock()
-            return m
-
-        mock_client.table.side_effect = side_effect
-
-        # Run the background job
-        run_extraction_background(doc_id, app_id)
-
-        # Verify extraction_status was updated to "completed"
-        doc_mock = table_mocks["documents"]
-        calls = doc_mock.update.call_args_list
-        status_updates = [c for c in calls if c[0][0].get("extraction_status") == "completed"]
-        assert len(status_updates) >= 1
-
-    @patch("app.extraction.background.get_supabase")
-    @patch("app.extraction.background.get_settings")
-    def test_skips_if_already_completed(self, mock_settings, mock_supabase):
+    def test_skips_if_already_completed(self):
         """Background job skips if document already has extraction_status=completed."""
         from app.extraction.background import run_extraction_background
 
         doc_id = str(uuid4())
         app_id = str(uuid4())
+        repo = _make_repo(_doc(doc_id, app_id, extraction_status="completed"))
+        storage = _make_storage()
 
-        mock_settings.return_value.supabase_storage_bucket = "documents"
-        mock_client = MagicMock()
-        mock_supabase.return_value = mock_client
+        run_extraction_background(doc_id, app_id, repo=repo, storage=storage)
 
-        # Mock document with already completed status
-        mock_doc = MagicMock()
-        mock_doc.data = [{
-            "id": doc_id,
-            "application_id": app_id,
-            "mime_type": "text/csv",
-            "storage_path": "test/path.csv",
-            "requirement_key": "D01",
-            "extraction_status": "completed",
-        }]
+        storage.read.assert_not_called()
+        repo.set_document_extraction_status.assert_not_called()
 
-        def side_effect(table_name):
-            m = MagicMock()
-            if table_name == "documents":
-                m.select.return_value.eq.return_value.execute.return_value = mock_doc
-            return m
-
-        mock_client.table.side_effect = side_effect
-
-        # Run — should return early without downloading
-        run_extraction_background(doc_id, app_id)
-
-        # Storage download should NOT be called
-        mock_client.storage.from_.assert_not_called()
-
-    @patch("app.extraction.background.get_supabase")
-    @patch("app.extraction.background.get_settings")
-    def test_sets_failed_on_exception(self, mock_settings, mock_supabase):
+    def test_sets_failed_on_exception(self):
         """Background job sets extraction_status to failed on exception."""
         from app.extraction.background import run_extraction_background
 
         doc_id = str(uuid4())
         app_id = str(uuid4())
+        repo = _make_repo(_doc(doc_id, app_id))
+        storage = _make_storage(Exception("Storage error"))
 
-        mock_settings.return_value.supabase_storage_bucket = "documents"
-        mock_client = MagicMock()
-        mock_supabase.return_value = mock_client
-        mock_client.storage.from_.return_value.download.side_effect = Exception("Storage error")
+        run_extraction_background(doc_id, app_id, repo=repo, storage=storage)
 
-        mock_doc = MagicMock()
-        mock_doc.data = [{
-            "id": doc_id,
-            "application_id": app_id,
-            "mime_type": "text/csv",
-            "storage_path": "test/path.csv",
-            "requirement_key": "D01",
-            "extraction_status": "pending",
-        }]
-
-        table_mocks: dict[str, MagicMock] = {}
-
-        def side_effect(table_name):
-            m = MagicMock()
-            table_mocks[table_name] = m
-            if table_name == "documents":
-                m.select.return_value.eq.return_value.execute.return_value = mock_doc
-                m.update.return_value.execute.return_value = MagicMock()
-            return m
-
-        mock_client.table.side_effect = side_effect
-
-        # Run — should not raise, should set failed status
-        run_extraction_background(doc_id, app_id)
-
-        # Verify extraction_status was set to failed
-        doc_mock = table_mocks["documents"]
-        calls = doc_mock.update.call_args_list
-        failed_updates = [c for c in calls if c[0][0].get("extraction_status") == "failed"]
-        assert len(failed_updates) >= 1
+        statuses = [
+            c[0][1]
+            for c in repo.set_document_extraction_status.call_args_list
+        ]
+        assert "failed" in statuses

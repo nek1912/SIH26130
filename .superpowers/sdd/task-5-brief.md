@@ -1,244 +1,99 @@
-﻿## Task 5: SLA API Endpoint
+﻿Task 5: Add Frontend Orchestration Types and API
 
 **Files:**
-- Modify: `backend/app/api/applications.py` (add SLA endpoint)
-- Modify: `backend/app/repositories/applications.py` (add `get_approval_stages()`)
-- Create: `backend/tests/test_sla_api.py`
+- Modify: `frontend/src/types/api.ts`
+- Modify: `frontend/src/lib/api.ts`
 
-**Interfaces:**
-- Consumes: `compute_application_sla()` from `app/workflow/sla.py`, `WorkflowEventsRepository.list_for_application()`, `ApplicationsRepository`
-- Produces: `GET /applications/{id}/sla` returning `SlaInfo` or `null`
+## Implementation
 
-- [ ] **Step 1: Write the failing test**
+### 1. Add TypeScript types to `frontend/src/types/api.ts`
 
-```python
-# backend/tests/test_sla_api.py
-"""Tests for SLA API endpoint."""
-from __future__ import annotations
+Add the following types at the end of the file (before the last line):
 
-from unittest.mock import MagicMock, patch
-from uuid import uuid4
+```typescript
+export type OrchestrationStatus =
+  | 'READY'
+  | 'BLOCKED_BY_DEPENDENCY'
+  | 'BLOCKED_BY_DOCUMENTS'
+  | 'REVIEW_REQUIRED'
+  | 'INSUFFICIENT_DATA'
+  | 'COMPLETE'
+  | 'NOT_APPLICABLE'
 
-import pytest
-from fastapi.testclient import TestClient
+export interface BlockerDetail {
+  blocker_type: string
+  description: string
+  affected_approval_id: string | null
+  affected_document_key: string | null
+  source_ref: string
+  evidence: string
+  action_required: string
+}
 
+export interface DocumentReadinessSummary {
+  requirement_key: string
+  document_name: string
+  readiness: string
+  extraction_status: string | null
+  validation_outcome: string | null
+  blocking: boolean
+  reason: string
+}
 
-class TestSlaEndpoint:
-    """Test GET /applications/{id}/sla."""
+export interface ApprovalOrchestration {
+  approval_id: string
+  status: OrchestrationStatus
+  applicability_result: string
+  dependency_readiness: string
+  document_readiness: string
+  consistency_outcome: string | null
+  sla_state: string | null
+  blockers: BlockerDetail[]
+  documents: DocumentReadinessSummary[]
+  explanation: string
+  next_action: string
+}
 
-    def _make_client(self):
-        """Create a test client with mocked dependencies."""
-        from app.main import app
-        from app.api.deps import get_db_client
+export interface NextAction {
+  action_type: string
+  description: string
+  affected_approval_id: string | null
+  affected_document_key: string | null
+  link_section: string
+}
 
-        client = MagicMock()
-        app.dependency_overrides[get_db_client] = lambda: client
-        return TestClient(app), client
-
-    def test_sla_returns_info_for_active_application(self):
-        """SLA endpoint returns SLA info for an active application."""
-        test_client, db_client = self._make_client()
-        app_id = str(uuid4())
-        approval_id = str(uuid4())
-
-        # Mock application
-        mock_app = MagicMock()
-        mock_app.data = [{
-            "id": app_id,
-            "status": "under_review",
-            "current_stage": "review",
-            "approval_id": approval_id,
-            "submitted_at": "2026-09-10",
-            "created_at": "2026-09-09",
-        }]
-
-        # Mock workflow events
-        mock_events = MagicMock()
-        mock_events.data = [
-            {"to_stage": "review", "created_at": "2026-09-10T10:00:00"}
-        ]
-
-        # Mock approval with workflow stages
-        mock_approval = MagicMock()
-        mock_approval.data = [{
-            "id": approval_id,
-            "workflow_definition": {
-                "stages": [
-                    {"key": "validation", "label": "Validation", "order": 0, "slaBusinessDays": 5},
-                    {"key": "review", "label": "Review", "order": 1, "slaBusinessDays": 10},
-                ]
-            }
-        }]
-
-        # Chain mock calls
-        table_mock = MagicMock()
-        db_client.table.return_value = table_mock
-        table_mock.select.return_value = table_mock
-        table_mock.eq.return_value = table_mock
-        table_mock.order.return_value = table_mock
-
-        # Return different data based on table name
-        def side_effect(table_name):
-            m = MagicMock()
-            if table_name == "applications":
-                m.select.return_value.eq.return_value.execute.return_value = mock_app
-            elif table_name == "workflow_events":
-                m.select.return_value.eq.return_value.order.return_value.execute.return_value = mock_events
-            elif table_name == "approvals":
-                m.select.return_value.eq.return_value.execute.return_value = mock_approval
-            return m
-
-        db_client.table.side_effect = side_effect
-
-        response = test_client.get(
-            f"/applications/{app_id}/sla",
-            headers={"Authorization": "Bearer test-token"},
-        )
-
-        # Note: This test may need auth mocking depending on deps
-        # The key assertion is that the endpoint exists and returns SLA shape
-        assert response.status_code in (200, 401, 403)
-
-    def test_sla_returns_null_for_inactive_status(self):
-        """SLA endpoint returns null for draft/approved/refused."""
-        test_client, db_client = self._make_client()
-        app_id = str(uuid4())
-
-        mock_app = MagicMock()
-        mock_app.data = [{
-            "id": app_id,
-            "status": "draft",
-            "current_stage": None,
-            "approval_id": str(uuid4()),
-            "submitted_at": None,
-            "created_at": "2026-09-09",
-        }]
-
-        table_mock = MagicMock()
-        db_client.table.return_value = table_mock
-        table_mock.select.return_value.eq.return_value.execute.return_value = mock_app
-
-        response = test_client.get(
-            f"/applications/{app_id}/sla",
-            headers={"Authorization": "Bearer test-token"},
-        )
-
-        # Should return 200 with null body or 401 if auth enforced
-        assert response.status_code in (200, 401, 403)
+export interface ApplicationOrchestration {
+  application_id: string
+  overall_status: OrchestrationStatus
+  approvals: Record<string, ApprovalOrchestration>
+  total_blockers: number
+  next_action: NextAction | null
+  stage_number: number | null
+  explanation: string
+}
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+### 2. Add API client method to `frontend/src/lib/api.ts`
 
-Run: `cd backend && python -m pytest tests/test_sla_api.py -v`
-Expected: FAIL â€” 404 (endpoint doesn't exist yet)
+Add to the `api` object (after the `consistency` block, before the closing `}`):
 
-- [ ] **Step 3: Add `get_approval_stages()` to applications repository**
-
-```python
-# Add to backend/app/repositories/applications.py
-
-    def get_approval_stages(self, approval_id: str) -> list[dict[str, Any]] | None:
-        """Load workflow stages from the approval's workflow_definition."""
-        result = (
-            self.client.table("approvals")
-            .select("workflow_definition")
-            .eq("id", approval_id)
-            .execute()
-        )
-        if not result.data:
-            return None
-        wf_def = result.data[0].get("workflow_definition")
-        if not wf_def:
-            return None
-        return wf_def.get("stages", [])
+```typescript
+orchestration: {
+  get: (appId: string) =>
+    request<ApplicationOrchestration>(`/applications/${appId}/orchestration`),
+},
 ```
 
-- [ ] **Step 4: Add SLA endpoint to applications API**
+Also add `ApplicationOrchestration` to the imports at the top of the file (it's already importing from `../types/api`).
 
-```python
-# Add to backend/app/api/applications.py
+## Verification
 
-# Add imports:
-from app.api.deps import get_workflow_events_repository
-from app.repositories.workflow_events import WorkflowEventsRepository
-from app.workflow.sla import compute_application_sla
+Run: `cd frontend && npx tsc --noEmit`
+Expected: 0 errors
 
-# Add endpoint:
-
-@router.get("/applications/{application_id}/sla")
-async def get_application_sla(
-    application_id: str,
-    repo: ApplicationsRepository = Depends(get_applications_repository),
-    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
-    user: UserContext = Depends(
-        require_any_permission(
-            Permission.APPLICATION_VIEW_OWN,
-            Permission.APPLICATION_VIEW_TEAM,
-            Permission.APPLICATION_VIEW_ALL,
-        )
-    ),
-):
-    """Get SLA status for an application.
-
-    Returns SLA info (stage, due date, remaining days, state) or null
-    if no SLA applies (inactive status or no SLA target on stage).
-    """
-    from uuid import UUID as UUIDType
-
-    application = repo.get_by_id(UUIDType(application_id))
-    if not application:
-        raise HTTPException(status_code=404, detail="Application not found")
-    check_application_ownership(user, application)
-
-    # Load workflow events
-    events = events_repo.list_for_application(application_id)
-
-    # Load approval stages
-    approval_id = application.get("approval_id")
-    stages = repo.get_approval_stages(approval_id) if approval_id else []
-
-    # Compute SLA
-    sla = compute_application_sla(
-        status=application.get("status"),
-        current_stage=application.get("current_stage"),
-        submitted_at=application.get("submitted_at"),
-        created_at=application.get("created_at"),
-        workflow_events=events,
-        stages=stages or [],
-    )
-
-    if sla is None:
-        return None
-
-    return {
-        "stage_key": sla.stage_key,
-        "stage_label": sla.stage_label,
-        "sla_business_days": sla.sla_business_days,
-        "entered_at": sla.entered_at.isoformat(),
-        "due_date": sla.due_date.isoformat(),
-        "used_business_days": sla.used_business_days,
-        "remaining_business_days": sla.remaining_business_days,
-        "overdue_business_days": sla.overdue_business_days,
-        "state": sla.state,
-    }
-```
-
-- [ ] **Step 5: Run test to verify it passes**
-
-Run: `cd backend && python -m pytest tests/test_sla_api.py -v`
-Expected: PASS
-
-- [ ] **Step 6: Run full backend tests for regressions**
-
-Run: `cd backend && python -m pytest tests/ -v`
-Expected: All tests PASS
-
-- [ ] **Step 7: Commit**
+## Commit
 
 ```bash
-git add backend/app/api/applications.py backend/app/repositories/applications.py backend/tests/test_sla_api.py
-git commit -m "feat: add GET /applications/{id}/sla endpoint"
+git add frontend/src/types/api.ts frontend/src/lib/api.ts
+git commit -m "feat(orchestration): add frontend types and API client method"
 ```
-
----
-

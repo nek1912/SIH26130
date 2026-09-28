@@ -1,0 +1,12 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": [
+    [
+      "@chncaesar/opencode-plugin-memory",
+      {
+        "maxSummaryChars": 2000,
+        "enableLog": false
+      }
+    ]
+  ]
+}

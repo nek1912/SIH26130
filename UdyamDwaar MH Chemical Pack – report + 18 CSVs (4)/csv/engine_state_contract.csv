@@ -1,0 +1,8 @@
+internal_status_or_input,engine_output,required_payload,note
+"rule VERIFIED / VERIFIED_CONDITIONAL, all inputs known, condition TRUE",APPLIES,rule_id; source_id; source_locator; effective_date,-
+"rule VERIFIED / VERIFIED_CONDITIONAL, all inputs known, condition FALSE",DOES_NOT_APPLY,rule_id; source_id; source_locator,only when every input is known
+rule outcome depends on authority/site decision or unconfirmed scope,CONDITIONAL,rule_id; condition; authority_status,e.g. R-105 planning
+any required input UNKNOWN / missing,INSUFFICIENT_DATA,missing_input; reason; source_status; required_confirmation,never DOES_NOT_APPLY
+rule status UNKNOWN or REQUIRES_OFFICIAL_CONFIRMATION,INSUFFICIENT_DATA (with confirmation flag),missing_input='official confirmation'; reason; source_status; required_confirmation,"displayed, not decided"
+rule status DO_NOT_IMPLEMENT_YET,not evaluated (excluded from orchestration),-,CHECK 08
+temporal query date before effective date / after effective_to,DOES_NOT_APPLY (not in force) or superseding rule,effective_date; effective_to,YEAR_ONLY/UNKNOWN date -> INSUFFICIENT_DATA

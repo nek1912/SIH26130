@@ -20,89 +20,68 @@ class ConsistencyRepository(BaseRepository):
         rule_version: str,
     ) -> dict[str, Any]:
         """Create a consistency result record."""
-        result = (
-            self.client.table("consistency_results")
-            .insert({
+        return self.client.insert_one(
+            "consistency_results",
+            {
                 "application_id": application_id,
                 "outcome": outcome,
                 "checked_at": checked_at,
                 "rule_version": rule_version,
-            })
-            .execute()
+            },
         )
-        return result.data[0]
 
     def create_findings(self, findings: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """Create multiple consistency findings in one call."""
         if not findings:
             return []
-        result = (
-            self.client.table("consistency_findings")
-            .insert(findings)
-            .execute()
-        )
-        return result.data or []
+        return self.client.insert_many("consistency_findings", findings)
 
     def get_latest_result(self, application_id: str) -> dict[str, Any] | None:
         """Get the most recent consistency result for an application."""
-        result = (
-            self.client.table("consistency_results")
-            .select("*")
-            .eq("application_id", application_id)
-            .order("checked_at", desc=True)
-            .limit(1)
-            .execute()
+        return self.client.fetch_one(
+            "SELECT * FROM consistency_results WHERE application_id = %s "
+            "ORDER BY checked_at DESC LIMIT 1",
+            (application_id,),
         )
-        return result.data[0] if result.data else None
 
     def list_findings_for_result(self, result_id: str) -> list[dict[str, Any]]:
         """List all findings for a consistency result."""
-        result = (
-            self.client.table("consistency_findings")
-            .select("*")
-            .eq("result_id", result_id)
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM consistency_findings WHERE result_id = %s",
+            (result_id,),
         )
-        return result.data or []
 
     def delete_findings_for_result(self, result_id: str) -> None:
         """Delete all findings for a consistency result."""
-        self.client.table("consistency_findings").delete().eq(
-            "result_id", result_id
-        ).execute()
+        self.client.delete_where(
+            "consistency_findings", "result_id = %s", (result_id,)
+        )
 
     def delete_previous_results(self, application_id: str) -> None:
         """Delete all previous consistency results for an application (for re-run)."""
-        existing = (
-            self.client.table("consistency_results")
-            .select("id")
-            .eq("application_id", application_id)
-            .execute()
+        existing = self.client.fetch_all(
+            "SELECT id FROM consistency_results WHERE application_id = %s",
+            (application_id,),
         )
-        for row in (existing.data or []):
+        for row in existing:
             self.delete_findings_for_result(row["id"])
-        self.client.table("consistency_results").delete().eq(
-            "application_id", application_id
-        ).execute()
+        self.client.delete_where(
+            "consistency_results", "application_id = %s", (application_id,)
+        )
 
     def get_extracted_fields_for_application(
         self, application_id: str
     ) -> list[dict[str, Any]]:
         """Get all extracted fields for an application."""
-        result = (
-            self.client.table("extracted_fields")
-            .select("*")
-            .eq("application_id", application_id)
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM extracted_fields WHERE application_id = %s",
+            (application_id,),
         )
-        return result.data or []
 
     def get_document_req_map(self, application_id: str) -> dict[str, str]:
         """Get mapping from document_id to requirement_key for an application."""
-        result = (
-            self.client.table("documents")
-            .select("id, requirement_key")
-            .eq("application_id", application_id)
-            .execute()
+        rows = self.client.fetch_all(
+            "SELECT id, requirement_key FROM documents WHERE application_id = %s",
+            (application_id,),
         )
-        return {row["id"]: row["requirement_key"] for row in (result.data or [])}
+        return {row["id"]: row["requirement_key"] for row in rows}

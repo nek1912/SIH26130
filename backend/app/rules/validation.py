@@ -18,6 +18,7 @@ from app.rules.models import (
     ApplicabilityCondition,
     ConditionNode,
     EntityType,
+    LiteralNode,
     NotNode,
     OrNode,
 )
@@ -237,6 +238,11 @@ def _check_value(field_name: str, op: str, value: object) -> str | None:
 
 def _validate_node(node: ConditionNode, path: str, issues: list[ValidationIssue]) -> None:
     """Recursively validate a condition node."""
+    if isinstance(node, LiteralNode):
+        # Literals are valid by construction (value constrained by the
+        # model); they reference no fact fields.
+        return
+
     if isinstance(node, ApplicabilityCondition):
         if node.field not in ALLOWED_FIELDS:
             issues.append(

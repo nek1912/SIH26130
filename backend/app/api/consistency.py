@@ -1,11 +1,15 @@
 """API endpoints for cross-document consistency checks."""
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from app.api.deps import (
+    get_applications_repository,
+    get_consistency_repository,
+)
 from app.auth.dependencies import (
     check_application_ownership,
     require_any_permission,
@@ -13,10 +17,9 @@ from app.auth.dependencies import (
 from app.auth.models import UserContext
 from app.auth.permissions import Permission
 from app.consistency.engine import check_application_consistency
-from app.db.client import get_supabase
 from app.repositories.applications import ApplicationsRepository
 from app.repositories.consistency import ConsistencyRepository
-from app.seed.consistency import load_consistency_rules
+from app.seed.pack import UnknownPackError, resolve_persisted_pack
 
 router = APIRouter()
 
@@ -24,10 +27,9 @@ router = APIRouter()
 def _get_application(
     application_id: str,
     user: UserContext,
+    app_repo: ApplicationsRepository,
 ) -> dict:
     """Get application and verify ownership. Raises 404/403."""
-    client = get_supabase()
-    app_repo = ApplicationsRepository(client)
     application = app_repo.get_by_id(UUID(application_id))
     if not application:
         raise HTTPException(status_code=404, detail="Application not found")
@@ -35,47 +37,52 @@ def _get_application(
     return application
 
 
-@router.post("/applications/{app_id}/consistency/check")
+@router.post("/applications/{application_id}/consistency/check")
 async def run_consistency_check(
-    app_id: str,
+    application_id: str,
     user: UserContext = Depends(
         require_any_permission(
-            Permission.APPLICATION_VIEW_OWN,
+            Permission.APPLICATION_CREATE,
             Permission.APPLICATION_VIEW_TEAM,
             Permission.APPLICATION_VIEW_ALL,
         )
     ),
+    app_repo: ApplicationsRepository = Depends(get_applications_repository),
+    repo: ConsistencyRepository = Depends(get_consistency_repository),
 ):
     """Run a cross-document consistency check for an application."""
-    _get_application(app_id, user)
-
-    sb = get_supabase()
-    repo = ConsistencyRepository(sb)
+    application = _get_application(application_id, user, app_repo)
 
     # Get extracted fields and document mapping
-    fields_data = repo.get_extracted_fields_for_application(app_id)
-    doc_map = repo.get_document_req_map(app_id)
+    fields_data = repo.get_extracted_fields_for_application(application_id)
+    doc_map = repo.get_document_req_map(application_id)
 
     # Convert to ExtractedField models
     from app.extraction.models import ExtractedField
 
     fields = [ExtractedField(**f) for f in fields_data]
 
-    # Run engine
-    rules = load_consistency_rules()
-    result = check_application_consistency(app_id, fields, rules, doc_map)
+    # Run engine with the application's persisted pack rules
+    try:
+        pack = resolve_persisted_pack(
+            application.get("jurisdiction"), application.get("pack_version")
+        )
+    except UnknownPackError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    rules = pack.consistency_rules
+    result = check_application_consistency(application_id, fields, rules, doc_map)
 
     # Persist: delete previous, store new
-    repo.delete_previous_results(app_id)
-    now = datetime.utcnow().isoformat()
+    repo.delete_previous_results(application_id)
+    now = datetime.now(UTC).isoformat()
     result_row = repo.create_result(
-        app_id, result.outcome.value, now, result.rule_version
+        application_id, result.outcome.value, now, result.rule_version
     )
 
     findings_data = [
         {
             "result_id": result_row["id"],
-            "application_id": app_id,
+            "application_id": application_id,
             "rule_id": f.rule_id,
             "canonical_field": f.canonical_field,
             "outcome": f.outcome.value,
@@ -108,9 +115,9 @@ async def run_consistency_check(
     }
 
 
-@router.get("/applications/{app_id}/consistency")
+@router.get("/applications/{application_id}/consistency")
 async def get_consistency(
-    app_id: str,
+    application_id: str,
     user: UserContext = Depends(
         require_any_permission(
             Permission.APPLICATION_VIEW_OWN,
@@ -118,14 +125,13 @@ async def get_consistency(
             Permission.APPLICATION_VIEW_ALL,
         )
     ),
+    app_repo: ApplicationsRepository = Depends(get_applications_repository),
+    repo: ConsistencyRepository = Depends(get_consistency_repository),
 ):
     """Get the latest consistency check result for an application."""
-    _get_application(app_id, user)
+    _get_application(application_id, user, app_repo)
 
-    sb = get_supabase()
-    repo = ConsistencyRepository(sb)
-
-    result_row = repo.get_latest_result(app_id)
+    result_row = repo.get_latest_result(application_id)
     if not result_row:
         raise HTTPException(status_code=404, detail="No consistency check found")
 

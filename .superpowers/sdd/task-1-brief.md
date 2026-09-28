@@ -1,44 +1,43 @@
-﻿## Task 1: Database Migration â€” workflow_events table + extraction_status column
+﻿Task 1: Create Orchestration Data Models
 
 **Files:**
-- Create: `supabase/migrations/005_workflow_events_sla.sql`
+- Create: `backend/app/orchestration/__init__.py`
+- Create: `backend/app/orchestration/models.py`
 
 **Interfaces:**
-- Produces: `workflow_events` table, `extraction_status` column on `documents`
+- Produces: `OrchestrationStatus`, `BlockerType`, `BlockerDetail`, `DocumentReadinessSummary`, `ApprovalOrchestration`, `NextAction`, `ApplicationOrchestration`
 
-- [ ] **Step 1: Write the migration**
+- [ ] **Step 1: Create module init**
 
-```sql
--- supabase/migrations/005_workflow_events_sla.sql
-
--- Workflow events table â€” persists every state transition for SLA computation
-CREATE TABLE workflow_events (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  application_id UUID NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
-  from_status TEXT,
-  to_status TEXT NOT NULL,
-  action TEXT NOT NULL,
-  performed_by UUID NOT NULL,
-  metadata JSONB DEFAULT '{}',
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_workflow_events_app ON workflow_events(application_id, created_at);
-
--- Extraction status on documents â€” document-level status for checklist display
-ALTER TABLE documents ADD COLUMN extraction_status TEXT DEFAULT 'pending';
+```python
+"""Approval orchestration — combines all engines into readiness assessments."""
 ```
 
-- [ ] **Step 2: Verify migration syntax**
+- [ ] **Step 2: Create orchestration models**
 
-Run: `cd backend && python -c "print('Migration file created')"` â€” confirm file exists.
+Create `backend/app/orchestration/models.py` with the following types:
 
-- [ ] **Step 3: Commit**
+**OrchestrationStatus** (StrEnum): READY, BLOCKED_BY_DEPENDENCY, BLOCKED_BY_DOCUMENTS, REVIEW_REQUIRED, INSUFFICIENT_DATA, COMPLETE, NOT_APPLICABLE
+
+**BlockerType** (StrEnum): dependency, document_missing, document_invalid, document_review_required, extraction_failed, consistency_review, insufficient_data, sla_breached
+
+**BlockerDetail** (BaseModel): blocker_type (BlockerType), description (str), affected_approval_id (str|None), affected_document_key (str|None), source_ref (str), evidence (str), action_required (str)
+
+**DocumentReadinessSummary** (BaseModel): requirement_key (str), document_name (str), readiness (str), extraction_status (str|None), validation_outcome (str|None), blocking (bool), reason (str)
+
+**ApprovalOrchestration** (BaseModel): approval_id (str), status (OrchestrationStatus), applicability_result (str), dependency_readiness (str), document_readiness (str), consistency_outcome (str|None), sla_state (str|None), blockers (list[BlockerDetail]), documents (list[DocumentReadinessSummary]), explanation (str), next_action (str)
+
+**NextAction** (BaseModel): action_type (str), description (str), affected_approval_id (str|None), affected_document_key (str|None), link_section (str)
+
+**ApplicationOrchestration** (BaseModel): application_id (str), overall_status (OrchestrationStatus), approvals (dict[str, ApprovalOrchestration]), total_blockers (int), next_action (NextAction|None), stage_number (int|None), explanation (str)
+
+- [ ] **Step 3: Verify imports**
+
+Run: `cd backend && python -c "from app.orchestration.models import OrchestrationStatus, ApplicationOrchestration; print('OK')"`
+
+- [ ] **Step 4: Commit**
 
 ```bash
-git add supabase/migrations/005_workflow_events_sla.sql
-git commit -m "feat: add workflow_events table + extraction_status column"
+git add backend/app/orchestration/
+git commit -m "feat(orchestration): add orchestration data models"
 ```
-
----
-

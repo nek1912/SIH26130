@@ -48,7 +48,7 @@ async def extract_document_fields(
     repo: DocumentsRepository = Depends(get_documents_repository),
     user: UserContext = Depends(
         require_any_permission(
-            Permission.APPLICATION_VIEW_OWN,
+            Permission.APPLICATION_CREATE,
             Permission.APPLICATION_VIEW_TEAM,
             Permission.APPLICATION_VIEW_ALL,
         )
@@ -73,18 +73,13 @@ async def extract_document_fields(
             status_code=404, detail="Document not found for this application"
         )
 
-    # Get file content from storage
-    from app.core.config import get_settings
-    from app.db.client import get_supabase
+    # Get file content from local storage
+    from app.storage import get_storage
 
-    settings = get_settings()
-    client = get_supabase()
     storage_path = document.get("storage_path", "")
 
     try:
-        file_data = client.storage.from_(settings.supabase_storage_bucket).download(
-            storage_path
-        )
+        file_data = get_storage().read(storage_path)
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Failed to download document: {str(e)}"
@@ -101,7 +96,6 @@ async def extract_document_fields(
 
     # Delete existing extraction data for this document
     repo.delete_extracted_fields_for_document(document_id)
-    repo.delete_extracted_fields_for_document(document_id)  # idempotent
 
     # Store extraction result
     extraction_data = {
@@ -175,7 +169,7 @@ async def validate_document_fields(
     repo: DocumentsRepository = Depends(get_documents_repository),
     user: UserContext = Depends(
         require_any_permission(
-            Permission.APPLICATION_VIEW_OWN,
+            Permission.APPLICATION_CREATE,
             Permission.APPLICATION_VIEW_TEAM,
             Permission.APPLICATION_VIEW_ALL,
         )
@@ -213,17 +207,12 @@ async def validate_document_fields(
     extraction_result_data = repo.get_extraction_result_for_document(document_id)
     if not extraction_result_data:
         # Run extraction first if not done
-        from app.core.config import get_settings
-        from app.db.client import get_supabase
+        from app.storage import get_storage
 
-        settings = get_settings()
-        client = get_supabase()
         storage_path = document.get("storage_path", "")
 
         try:
-            file_data = client.storage.from_(
-                settings.supabase_storage_bucket
-            ).download(storage_path)
+            file_data = get_storage().read(storage_path)
         except Exception as e:
             raise HTTPException(
                 status_code=500, detail=f"Failed to download document: {str(e)}"

@@ -16,9 +16,11 @@ from app.orchestration.models import (
     BlockerDetail,
     BlockerType,
     DocumentReadinessSummary,
+    FactProvenance,
     NextAction,
     OrchestrationStatus,
 )
+from app.regulatory.evidence import EvidenceRecord, is_evidence_gap
 from app.rules.applicability import (
     evaluate_approval_applicability,
     summarize_by_approval,
@@ -317,6 +319,66 @@ def _build_explanation(
     return " | ".join(parts)
 
 
+def evidence_gaps_to_blockers(
+    gaps: list[EvidenceRecord],
+    approval_id: str,
+) -> list[BlockerDetail]:
+    """Convert G0-R5 evidence gaps into INSUFFICIENT_DATA blockers.
+
+    Only non-VERIFIED records produce blockers. Callers pass the gaps
+    relevant to ``approval_id`` (see ``app.seed.evidence_gaps`` hints);
+    this function never invents the relevance mapping itself.
+    """
+    blockers: list[BlockerDetail] = []
+    for gap in gaps:
+        if not is_evidence_gap(gap):
+            continue
+        blockers.append(
+            BlockerDetail(
+                blocker_type=BlockerType.INSUFFICIENT_DATA,
+                description=(
+                    f"Evidence gap {gap.evidence_id} ({gap.status.value}): "
+                    f"{gap.unresolved_question}"
+                ),
+                affected_approval_id=approval_id,
+                affected_document_key=None,
+                source_ref=gap.source_reference,
+                evidence=gap.verified_scope,
+                action_required=(
+                    f"Human review of {gap.evidence_id}; "
+                    "do not encode rules from this evidence."
+                ),
+                evidence_id=gap.evidence_id,
+                evidence_status=gap.status.value,
+                unresolved_question=gap.unresolved_question,
+            )
+        )
+    return blockers
+
+
+def _apply_evidence_gaps(
+    status: OrchestrationStatus,
+    blockers: list[BlockerDetail],
+    gaps: list[EvidenceRecord] | None,
+    approval_id: str,
+) -> tuple[OrchestrationStatus, list[BlockerDetail]]:
+    """Fail closed on evidence gaps: surface as INSUFFICIENT_DATA.
+
+    NOT_APPLICABLE is preserved (a gap cannot make a non-applicable
+    approval applicable). All other statuses with a relevant gap become
+    INSUFFICIENT_DATA. With no gaps, status and blockers are unchanged.
+    """
+    if not gaps:
+        return status, blockers
+    gap_blockers = evidence_gaps_to_blockers(gaps, approval_id)
+    if not gap_blockers:
+        return status, blockers
+    merged = [*blockers, *gap_blockers]
+    if status == OrchestrationStatus.NOT_APPLICABLE:
+        return status, merged
+    return OrchestrationStatus.INSUFFICIENT_DATA, merged
+
+
 def orchestrate_application(
     application_id: str,
     approval_id: str,
@@ -331,11 +393,25 @@ def orchestrate_application(
     consistency_result: Any | None,
     sla_info: Any | None,
     obtained_approvals: set[str],
+    evidence_gaps: list[EvidenceRecord] | None = None,
+    applicability_results_map: dict[str, str] | None = None,
 ) -> ApprovalOrchestration:
     """Orchestrate readiness assessment for a single approval.
 
     Combines applicability evaluation, dependency readiness, document
     completeness, consistency, and SLA checks into a unified status.
+
+    ``evidence_gaps`` is an opt-in fail-closed input: G0-R5 records
+    relevant to this approval. When supplied and non-VERIFIED, the result
+    surfaces them as INSUFFICIENT_DATA blockers. Defaults to None so
+    existing verified behaviour is unchanged.
+
+    ``applicability_results_map`` is an optional precomputed
+    approval_id -> applicability result map. When supplied it is used for
+    dependency evaluation so prerequisite applicabilities are visible
+    (a NOT_APPLICABLE prerequisite satisfies the dependency per the
+    dependency engine). Defaults to None, preserving the single-approval
+    evaluation for direct callers.
     """
     # 1. Run applicability
     applicability_evals = evaluate_approval_applicability(
@@ -346,9 +422,12 @@ def orchestrate_application(
     applicability_result = applicability_eval.result if applicability_eval else "insufficient_data"
 
     # 2. Run dependency readiness
-    applicability_results_map = {
-        aid: ev.result for aid, ev in by_approval.items()
-    }
+    if applicability_results_map is None:
+        applicability_results_map = {
+            aid: ev.result for aid, ev in by_approval.items()
+        }
+    else:
+        applicability_results_map = dict(applicability_results_map)
     # Include this approval even if not in by_approval (for dependency graph completeness)
     if approval_id not in applicability_results_map:
         applicability_results_map[approval_id] = applicability_result
@@ -437,6 +516,9 @@ def orchestrate_application(
         sla_breached,
     )
 
+    # 7b. Fail closed on G0-R5 evidence gaps (opt-in; default unchanged).
+    status, all_blockers = _apply_evidence_gaps(status, all_blockers, evidence_gaps, approval_id)
+
     # 8. Pick next action
     next_action = _pick_next_action(
         all_blockers, doc_readiness_label, consistency_review_needed, sla_breached
@@ -487,17 +569,37 @@ def orchestrate_application_full(
     consistency_result: Any | None,
     sla_info: Any | None,
     obtained_approvals: set[str],
+    evidence_gaps_by_approval: dict[str, list[EvidenceRecord]] | None = None,
+    fact_provenance: dict[str, dict[str, Any]] | None = None,
 ) -> ApplicationOrchestration:
     """Orchestrate readiness assessment for all approvals in an application.
 
     Calls orchestrate_application() for each approval, then aggregates
     into an overall application status.
+
+    ``evidence_gaps_by_approval`` maps approval_id to its relevant G0-R5
+    gaps. Defaults to None so existing verified behaviour is unchanged.
+
+    ``fact_provenance`` carries derived-fact provenance entries (as
+    produced by ``apply_derived_facts``); they are attached verbatim to
+    the result. Defaults to None (= no derived facts).
     """
     approvals: dict[str, ApprovalOrchestration] = {}
     total_blockers = 0
     candidate_actions: list[tuple[int, str, str | None, str | None]] = []
 
+    # Evaluate applicability once across all rules so every per-approval
+    # dependency check sees prerequisite applicabilities (a NOT_APPLICABLE
+    # prerequisite satisfies the dependency instead of blocking blindly).
+    full_evals = evaluate_approval_applicability(
+        approval_rules, project_facts, approval_authorities
+    )
+    full_applicability_map = {
+        aid: ev.result for aid, ev in summarize_by_approval(full_evals).items()
+    }
+
     for aid in all_approval_ids:
+        gaps = evidence_gaps_by_approval.get(aid) if evidence_gaps_by_approval else None
         orch = orchestrate_application(
             application_id=application_id,
             approval_id=aid,
@@ -512,6 +614,8 @@ def orchestrate_application_full(
             consistency_result=consistency_result,
             sla_info=sla_info,
             obtained_approvals=obtained_approvals,
+            evidence_gaps=gaps,
+            applicability_results_map=full_applicability_map,
         )
         approvals[aid] = orch
         total_blockers += len(orch.blockers)
@@ -580,4 +684,8 @@ def orchestrate_application_full(
         next_action=next_action_model,
         stage_number=stage_number,
         explanation=explanation,
+        fact_provenance={
+            key: FactProvenance(**entry)
+            for key, entry in (fact_provenance or {}).items()
+        },
     )

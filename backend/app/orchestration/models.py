@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 from enum import StrEnum
+from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class OrchestrationStatus(StrEnum):
@@ -35,6 +36,12 @@ class BlockerDetail(BaseModel):
     source_ref: str
     evidence: str
     action_required: str
+    # Structured G0-R5 evidence traceability (req-7 machine-readable
+    # exposure). Set only on INSUFFICIENT_DATA blockers built from
+    # evidence gaps; None on all other blocker kinds.
+    evidence_id: str | None = None
+    evidence_status: str | None = None
+    unresolved_question: str | None = None
 
 
 class DocumentReadinessSummary(BaseModel):
@@ -69,6 +76,21 @@ class NextAction(BaseModel):
     link_section: str
 
 
+class FactProvenance(BaseModel):
+    """Provenance for one derived project fact.
+
+    Only derived facts appear in the ``fact_provenance`` map; any fact
+    absent from the map is a supplied fact. No LLM or generic
+    explanation is involved — every field is deterministic.
+    """
+
+    fact_id: str
+    derived: bool = True
+    derivation: str
+    source_facts: list[str] = Field(default_factory=list)
+    value: Any = None
+
+
 class ApplicationOrchestration(BaseModel):
     application_id: str
     overall_status: OrchestrationStatus
@@ -77,3 +99,6 @@ class ApplicationOrchestration(BaseModel):
     next_action: NextAction | None
     stage_number: int | None
     explanation: str
+    # Derived-fact provenance (empty when nothing was derived, e.g.
+    # all IN-GJ assessments). Facts not listed here are supplied.
+    fact_provenance: dict[str, FactProvenance] = Field(default_factory=dict)

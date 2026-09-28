@@ -1,36 +1,35 @@
-# Task 4: Persist workflow events on transitions
+# Task 4: Create Orchestration API Endpoint — Report
 
-## What I implemented
+## Status: DONE
 
-1. **Modified `backend/app/workflow/engine.py`**: Added optional `events_repository` parameter to `execute_transition()`. When provided, the workflow event is persisted to the database via `events_repository.create()` with fields matching the DB schema (`application_id`, `from_stage`, `to_stage`, `action`, `performed_by_id`, `metadata`, `created_at`).
+## Summary
+Created `GET /applications/{id}/orchestration` endpoint that loads application data from the database and calls the orchestration service to return per-approval readiness status.
 
-2. **Modified `backend/app/api/workflow.py`**: Injected `WorkflowEventsRepository` into all 7 transition endpoints (submit, advance, request_info, respond, approve, refuse, withdraw) via FastAPI dependency injection. Each endpoint now passes `events_repository=events_repo` to `execute_transition()`.
+## Files Created/Modified
+- **Created:** `backend/app/api/orchestration.py` — Orchestration endpoint
+- **Modified:** `backend/app/main.py` — Registered orchestration router
+- **Created:** `backend/tests/test_orchestration_api.py` — 3 API tests
 
-3. **Created `backend/tests/test_workflow_events_persistence.py`**: 3 tests covering event persistence behavior:
-   - Event is persisted when `events_repository` is provided
-   - No DB call when `events_repository` is not provided (backward compatible)
-   - Persisted event includes all required fields with correct DB column names
+## Implementation Details
+- Follows the SLA endpoint pattern from `applications.py:163-216`
+- Uses `require_any_permission` with VIEW_OWN, VIEW_TEAM, VIEW_ALL
+- Uses `check_application_ownership` for authorization
+- Loads project facts from `ProjectFactsRepository`
+- Loads uploaded documents from `DocumentsRepository.list_documents_for_application()`
+- Loads seed data (approval rules, authorities, dependencies, document requirements)
+- Calls `orchestrate_application_full()` with all required parameters
+- Returns `result.model_dump()` for the response
 
-## What I tested and test results
+## Test Results
+- 3/3 orchestration API tests passed
+- 558/558 total tests passed (4 skipped)
+- Ruff: All checks passed for new files
 
-- **New tests**: 3/3 passed (`test_workflow_events_persistence.py`)
-- **Existing workflow engine tests**: 68/68 passed (no regressions)
-- **Full backend test suite**: 533 passed, 4 skipped, 0 failed
-- **Lint**: All ruff checks passed
-
-## Files changed
-
-- `backend/app/workflow/engine.py` — Added `events_repository` parameter + persistence logic
-- `backend/app/api/workflow.py` — Injected repository into all 7 transition endpoints
-- `backend/tests/test_workflow_events_persistence.py` — New test file (3 tests)
-
-## Design decisions
-
-- Used DB column names (`from_stage`, `to_stage`, `performed_by_id`) not the task brief's `from_status`/`to_status`/`performed_by`
-- Made `events_repository` optional (default `None`) for backward compatibility — existing callers don't break
-- Persistence happens inside the engine after event creation but before returning, keeping it atomic with the in-memory event
-- Used `Any | None` type hint for the repository parameter to avoid import coupling (repository interface is duck-typed)
+## Deviation from Brief
+The brief referenced `docs_repo.list_for_application()` but the actual method is `list_documents_for_application()`. Used the correct method name from the DocumentsRepository.
 
 ## Commit
+- `eaaa85f` — `feat(orchestration): add GET /applications/{id}/orchestration endpoint`
 
-`1c263a9` — feat: persist workflow events on transitions via optional repository parameter
+## Concerns
+None. The endpoint follows established patterns and integrates cleanly with existing infrastructure.

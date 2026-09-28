@@ -1,0 +1,13 @@
+document_id,document,used_for,issuer,mandatory_basis,size_limit,source_ids,confidence,record_state,final_status
+DOC-001,Consent to Establish (copy),APR-010;APR-030,MPCB,HOWM r.6 requires CTE with Form 1; MIDC BP requires CTE (Red) / acknowledgement (Orange/Green),NOT_STATED,SRC-013;SRC-044,HIGH,ACTIVE,VERIFIED_CONDITIONAL
+DOC-002,Consent to Operate (copy),APR-010;APR-032,MPCB,HOWM r.6; MIDC OC,NOT_STATED,SRC-013;SRC-044,HIGH,ACTIVE,VERIFIED_CONDITIONAL
+DOC-003,Self-certified compliance report (HW renewal),APR-010,Occupier,HOWM r.6,NOT_STATED,SRC-013,HIGH,ACTIVE,VERIFIED_CONDITIONAL
+DOC-004,Building permission from competent planning authority (non-MIDC),APR-008,Planning authority,MPCB circular 24-07-2025 (local body NOC not accepted),NOT_STATED,SRC-067,HIGH,ACTIVE,VERIFIED_CONDITIONAL
+DOC-005,Provisional fire NOC,APR-030,MIDC fire / fire authority,MIDC combined BP,NOT_STATED,SRC-044,HIGH,ACTIVE,VERIFIED_CONDITIONAL
+DOC-006,Final fire NOC,APR-032,MIDC fire / fire authority,MIDC OC,NOT_STATED,SRC-044,HIGH,ACTIVE,VERIFIED_CONDITIONAL
+DOC-007,Factory registration/licence (if applicable),APR-032,DISH,MIDC OC,NOT_STATED,SRC-044,MEDIUM,ACTIVE,REQUIRES_OFFICIAL_CONFIRMATION
+DOC-008,District Authority NOC (Rule 144),APR-026,District Authority,Petroleum Rules 2002,NOT_STATED,SRC-017,HIGH,ACTIVE,VERIFIED_CONDITIONAL
+DOC-009,Safety report / site notification (MSIHC),APR-012,Occupier,"MSIHC r.7, r.10",NOT_STATED,SRC-016,MEDIUM,ACTIVE,REQUIRES_OFFICIAL_CONFIRMATION
+DOC-010,"Electricity connection documents: ID proof, ownership/occupancy proof, authorisation (firm/company)",APR-045,Applicant,State EoDB reform (MSEDCL),NOT_STATED,SRC-070,MEDIUM,ACTIVE,REQUIRES_OFFICIAL_CONFIRMATION
+DOC-011,Environmental Clearance letter,APR-008 (practice),MoEFCC/SEIAA,Dependency INFERRED - see DEP-002,NOT_STATED,SRC-001,MEDIUM,ACTIVE,UNKNOWN
+DOC-012,Hydrogeological/abstraction details for NOCAP,APR-043,Applicant,CGWA guidelines (detail not extracted),NOT_STATED,SRC-052,LOW,ACTIVE,REQUIRES_OFFICIAL_CONFIRMATION

@@ -1,0 +1,12 @@
+node_id,question,fact_ids,if_true,if_false,if_unknown,output,source_id,locator
+PF-01,Is the site in an MIDC area?,F-LOC-01,MIDC branch (R-035..R-040; MIDC DCR; MIDC fire),PF-02,UNKNOWN - stop; no authority asserted,-,SRC-044;SRC-124,UDCPR Reg.1.1 (MIDC excluded)
+PF-02,Which planning authority? (named),F-LOC-05,PF-03,-,UNKNOWN - answer depends on the particular planning authority,BP_AUTHORITY per R-080,SRC-123,"s.2(19), s.18(1), s.40, s.44"
+PF-03,"Is the PA in UDCPR exclusion list (MCGM etc., NAINA, JNPT, hill-station MCs, Chikhaldara, ESZ, Lonavala)?",F-LOC-05,Own DCR of that authority (UNKNOWN which provisions),UDCPR applies (R-082),UNKNOWN,DCR identity,SRC-124,Reg.1.1
+PF-04,Development/building permission,-,Application s.44; decision s.45 in commencement certificate; deemed after 60 d only if DCR-conformant; appeal 40 d,-,-,APR-038,SRC-123,"s.44, s.45, s.47"
+PF-05,Plinth/completion/occupancy,-,Per applicable DCR (UDCPR provisions not extracted this pass),-,REQUIRES_OFFICIAL_CONFIRMATION,APR-041,SRC-124,UDCPR Ch.2 (not extracted)
+PF-06,Building class in MFPLSM Schedule-I (G-1/G-2/G-3/H/J)?,F-BLD-10,"Fire safety approval required (Provisional before construction, Final before occupation) (R-079)",Other Schedule-I class evaluation,UNKNOWN,APR-039/APR-040,SRC-121,s.3(1); Schedule-I
+PF-07,Does the planning/local authority have a CFO?,F-LOC-05;F-LOC-05,Approval by that authority's CFO,"Approval by Director, Maharashtra Fire Services (also outside local-authority limits)",UNKNOWN - do not default,R-078,SRC-121,s.3(1)
+PF-08,Minimum installations,F-BLD-10;F-BLD-11,"Schedule-I row by class and aggregate floor area of largest building (e.g. G-1 <=500 m2: extinguishers + 10,000 L tank)",-,UNKNOWN,design input,SRC-121,Schedule-I
+PF-09,Periodic compliance,-,Licensed-agency Form A on installation; Form B every January and July,-,-,CMP-008,SRC-121;SRC-049,s.3(3)
+PF-10,Renewal of fire approval,-,-,-,REQUIRES_OFFICIAL_CONFIRMATION (CON-013),-,SRC-122,"circular list rows 10, 42"
+PF-11,Hazardous building (J) / industrial occupancy office order 10-09-2014,F-BLD-10,Additional MFS requirements may apply (order not read),-,UNKNOWN,-,SRC-122,row 7

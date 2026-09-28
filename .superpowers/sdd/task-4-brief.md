@@ -1,226 +1,143 @@
-﻿## Task 4: Persist workflow events on transitions
+﻿Task 4: Create Orchestration API Endpoint
 
 **Files:**
-- Modify: `backend/app/workflow/engine.py` (add optional `events_repository` param)
-- Modify: `backend/app/api/workflow.py` (inject repository, pass to engine)
-- Create: `backend/tests/test_workflow_events_persistence.py`
+- Create: `backend/app/api/orchestration.py`
+- Modify: `backend/app/main.py`
+- Create: `backend/tests/test_orchestration_api.py`
 
 **Interfaces:**
-- Consumes: `WorkflowEventsRepository.create()` from Task 2
-- Produces: Events persisted to DB on every transition in workflow API
+- Consumes: `orchestrate_application_full()` from `app.orchestration.service`
+- Consumes: seed data (approval rules, dependencies, authorities, document requirements)
+- Consumes: existing repositories (applications, project_facts, documents)
+- Produces: `GET /applications/{id}/orchestration` endpoint
 
-- [ ] **Step 1: Write the failing test**
+## Implementation
 
-```python
-# backend/tests/test_workflow_events_persistence.py
-"""Tests that workflow events are persisted on transitions."""
-from __future__ import annotations
+### 1. Create `backend/app/api/orchestration.py`
 
-from unittest.mock import MagicMock, patch
-from uuid import uuid4
-
-import pytest
-
-from app.workflow.engine import execute_transition
-from app.workflow.models import ApplicationStatus
-from app.workflow.stages import StageType, WorkflowDefinition, WorkflowStage
-
-
-class TestExecuteTransitionEventPersistence:
-    """Test that execute_transition persists events when repository is provided."""
-
-    def _make_workflow_def(self):
-        """Create a simple workflow definition for testing."""
-        return WorkflowDefinition(
-            stages=[
-                WorkflowStage(
-                    key="validation",
-                    label="Validation",
-                    order=0,
-                    type=StageType.VALIDATION,
-                    sla_business_days=5,
-                ),
-                WorkflowStage(
-                    key="review",
-                    label="Review",
-                    order=1,
-                    type=StageType.REVIEW,
-                    sla_business_days=10,
-                ),
-            ]
-        )
-
-    def test_event_persisted_when_repository_provided(self):
-        """When events_repository is provided, event is persisted."""
-        mock_repo = MagicMock()
-        mock_repo.create.return_value = {"id": "event-1"}
-
-        result = execute_transition(
-            application_id=uuid4(),
-            current_status=ApplicationStatus.DRAFT,
-            action="submit",
-            user_id=uuid4(),
-            user_role="APPLICANT",
-            workflow_def=self._make_workflow_def(),
-            events_repository=mock_repo,
-        )
-
-        assert result.success
-        mock_repo.create.assert_called_once()
-        event_data = mock_repo.create.call_args[0][0]
-        assert event_data["to_status"] == "submitted"
-        assert event_data["action"] == "submit"
-
-    def test_event_not_persisted_when_repository_not_provided(self):
-        """When events_repository is not provided, no DB call is made."""
-        result = execute_transition(
-            application_id=uuid4(),
-            current_status=ApplicationStatus.DRAFT,
-            action="submit",
-            user_id=uuid4(),
-            user_role="APPLICANT",
-            workflow_def=self._make_workflow_def(),
-        )
-
-        assert result.success
-        # workflow_event is still in the result dict (in-memory)
-        assert result.workflow_event is not None
-
-    def test_event_includes_correct_fields(self):
-        """Persisted event includes all required fields."""
-        mock_repo = MagicMock()
-        mock_repo.create.return_value = {"id": "event-1"}
-        app_id = uuid4()
-        user_id = uuid4()
-
-        result = execute_transition(
-            application_id=app_id,
-            current_status=ApplicationStatus.DRAFT,
-            action="submit",
-            user_id=user_id,
-            user_role="APPLICANT",
-            workflow_def=self._make_workflow_def(),
-            events_repository=mock_repo,
-        )
-
-        event_data = mock_repo.create.call_args[0][0]
-        assert event_data["application_id"] == str(app_id)
-        assert event_data["performed_by"] == str(user_id)
-        assert event_data["from_status"] is None  # DRAFT has no previous stage
-        assert event_data["to_status"] == "submitted"
-        assert event_data["action"] == "submit"
-        assert "created_at" in event_data
-```
-
-- [ ] **Step 2: Run test to verify it fails**
-
-Run: `cd backend && python -m pytest tests/test_workflow_events_persistence.py -v`
-Expected: FAIL â€” `TypeError: execute_transition() got an unexpected keyword argument 'events_repository'`
-
-- [ ] **Step 3: Modify engine.py to accept optional events_repository**
-
-In `backend/app/workflow/engine.py`, modify `execute_transition()`:
+Follow the exact pattern from `backend/app/api/applications.py` (SLA endpoint at line 163).
 
 ```python
-def execute_transition(
-    *,
-    application_id: UUID,
-    current_status: ApplicationStatus,
-    action: str,
-    user_id: UUID,
-    user_role: SystemRole,
-    current_stage: str | None = None,
-    workflow_def: WorkflowDefinition | None = None,
-    metadata: dict[str, Any] | None = None,
-    ip_address: str | None = None,
-    user_agent: str | None = None,
-    events_repository=None,  # NEW â€” optional, for persisting events
-) -> TransitionResult:
-```
+"""Orchestration endpoint — readiness/blocking status for an application."""
 
-Then after creating the `event` dataclass (around line 281), add persistence logic:
+from uuid import UUID
 
-```python
-    # Create workflow event
-    event = WorkflowEvent(
-        id=uuid4(),
-        application_id=application_id,
-        from_stage=current_stage,
-        to_stage=to_stage,
-        action=action,
-        performed_by=user_id,
-        metadata=metadata or {},
-        created_at=datetime.now(),
-    )
+from fastapi import APIRouter, Depends, HTTPException
 
-    # Persist event if repository provided
-    if events_repository is not None:
-        events_repository.create({
-            "application_id": str(event.application_id),
-            "from_status": event.from_stage,
-            "to_status": event.to_stage,
-            "action": event.action,
-            "performed_by": str(event.performed_by) if event.performed_by else None,
-            "metadata": event.metadata,
-            "created_at": event.created_at.isoformat(),
-        })
-```
+from app.api.deps import (
+    get_applications_repository,
+    get_documents_repository,
+    get_project_facts_repository,
+)
+from app.auth.dependencies import (
+    check_application_ownership,
+    require_any_permission,
+)
+from app.auth.models import UserContext
+from app.auth.permissions import Permission
+from app.orchestration.service import orchestrate_application_full
+from app.repositories.applications import ApplicationsRepository
+from app.repositories.documents import DocumentsRepository
+from app.repositories.project_facts import ProjectFactsRepository
+from app.seed.approvals import load_approval_rules, load_approval_authorities
+from app.seed.dependencies import load_approval_dependencies
+from app.seed.documents import load_document_requirements
 
-- [ ] **Step 4: Run test to verify it passes**
+router = APIRouter()
 
-Run: `cd backend && python -m pytest tests/test_workflow_events_persistence.py -v`
-Expected: PASS (3 tests)
 
-- [ ] **Step 5: Modify workflow API to inject repository**
-
-In `backend/app/api/workflow.py`, add the import and modify each transition endpoint:
-
-```python
-# Add to imports at top:
-from app.api.deps import get_workflow_events_repository
-from app.repositories.workflow_events import WorkflowEventsRepository
-```
-
-Then modify each transition endpoint (submit, advance, request_info, respond, approve, refuse, withdraw) to:
-
-1. Add `events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository)` parameter
-2. Pass `events_repository=events_repo` to `execute_transition()`
-
-Example for `submit_application`:
-
-```python
-@router.post("/applications/{application_id}/submit")
-async def submit_application(
+@router.get("/applications/{application_id}/orchestration")
+async def get_application_orchestration(
     application_id: UUID,
     repo: ApplicationsRepository = Depends(get_applications_repository),
-    events_repo: WorkflowEventsRepository = Depends(get_workflow_events_repository),
-    user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
+    facts_repo: ProjectFactsRepository = Depends(get_project_facts_repository),
+    docs_repo: DocumentsRepository = Depends(get_documents_repository),
+    user: UserContext = Depends(
+        require_any_permission(
+            Permission.APPLICATION_VIEW_OWN,
+            Permission.APPLICATION_VIEW_TEAM,
+            Permission.APPLICATION_VIEW_ALL,
+        )
+    ),
 ):
-    # ... existing code ...
-    result = execute_transition(
-        application_id=application_id,
-        current_status=current_status,
-        action="submit",
-        user_id=user.user_id,
-        user_role=user.role,
-        events_repository=events_repo,  # NEW
+    """Get orchestration readiness status for an application.
+
+    Returns per-approval readiness, blockers, next action, and overall status.
+    """
+    application = repo.get_by_id(application_id)
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found")
+    check_application_ownership(user, application)
+
+    project_id = application.get("project_id")
+    approval_id = application.get("approval_id")
+
+    # Load project facts
+    facts = {}
+    if project_id:
+        facts_record = facts_repo.get_by_project(project_id)
+        if facts_record:
+            facts = {k: v for k, v in facts_record.items() if k not in ("id", "project_id", "created_at", "updated_at")}
+
+    # Load documents
+    uploaded_docs = docs_repo.list_for_application(str(application_id)) if docs_repo else []
+    doc_requirements = load_document_requirements()
+
+    # Load seed data
+    rules = load_approval_rules()
+    authorities = load_approval_authorities()
+    dependencies = load_approval_dependencies()
+
+    # Determine which approvals have been obtained (approved status)
+    # For now, no approvals are "obtained" since this is a per-application view
+    obtained: set[str] = set()
+
+    # Determine all approval IDs to evaluate
+    all_approval_ids = [f"A{i:02d}" for i in range(1, 19)]
+
+    # Run orchestration
+    result = orchestrate_application_full(
+        application_id=str(application_id),
+        project_facts=facts,
+        approval_rules=rules,
+        approval_authorities=authorities,
+        dependencies=dependencies,
+        all_approval_ids=all_approval_ids,
+        document_requirements=doc_requirements,
+        uploaded_documents=uploaded_docs,
+        extraction_results=[],
+        validation_results=[],
+        consistency_result=None,
+        sla_info=None,
+        obtained_approvals=obtained,
     )
-    # ... rest unchanged ...
+
+    return result.model_dump()
 ```
 
-Apply the same pattern to all 7 transition endpoints.
+### 2. Register router in `backend/app/main.py`
 
-- [ ] **Step 6: Run existing workflow tests to verify no regressions**
+Add to imports: `from app.api import orchestration`
+Add to routers: `app.include_router(orchestration.router, tags=["orchestration"])`
 
-Run: `cd backend && python -m pytest tests/test_workflow_engine.py -v`
-Expected: All existing tests PASS (they don't pass events_repository, so events are not persisted â€” backward compatible)
+### 3. Create `backend/tests/test_orchestration_api.py`
 
-- [ ] **Step 7: Commit**
+Write minimal API tests:
+1. `test_orchestration_endpoint_returns_200` — Mock auth, call endpoint, verify 200 + response shape
+2. `test_orchestration_endpoint_returns_401` — No auth token, verify 401
+3. `test_orchestration_endpoint_returns_404` — Non-existent application, verify 404
+
+Follow existing API test patterns from `backend/tests/test_api_projects.py` or `backend/tests/test_sla_api.py`.
+
+## Verification
+
+1. Run new tests: `cd backend && python -m pytest tests/test_orchestration_api.py -v`
+2. Run full suite: `cd backend && python -m pytest tests/ --tb=short -q`
+3. Run ruff: `cd backend && python -m ruff check app/ tests/`
+
+## Commit
 
 ```bash
-git add backend/app/workflow/engine.py backend/app/api/workflow.py backend/tests/test_workflow_events_persistence.py
-git commit -m "feat: persist workflow events on transitions via optional repository parameter"
+git add backend/app/api/orchestration.py backend/app/main.py backend/tests/test_orchestration_api.py
+git commit -m "feat(orchestration): add GET /applications/{id}/orchestration endpoint"
 ```
-
----
-

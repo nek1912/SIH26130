@@ -1,0 +1,22 @@
+bucket,status,item,records
+A,PASS,MPCB 23-02-2026 timelines captured (ADMINISTRATIVE; working days),mpcb_consent_timeline_2026
+A,PASS,MSIHC 218/221 rows verified incl. 1994 values (T1 consolidated attribution),msihc_t1_thresholds; msihc_value_chronology
+A,PASS,Fire: general vs sector-specific separated,sector_specific_certificates
+A,PASS,PESO thresholds from primary text; SMPV r.47 omission temporal rule,peso_thresholds; R-103
+A,PASS,MFS Annexure A per-column cells,mfs_annexA_cells
+A,PASS,EPR role screening,epr_role_screening
+A,PASS,Planning modelled as authority/site dependent,R-105
+B,PARTIAL,MSIHC: 3 blocked cells; post-2024 amendments NOT_FOUND,UR-01..03
+B,PARTIAL,Groundwater: MWRRA order located; currency/list unconfirmed,UR-15
+B,PARTIAL,PESO unread amendments,UR-10
+B,PARTIAL,EPR used-oil gazette unread,UR-08
+B,PARTIAL,MPCB clock start / central limits,UR-18
+B,PARTIAL,Authorities requiring confirmation,UR-17; UR-19
+C,PENDING,EIA 5(f)+8(a),UR-06
+C,PENDING,DSB workflow under Boilers Act 2025,UR-09
+C,PENDING,MH OSH final rules,UR-12
+C,PENDING,MAITRI integration evidence,UR-13
+D,DO_NOT_IMPLEMENT,All incentive amounts,incentive_status
+D,DO_NOT_IMPLEMENT,CTO one-time fee (GSR-04),mpcb_gsr62_63_implementation
+D,DO_NOT_IMPLEMENT,MH Groundwater Rules 2018 (draft),GW-03
+D,DO_NOT_IMPLEMENT,Petroleum Class A 30 L SOP exemption,R-029; PT-14

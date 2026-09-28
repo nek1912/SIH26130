@@ -1,0 +1,20 @@
+cond_id,condition,result,evidence
+RC-01,every implemented deterministic rule has a primary/official source,PARTIAL,"Most rules T1/T2; MIDC workflow, CWC thresholds, NCB list and LM rule rest on T3 official authority material"
+RC-02,every threshold has an exact locator,PARTIAL,"MSIHC: 191/221 rows primary-verified; 1994 col-4 insertions and 3 conflicting entries held (UR-01, UR-02)"
+RC-03,every SLA is labelled legal/RTS/portal/inferred,PASS,sla.csv sla_source_type
+RC-04,every authority is verified,PARTIAL,Insecticides/Drugs authority (UR-11); planning/fire authority are input facts
+RC-05,current law and draft law are separated,PASS,regimes/labour_matrix/peso_gating
+RC-06,transitional law is separated,PASS,s.143 OSH; s.45 Boilers
+RC-07,every major regulatory domain is at least screened,PASS,completeness_matrix + chem_specific_branches + location_triggers
+RC-08,non-MIDC planning/fire is researched,PARTIAL,Fire renewal RESOLVED (R-099); UDCPR CC/OC steps added (planning_steps); zone permissibility and non-MIDC fire SLA open (UR-14)
+RC-09,labour transition is explicitly modelled,PASS,labour_matrix.csv (MH State rules still DRAFT -> procedures REQUIRES_OFFICIAL_CONFIRMATION)
+RC-10,boiler implementation is resolved or clearly confirmation-gated,PASS,boiler_lifecycle.csv; MH workflow confirmation-gated
+RC-11,HOWM waste classification has a usable decision path,PASS,howm_decision_path.csv; code never inferred
+RC-12,MSIHC chemical mapping is usable,PASS,Pipeline + primary-verified threshold table with cell-level gating (msihc_t1_thresholds)
+RC-13,PESO primary-source gaps are identified,PASS,peso_gating.csv
+RC-14,EC 5(f)/8(a) interaction is resolved or hard-blocked,PASS (hard-blocked),R-074 returns UNKNOWN
+RC-15,incentive implementation status is established or explicitly blocked,PASS (blocked),incentive_status v4_status; all computations DO_NOT_IMPLEMENT_YET
+RC-16,MAITRI integration is evidence-based,PASS,maitri_fields.csv - UNKNOWN unless evidenced
+RC-17,lifecycle stages are represented,PARTIAL,All approvals/compliance carry lifecycle_stage; trigger/validity fields UNKNOWN for many records
+RC-18,all conflicts remain traceable,PASS,conflicts.csv (CON-001..021)
+RC-19,UNKNOWN is never converted to FALSE,PASS,QG-06

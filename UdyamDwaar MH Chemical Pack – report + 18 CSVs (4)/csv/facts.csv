@@ -1,0 +1,130 @@
+fact_id,name,type,allowed_values_unit,required_for,notes,record_state,final_status
+F-LOC-01,site_in_midc_estate,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,MIDC vs non-MIDC branch,Can be checked against MIDC GIS (POR-008G),ACTIVE,VERIFIED
+F-LOC-02,site_in_notified_industrial_area_or_estate (EIA sense),BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,EIA 5(f) A/B,MIDC estate is not automatically 'notified' for EIA purposes - confirm,ACTIVE,VERIFIED
+F-LOC-03,estate_holds_prior_EC_covering_units,BOOL_OR_UNKNOWN,,EIA SC,,ACTIVE,VERIFIED
+F-LOC-04,taluka,STRING,Taluka name,Incentive basket,Map via IISP Annexure 1,ACTIVE,VERIFIED
+F-LOC-05,planning_authority,ENUM,MIDC/MUNICIPAL_CORP:<name>/MUNICIPAL_COUNCIL:<name>/NAGAR_PANCHAYAT:<name>/SPA:<name>/RP_AREA_COLLECTOR/GAOTHAN_PANCHAYAT/UNKNOWN,R-041;R-078;R-080;R-082,,ACTIVE,VERIFIED
+F-LOC-06,urban_area,BOOL_OR_UNKNOWN,,Tree Act,,ACTIVE,VERIFIED
+F-LOC-07,gc_within_5km (protected area / CPCB critically polluted area / ESZ / inter-state or international boundary),BOOL_OR_UNKNOWN per sub-item,,EIA GC,Four sub-facts,ACTIVE,VERIFIED
+F-LOC-08,distribution_licence_area,ENUM,MSEDCL/TATA_POWER/AEML/BEST/TORRENT_FRANCHISE/OTHER/UNKNOWN,Electricity,,ACTIVE,VERIFIED
+F-PRD-01,product_in_EIA_5f_scope,BOOL_OR_UNKNOWN,,EC,Expert/appraisal classification; never inferred from name,ACTIVE,VERIFIED
+F-PRD-02,product_type_special,ENUM_SET,PESTICIDE_TECHNICAL/BULK_DRUG/DYE_INTERMEDIATE/PAINT_INTEGRATED/NONE/UNKNOWN,EC 5(b)/5(h); conditional regs,,ACTIVE,VERIFIED
+F-PRD-03,process_mode,ENUM,SYNTHESIS/FORMULATION_ONLY/BLENDING_ONLY/MIXED/UNKNOWN,MPCB sector code; EC,,ACTIVE,VERIFIED
+F-PRD-04,special_substance_flags,ENUM_SET,EXPLOSIVE/NDPS/CWC/ODS/EXCISE/NONE/UNKNOWN,Conditional regs,All not researched,ACTIVE,VERIFIED
+F-PRC-01,water_consumption_m3_per_day,NUMBER,m3/day,EIA small-unit exception,,ACTIVE,VERIFIED
+F-PRC-02,fuel_consumption_tpd,NUMBER,tonnes/day,EIA small-unit exception,,ACTIVE,VERIFIED
+F-PRC-03,is_MAH_under_MSIHC,DERIVED_BOOL,,EIA small-unit exception; DISH category,Derived from F-HAZ-01,ACTIVE,VERIFIED
+F-PRC-04,dg_set_present,BOOL_OR_UNKNOWN,,MPCB,,ACTIVE,VERIFIED
+F-MPCB-01,cpcb_sector_codes,LIST,"e.g. 111.1,111.2,42.1,76",MPCB category,Per activity,ACTIVE,VERIFIED
+F-BLD-01,total_built_up_area_m2,NUMBER,m2,EIA 8(a)/8(b),,ACTIVE,VERIFIED
+F-BLD-02,built_up_is_industrial_shed_only,BOOL_OR_UNKNOWN,,EIA 8(a) exclusion,,DEPRECATED,DO_NOT_IMPLEMENT_YET
+F-BLD-03,project_area_ha,NUMBER,ha,EIA 8(b),,ACTIVE,VERIFIED
+F-HAZ-01,hazardous_chemical_inventory,LIST,"[{chemical, cas, max_qty_t, storage_type ISOLATED/PROCESS}]",MSIHC,,ACTIVE,VERIFIED
+F-HAZ-02,msihc_schedule_mapping,LIST,"[{chemical, schedule, col3_t, col4_t}]",MSIHC,Must be sourced from Sch 2/3,ACTIVE,VERIFIED
+F-PET-01,petroleum_class,ENUM per product,A/B/C/NOT_PETROLEUM/UNKNOWN,PESO,Flash point basis,ACTIVE,VERIFIED
+F-PET-02,petroleum_qty_litres,NUMBER per class,L,PESO,,ACTIVE,VERIFIED
+F-PET-03,storage_mode,ENUM,BULK/NON_BULK,PESO,,ACTIVE,VERIFIED
+F-PET-04,max_receptacle_litres,NUMBER,L,PESO exemptions,,ACTIVE,VERIFIED
+F-GAS-01,gas_cylinder_inventory,LIST,"[{gas, n_cylinders, kg}]",GCR,,ACTIVE,VERIFIED
+F-GAS-02,lpg_own_use_kg,NUMBER,kg,GCR r.44,,ACTIVE,VERIFIED
+F-PV-01,pressure_vessels,LIST,"[{water_capacity_L, gas, is_process_vessel}]",SMPV,,ACTIVE,VERIFIED
+F-PV-02,cryogenic_vessel,BOOL,,SMPV,,ACTIVE,VERIFIED
+F-BLR-01,boiler_volume_L,NUMBER,L,Boilers Act,,ACTIVE,VERIFIED
+F-BLR-02,boiler_pressure_kgcm2,NUMBER,kg/cm2,Boilers Act,,ACTIVE,VERIFIED
+F-BLR-03,boiler_water_temp_C,NUMBER,C,Boilers Act,,ACTIVE,VERIFIED
+F-WAT-01,water_source,ENUM_SET,MIDC/MUNICIPAL/GROUNDWATER/SURFACE/TANKER/UNKNOWN,Water approvals,,ACTIVE,VERIFIED
+F-WAT-02,effluent_generated,BOOL_OR_UNKNOWN,,Consent,,ACTIVE,VERIFIED
+F-WAT-03,discharge_mode,ENUM,CETP/ZLD/SEWER/SURFACE/UNKNOWN,Consent/MIDC drainage,,ACTIVE,VERIFIED
+F-WAT-04,cetp_available_and_accepting,BOOL_OR_UNKNOWN,,CETP,Never default TRUE,ACTIVE,VERIFIED
+F-WAT-05,groundwater_abstraction_m3_per_day,NUMBER,m3/day,CGWA,,ACTIVE,VERIFIED
+F-WAT-06,groundwater_purpose,ENUM,INDUSTRIAL/DOMESTIC_ONLY/BOTH,CGWA,,ACTIVE,VERIFIED
+F-WAT-07,surface_water_drawal,BOOL_OR_UNKNOWN,,WRD,,ACTIVE,VERIFIED
+F-WAT-08,construction_dewatering,BOOL_OR_UNKNOWN,,CGWA,,ACTIVE,VERIFIED
+F-WAT-09,assessment_unit_category,ENUM,SAFE/SEMI_CRITICAL/CRITICAL/OVER_EXPLOITED/UNKNOWN,CGWA,,ACTIVE,VERIFIED
+F-ELE-01,connection_voltage_kV,NUMBER,kV,Electrical inspection,,ACTIVE,VERIFIED
+F-ELE-02,state_notified_self_cert_voltage_kV,NUMBER_OR_UNKNOWN,kV,Electrical inspection,Value UNKNOWN (UNK-005),ACTIVE,VERIFIED
+F-ELE-03,connected_load_kW,NUMBER,kW,Connection,,ACTIVE,VERIFIED
+F-LFT-01,lift_count,INTEGER,,Lifts,,ACTIVE,VERIFIED
+F-LAB-01,max_workers_any_day_prev_12_months,INTEGER,,Factory threshold,,ACTIVE,VERIFIED
+F-LAB-02,manufacturing_with_power,BOOL,,Factory threshold,,ACTIVE,VERIFIED
+F-LAB-03,max_contract_labour,INTEGER,,Contract labour,,ACTIVE,VERIFIED
+F-LAB-04,is_contractor,BOOL,,Contractor licence,,ACTIVE,VERIFIED
+F-LAB-05,construction_workers,INTEGER,,BOCW,Threshold unverified,ACTIVE,VERIFIED
+F-LAB-06,total_employees,INTEGER,,OSH registration,,ACTIVE,VERIFIED
+F-HW-01,hw_generated,BOOL_OR_UNKNOWN,,HW authorisation,,ACTIVE,VERIFIED
+F-HW-02,hw_streams,LIST,"[{description, schedule, entry_no (as determined by MPCB/consultant), qty_tpa}]",HW,"Entry numbers must be supplied, not inferred",ACTIVE,VERIFIED
+F-HW-03,hw_utilisation_or_recovery,BOOL_OR_UNKNOWN,,HW r.9,,ACTIVE,VERIFIED
+F-SITE-01,trees_to_fell,BOOL_OR_UNKNOWN,,Tree permission,,ACTIVE,VERIFIED
+F-EXP-01,is_expansion_or_modernisation,BOOL,,EC 7(ii); MPCB,,ACTIVE,VERIFIED
+F-EXP-02,pollution_load_increase,BOOL_OR_UNKNOWN,,EC 7(ii)(b),,ACTIVE,VERIFIED
+F-INC-01,msme_class,DERIVED_ENUM,MICRO/SMALL/MEDIUM/LARGE/UNKNOWN,Incentives,Requires both investment AND turnover,ACTIVE,VERIFIED
+F-INC-02,pm_investment_cr,NUMBER,Rs crore,MSME class,,ACTIVE,VERIFIED
+F-INC-03,sector_thrust_flag,DERIVED_BOOL,,Incentives,,ACTIVE,VERIFIED
+F-INC-04,taluka_basket,DERIVED_ENUM,A/B/C/D/D+/SPECIAL_REGION/NO_INDUSTRY_NAXAL_ASPIRATIONAL/UNKNOWN,Incentives,From taluka via Annexure 1,ACTIVE,VERIFIED
+F-INC-05,export_share_pct,NUMBER,%,Capital subsidy / ED,,ACTIVE,VERIFIED
+F-INC-06,ownership_category,ENUM,WOMEN/SC/ST/PWD/GENERAL/UNKNOWN,Incentives,,ACTIVE,VERIFIED
+F-INC-07,women_staff_share_pct,NUMBER,%,Capital subsidy,,ACTIVE,VERIFIED
+F-INC-08,fci_cr_and_direct_jobs,NUMBER_PAIR,Rs crore; count,LSI thresholds,,ACTIVE,VERIFIED
+F-INC-09,turnover_cr,NUMBER,Rs crore,MSME class,,ACTIVE,VERIFIED
+F-OTH-01,sells_prepackaged_commodities,BOOL_OR_UNKNOWN,,Legal metrology,,ACTIVE,VERIFIED
+F-OTH-02,within_aerodrome_height_zone,BOOL_OR_UNKNOWN,,AAI,,ACTIVE,VERIFIED
+F-OTH-03,annual_energy_consumption_toe,NUMBER,toe,EC Act,Applicability UNKNOWN,ACTIVE,VERIFIED
+F-OTH-04,transports_hazardous_goods,BOOL_OR_UNKNOWN,,CMVR,,ACTIVE,VERIFIED
+F-OTH-05,epr_role,ENUM_SET,PIBO/BATTERY/EWASTE/NONE/UNKNOWN,EPR,,ACTIVE,VERIFIED
+F-LOC-09,site_coordinates,GEO,"lat,lon (WGS84) | UNKNOWN",GC distances; CRZ; ESZ; AAI,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-10,in_estate_notified_for_consent_guidelines (State/UT/local body notified industrial estate/area),BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-016 deemed CTE,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-11,district,TEXT,name | UNKNOWN,Authorities; incentives,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-12,industrial_estate_name,TEXT,name | NONE | UNKNOWN,Estate EC; CETP,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-13,"gc_distances_km {protected_area, cpa, esa, interstate_boundary}",NUM_MAP_OR_UNKNOWN,km each | UNKNOWN,EIA GC (whole or part within 5 km),UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-14,in_crz,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,CRZ,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-15,forest_land_involved,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,Van Adhiniyam,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-16,in_esz_or_wildlife_area,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,WLPA / ESZ,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-17,structure_height_m_amsl,NUM_OR_UNKNOWN,m | UNKNOWN,AAI height NOC,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-18,plot_area_m2 / land_tenure (MIDC_LEASE/OWNED/LEASED/UNKNOWN),MIXED,m2; enum,MIDC; planning,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-PRD-05,"products [{name, CAS, product_family, capacity_tpa}]",LIST_OR_UNKNOWN,list | UNKNOWN,EIA scope; CWC; CPCB code,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-PRD-06,"raw_materials [{name, CAS, hazard_class, max_inventory_t}]",LIST_OR_UNKNOWN,list | UNKNOWN,MSIHC; PESO; NDPS,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-HAZ-03,"storage_units [{chemical, mode TANK/DRUM/CYLINDER/VESSEL, capacity, location_group}]",LIST_OR_UNKNOWN,list | UNKNOWN,MSIHC aggregation; PESO,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-GAS-03,gas_type_group per cylinder set (FLAMMABLE_NONTOXIC/NONFLAMMABLE_NONTOXIC/TOXIC/DISSOLVED_ACETYLENE/LPG),ENUM_OR_UNKNOWN,enum | UNKNOWN,GCR r.44,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-BLR-04,steam_generated_for_external_use,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,Boilers Act s.2(c),UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-BLR-05,boiler_design_gauge_pressure_kgcm2,NUM_OR_UNKNOWN,kg/cm2,Boilers Act s.2(c)(ii),UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-BLR-06,total_boiler_heating_surface_m2,NUM_OR_UNKNOWN,m2,BOE Rules 2025,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LAB-07,hazardous_process_first_schedule,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,OSH s.22; s.2(1)(za),UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LAB-08,interstate_migrant_workers,NUM_OR_UNKNOWN,count,ISMW provisions,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LAB-09,work_intermittent_or_casual_only,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,OSH s.45(2),UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-CWC-01,unscheduled_DOC_synthesised_t_prev_year,NUM_OR_UNKNOWN,t/yr,CWC OCPF,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-CWC-02,PSF_chemical_synthesised_t_prev_year,NUM_OR_UNKNOWN,t/yr,CWC OCPF,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-CWC-03,"cwc_scheduled_chemicals [{schedule, qty}]",LIST_OR_UNKNOWN,list | UNKNOWN,CWC Sch 2/3,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-NDPS-01,controlled_substances_handled,LIST_OR_UNKNOWN,list | NONE | UNKNOWN,RCS Order,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-INS-01,manufactures_insecticide,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,Insecticides Act,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-DRG-01,manufactures_drug_for_sale,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,Drugs Rules,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LM-01,max_package_size_kg_or_L,NUM_OR_UNKNOWN,kg or L,LM(PC) r.3,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LM-02,buyer_type (RETAIL/INDUSTRIAL_CONSUMER/INSTITUTIONAL_CONSUMER/MIXED),ENUM_OR_UNKNOWN,enum | UNKNOWN,"LM(PC) r.2(bb), r.3",UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-CHG-01,"change_types [PRODUCT, PROCESS, INVENTORY, WASTE_STREAM, WATER, FUEL, CAPACITY, NAME]",LIST_OR_UNKNOWN,list | NONE | UNKNOWN,EC 7(ii); MPCB amendment/fresh; MSIHC r.8/r.11,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-WAT-10,river_or_surface_source_name,TEXT_OR_UNKNOWN,name | NONE | UNKNOWN,WRD permission,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-FUEL-01,fuel_types_and_tpd,LIST_OR_UNKNOWN,list,EIA small-unit; consent,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-EFF-01,effluent_destination (CETP/ZLD/SEWER/SURFACE/NONE/UNKNOWN) and qty_m3_day,MIXED,enum; m3/day,Consent; CETP,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-INC-10,ownership_structure (PROPRIETORSHIP/PARTNERSHIP/LLP/COMPANY/UNKNOWN),ENUM_OR_UNKNOWN,enum,Incentive documents,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-PA-02,planning_or_local_authority_has_CFO,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-078,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-BLD-10,MFPLSM_Schedule_I_building_class (G-1/G-2/G-3/H/J/other/UNKNOWN),ENUM_OR_UNKNOWN,enum,R-079,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-BLD-11,aggregate_floor_area_largest_building_m2,NUMBER_OR_UNKNOWN,m2,R-079,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-GEO-01,CRZ_category_of_site (CRZ-I/II/III/IV/NOT_IN_CRZ/UNKNOWN) from approved CZMP,ENUM_OR_UNKNOWN,enum,R-083,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-GEO-03,forest_area_ha,NUMBER_OR_UNKNOWN,ha,R-084,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-GEO-04,site_within_notified_ESZ,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-085,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-GEO-05,distance_to_nearest_NP_or_WLS_km,NUMBER_OR_UNKNOWN,km,R-085,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-GEO-06,ESZ_notified_for_that_PA,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-085,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-GW-01,CGWB_assessment_unit_category (SAFE/SEMI_CRITICAL/CRITICAL/OVER_EXPLOITED/UNKNOWN),ENUM_OR_UNKNOWN,enum,R-077,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-GW-02,well_depth_m,NUMBER_OR_UNKNOWN,m,R-097,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-GW-03,MWRRA_notified_area,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-097,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-BLR-07,boiler_registration_status (REGISTERED_UNDER_1923_ACT/REGISTERED_UNDER_2025_ACT/NOT_REGISTERED/UNKNOWN),ENUM_OR_UNKNOWN,enum,R-086;R-087,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-BLR-08,boiler_certificate_expiry_date,DATE_OR_UNKNOWN,date,R-087;R-088,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LAB-10,engages_workers_in_Mathadi_scheduled_employment,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-098,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-LOC-19,locality_covered_by_Mathadi_board_notification,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-098,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-HAZ-04,chemical_inventory (CAS or name; physical state; flash point; boiling point; LD50/LC50; max qty t; installation id; distance matrix),LIST_OR_UNKNOWN,list,R-091,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-HW-04,lab_results_for_Schedule_II_tests,LIST_OR_UNKNOWN,list,R-096,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-TRN-01,consigns_CMVR_Table_III_goods_by_road,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-093,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-EEE-01,units_of_Schedule_I_EEE_used_in_FY,NUMBER_OR_UNKNOWN,units,R-094,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-ODS-01,uses_ODS_in_Schedule_IV_activity,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-095,UNKNOWN is always a permitted value and never coerced to FALSE,ACTIVE,VERIFIED
+F-FIR-20,separate_act_or_rule_specifically_requires_fire_approval_renewal,BOOL_OR_UNKNOWN,TRUE/FALSE/UNKNOWN,R-099,Answer from the other statute's text; Petroleum/GCR claim in PA-7 order unverified (FR-03),ACTIVE,VERIFIED
+F-PLN-02,zone (DP/RP land-use zone of site),TEXT_OR_UNKNOWN,text | UNKNOWN,R-105,UNKNOWN is always permitted and never coerced to FALSE,ACTIVE,VERIFIED
+F-PLN-03,proposed_use,TEXT_OR_UNKNOWN,text | UNKNOWN,R-105,UNKNOWN is always permitted and never coerced to FALSE,ACTIVE,VERIFIED
+F-PLN-04,existing_use,TEXT_OR_UNKNOWN,text | UNKNOWN,R-105,UNKNOWN is always permitted and never coerced to FALSE,ACTIVE,VERIFIED

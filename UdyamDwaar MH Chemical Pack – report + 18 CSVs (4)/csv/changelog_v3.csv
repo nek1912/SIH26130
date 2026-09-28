@@ -1,0 +1,767 @@
+change_id,table,record_id,field,OLD_VALUE,NEW_VALUE,REASON,SOURCE_ID,EXACT_LOCATOR,SOURCE_TIER,EFFECTIVE_DATE,CONFIDENCE,change_type
+V3-0001,sources,SRC-111,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-111,"r.3, r.4, r.7, r.14, r.72, r.74, r.98",T1,08-05-2026,HIGH,ADDITION
+V3-0002,sources,SRC-112,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-112,"paras 3, 4(i), 4(ii), 4(xi), 5.1.2(v), 7, 8, Annexure-II",T1,18-01-2019,HIGH,ADDITION
+V3-0003,sources,SRC-113,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-113,"r.9, r.10",T1,01-12-2023,HIGH,ADDITION
+V3-0004,sources,SRC-114,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-114,order text,T2,04-12-2006,HIGH,ADDITION
+V3-0005,sources,SRC-115,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-115,"paras on 06-09-2016 letter; shed >=1,50,000 m2",T2,04-10-2022,HIGH,ADDITION
+V3-0006,sources,SRC-116,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-116,full,T2,09-06-2015,HIGH,ADDITION
+V3-0007,sources,SRC-117,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-117,"r.2, r.42, r.62, r.131, r.144, First Schedule",T1,,HIGH,ADDITION
+V3-0008,sources,SRC-118,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-118,draft rule omitting r.48,T1,,HIGH,ADDITION
+V3-0009,sources,SRC-119,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-119,"r.7, r.9, r.10, r.26",T1,,HIGH,ADDITION
+V3-0010,sources,SRC-120,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-120,r.3(17); Schedule II Class A/B/C,T2,04-04-2016,HIGH,ADDITION
+V3-0011,sources,SRC-121,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-121,"s.2, s.3(1), s.3(1C), s.3(3), Schedule-I (G-1/G-2/G-3, H, J)",T1,,HIGH,ADDITION
+V3-0012,sources,SRC-122,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-122,"rows 7, 10, 42",T3,,MEDIUM,ADDITION
+V3-0013,sources,SRC-123,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-123,"s.2(19), s.18, s.40, s.44, s.45(5), s.46, s.47, s.52",T1,,HIGH,ADDITION
+V3-0014,sources,SRC-124,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-124,"Reg. 1.1, 1.4, 2.1.1, 2.1.2",T2,03-12-2020,HIGH,ADDITION
+V3-0015,sources,SRC-125,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-125,operative period clause; taluka-group tables,T1,01-04-2019,HIGH,ADDITION
+V3-0016,sources,SRC-126,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-126,para 2.6 as amended,T1,14-05-2025,HIGH,ADDITION
+V3-0017,sources,SRC-127,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-127,"r.3, r.6, r.8, r.11",T1,,HIGH,ADDITION
+V3-0018,sources,SRC-128,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-128,"s.1(4A), Schedule, footnotes",T1,,HIGH,ADDITION
+V3-0019,sources,SRC-129,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-129,Form R.S. II provisions,T2,,HIGH,ADDITION
+V3-0020,sources,SRC-130,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-130,services list,T3,,MEDIUM,ADDITION
+V3-0021,sources,SRC-131,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-131,s.1(3) footnote 2,T1,01-06-2014,HIGH,ADDITION
+V3-0022,sources,SRC-132,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-132,"s.2 (deep well >=60 m), s.3, s.4, s.8",T1,,HIGH,ADDITION
+V3-0023,sources,SRC-133,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-133,list,T3,,MEDIUM,ADDITION
+V3-0024,sources,SRC-134,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-134,Schedule 1 Part I; Schedule 2; Schedule 3 Parts I-II,T2,,HIGH,ADDITION
+V3-0025,sources,SRC-135,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-135,r.3 'bulk consumer'; r.8,T1,01-04-2023,HIGH,ADDITION
+V3-0026,sources,SRC-136,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-136,DISH rows 1-7; Boilers rows 1-29; Labour Commissioner rows 1-23,T3,,MEDIUM,ADDITION
+V3-0027,sources,SRC-137,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-137,fee/forms table; bulk-drug documents,T3,,MEDIUM,ADDITION
+V3-0028,sources,SRC-138,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-138,notice,T3,,MEDIUM,ADDITION
+V3-0029,sources,SRC-139,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-139,insecticide licence row,T4,,MEDIUM,ADDITION
+V3-0030,sources,SRC-140,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-140,fee provisions,T2,,HIGH,ADDITION
+V3-0031,sources,SRC-141,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-141,list,T3,,MEDIUM,ADDITION
+V3-0032,sources,SRC-142,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-142,page,T3,,MEDIUM,ADDITION
+V3-0033,sources,SRC-143,(record),(did not exist in v2),ADDED,Stage-3 closure research source,SRC-143,UDCPR entries,T3,,MEDIUM,ADDITION
+V3-0034,approvals,APR-023,legal_basis,"Boilers Act 2025 (in force 01-05-2025); final rules incl. Boiler Operation Engineers' Rules 2025 (G.S.R.705(E), superseding 2021 rules) and Boilers (Appeal and Revision) Rules 2025; Maharashtra services run under MRTPS Act 2015 via LMS (PORTAL LEGACY SERVICE - neither 1923 nor 2025 Act cited)","Boilers Act 2025 s.2(c), s.9, s.11, s.12 (registration), s.13-16 (certificate cessation/renewal/provisional order/revocation), s.45 (repeal & savings); Maharashtra Boiler Rules 1962 continue under s.45(2)(a) until replaced",Registration/certificate provisions extracted (closes UNK-038),SRC-034;SRC-140,"Boilers Act 2025 ss.11-16, 45",T1;T2,2025-05-01,HIGH,CORRECTION
+V3-0035,approvals,APR-023,notes,State page cites 1923 Act (conflict CON-004),"Registration: application to Inspector; exam date within 30 d (or shorter State period), >=10 d notice; report to Chief Inspector within 7 d; certificate <=12 months (<=24 for integral economiser/unfired boiler heated by oil/asphalt/bitumen); provisional order <=6 months. Existing 1923-Act registrations deemed registered; certificates continue until date shown (s.45(2)(f),(g)). Maharashtra services still cite the 1923 Act (PORTAL_LEGACY) - see boiler_lifecycle.csv",Replace 'unknown' with extracted statutory workflow,SRC-034;SRC-136,"ss.12, 14, 45",T1;T3,2025-05-01,HIGH,CORRECTION
+V3-0036,compliance,CMP-009,frequency_deadline,Annual (per regime),Certificate ceases on expiry (<=12 months) or s.13(1)(b)-(f) events; owner applies to competent person; inspection within 15 d (s.13(4)); defects to owner within 48 h; Chief Inspector renews/refuses (s.13(6)); use pending renewal allowed only if renewal applied before expiry (s.15),Renewal/revalidation text extracted,SRC-034,"s.13, s.15",T1,2025-05-01,HIGH,CORRECTION
+V3-0037,compliance,CMP-009,legal_basis,Boilers Act 2025; IBR 1950,"Boilers Act 2025 s.13, s.15, s.19",Boilers Act 2025 replaces 1923 Act,SRC-034,s.13,T1,2025-05-01,HIGH,CORRECTION
+V3-0038,compliance,CMP-009,source_ids,SRC-031;SRC-032,SRC-034;SRC-136,add T1 source,SRC-034,s.13,T1,2025-05-01,HIGH,CORRECTION
+V3-0039,compliance,CMP-009,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,Statutory renewal path verified; period of renewed certificate is 'as specified by regulations' (not captured) -> period value UNKNOWN,SRC-034,s.13(5)(a),T1,2025-05-01,HIGH,CORRECTION
+V3-0040,rules,R-028,notes,Boundary semantics (< vs <=) and exact text must be confirmed from SRC-034 - REQUIRES_OFFICIAL_CONFIRMATION,s.2(c) definition verified in v2 (UNK-021 closed). Evaluate UNKNOWN when an operand is UNKNOWN.,Remove stale 'must be confirmed' note (contradicted UNK-021 VERIFIED),SRC-034,s.2(c),T1,2025-05-01,HIGH,CORRECTION
+V3-0041,rules,R-024,condition,OSH_REG := F-LAB-06 >= 10,OSH_REG := (F-LAB-06 >= 10) OR (F-LAB-07 == TRUE AND establishment carries on a notified hazardous activity) ; UNKNOWN if F-LAB-06 UNKNOWN,Threshold text re-read: s.2(1)(v) 10 workers; threshold does not apply to notified hazardous activities,SRC-081,s.2(1)(v); s.3(1),T1,2025-11-21,HIGH,CORRECTION
+V3-0042,rules,R-024,final_status,DO_NOT_IMPLEMENT_YET,VERIFIED_CONDITIONAL,"The statutory duty and threshold are T1 and in force (S.O. 5321(E)). Maharashtra procedure/form/portal remains REQUIRES_OFFICIAL_CONFIRMATION (State rules DRAFT) - tracked in labour_matrix, not in this applicability rule",SRC-081;SRC-080,s.3; commencement,T1,2025-11-21,HIGH,CORRECTION
+V3-0043,rules,R-024,effective_from,ON MH RULES FINALISATION,2025-11-21,Code provisions in force from 21-11-2025; applicability does not wait for State rules,SRC-080,S.O. 5321(E),T1,2025-11-21,HIGH,CORRECTION
+V3-0044,approvals,APR-060,final_status,DO_NOT_IMPLEMENT_YET,VERIFIED_CONDITIONAL,Duty (s.3) and 10-worker threshold verified T1; MH form/portal REQUIRES_OFFICIAL_CONFIRMATION,SRC-081,s.3,T1,2025-11-21,HIGH,CORRECTION
+V3-0045,approvals,APR-022,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,ISMW Part applies to establishments employing >=10 inter-State migrant workers (s.59); MH service still cites ISMW Act 1979 (PORTAL_LEGACY),SRC-081;SRC-136,s.59,T1;T3,2025-11-21,HIGH,CORRECTION
+V3-0046,approvals,APR-021,notes,,"OSH Code s.2(1)(h): 'building or other construction work' excludes construction work related to a factory or mine and own-residence work <= Rs 50 lakh. Whether construction of a new chemical factory building falls in the exclusion is NOT resolved by the text read -> REQUIRES_OFFICIAL_CONFIRMATION. MH service still under BOCW Act 1996 (PORTAL_LEGACY, 7 d).",BOCW threshold/exclusion extracted,SRC-081;SRC-136,s.2(1)(h),T1;T3,2025-11-21,HIGH,CORRECTION
+V3-0047,compliance,CMP-013,final_status,UNKNOWN,REQUIRES_OFFICIAL_CONFIRMATION,OSH s.33 returns 'as prescribed'; Central Rules r.72/74 (Form XVII by 28/29 Feb) are for Central-sphere establishments; MH State rules DRAFT; MFR 1963 returns TRANSITIONAL_SAVED under s.143 to the extent not contrary,SRC-081;SRC-111,"s.33; s.143; r.72, r.74",T1,2026-05-08,HIGH,CORRECTION
+V3-0048,compliance,CMP-017,notes,,Central Rules r.7: Form XI; 12 h after 48-h incapacity; dangerous occurrence within 12 h - applies to Central-sphere establishments. State-sphere (MH) form/time: MFR 1963 provisions TRANSITIONAL_SAVED (s.143) unless contrary; MH OSH rules DRAFT. Kept DO_NOT_IMPLEMENT_YET for MH deterministic timing.,Accident reporting evidence added,SRC-111;SRC-081,r.7; s.143,T1,2026-05-08,HIGH,CORRECTION
+V3-0049,compliance,CMP-006,frequency_deadline,Periodic (period not extracted),Half-yearly compliance reports on 1 June and 1 December each calendar year (para 10(ii)); EC publicity: Cat A two local newspapers + website; Cat B newspaper advertisement (para 10(i)),EIA para 10 extracted (closes UNK-017),SRC-001,EIA 2006 para 10(i)-(ii) (consolidated 13-07-2026),T1,2026-07-13,HIGH,CORRECTION
+V3-0050,compliance,CMP-006,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,Para 10 text T1; PARIVESH upload mechanics are portal facts,SRC-001,para 10,T1,2026-07-13,HIGH,CORRECTION
+V3-0051,rules,R-004,source_locator,General Condition note to Schedule,EIA Schedule General Condition: 'located in whole or in part within 5 km from the boundary of' PA / CPA / ESA / inter-State & international boundaries; 10 km for 7(c) estates,GC wording verified verbatim,SRC-001,General Condition,T1,2026-07-13,HIGH,CORRECTION
+V3-0052,rules,R-071,condition,MH_GW_ACT := UNKNOWN until s.1(3) commencement notification verified,MH_GW_ACT_IN_FORCE := TRUE from 01-06-2014 ; MH_GW_DEEP_WELL_BRANCH evaluated by R-098 ; Groundwater Rules 2018 remain DRAFT,Commencement footnote found (G.N. WS&SD 28-05-2014),SRC-131,s.1(3) footnote 2,T1,2014-06-01,HIGH,CORRECTION
+V3-0053,rules,R-071,effective_from,UNKNOWN,2014-06-01,Commencement verified,SRC-131,s.1(3) footnote 2,T1,2014-06-01,HIGH,CORRECTION
+V3-0054,rules,R-071,final_status,VERIFIED_CONDITIONAL,VERIFIED,T1 commencement verified,SRC-131,s.1(3) footnote,T1,2014-06-01,HIGH,CORRECTION
+V3-0055,rules,R-071,source_id,SRC-097,SRC-131;SRC-132,add T1 sources,SRC-131,s.1(3),T1,2014-06-01,HIGH,CORRECTION
+V3-0056,rules,R-029,final_status,REQUIRES_OFFICIAL_CONFIRMATION,DO_NOT_IMPLEMENT_YET,"Petroleum Rules 2002 T1 text (r.2, r.42, r.62, First Schedule) read: no Class A <=30 L storage exemption found; only T3 SOP states it (CON-014). A T3 source cannot establish the threshold when T1 is available.",SRC-117;SRC-017,r.42 (30 L relates to vessels); r.62 (transport Class A <=100 L),T1;T3,2002,HIGH,CORRECTION
+V3-0057,rules,R-032,source_id,SRC-017,SRC-117;SRC-017,Form scopes now from T1 First Schedule,SRC-117,First Schedule,T1,2002,HIGH,CORRECTION
+V3-0058,rules,R-032,source_locator,SOP forms table,"Petroleum Rules 2002 First Schedule: Form XII Class A <=300 L (DA); Form XIII Class B non-bulk <=25,000 L (DA); Form XV installation (CCE/Controller); Form XVI non-bulk A >300 L / B >25,000 L / C >45,000 L (Controller)",T1 locator,SRC-117,First Schedule,T1,2002,HIGH,CORRECTION
+V3-0059,rules,R-032,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,T1 scopes; combinations of classes remain UNKNOWN; post-2019 amendments not checked,SRC-117,First Schedule,T1,2002,MEDIUM,CORRECTION
+V3-0060,rules,R-033,final_status,REQUIRES_OFFICIAL_CONFIRMATION,DO_NOT_IMPLEMENT_YET,GCR 2016 r.44 text only from T5 copies; official rule text not captured; draft GSR 146(E) 2026 exists. Instruction: do not implement r.44 until authoritative text captured.,SRC-093;SRC-118,r.44,T1;T5,2016,LOW,CORRECTION
+V3-0061,rules,R-034,final_status,VERIFIED_CONDITIONAL,REQUIRES_OFFICIAL_CONFIRMATION,SMPV(U) r.2/r.3 text only from T5 copies; T3 PESO SOP consistent. Decision branch confirmation-gated until official rule text verified.,SRC-094;SRC-020,"r.2, r.3",T3;T5,2016,MEDIUM,CORRECTION
+V3-0062,approvals,APR-027,final_status,REQUIRES_OFFICIAL_CONFIRMATION,DO_NOT_IMPLEMENT_YET,Depends on R-033 (GCR r.44) which is DO_NOT_IMPLEMENT_YET,SRC-093;SRC-118,r.44,T1;T5,2016,LOW,CORRECTION
+V3-0063,rules,R-041,condition,NONMIDC_BP := F-LOC-01 == FALSE AND construction == TRUE; authority := F-LOC-05,NONMIDC_BP := F-LOC-01 == FALSE AND construction == TRUE ; authority := R-080(F-LOC-05) ; DCR := R-082(F-LOC-05) ; UNKNOWN if F-LOC-05 UNKNOWN,"Jurisdiction-aware authority logic (MRTP s.18/s.44, UDCPR 1.1)",SRC-123;SRC-124,"MRTP s.18, s.44; UDCPR Reg.1.1",T1;T2,1966/2020,HIGH,CORRECTION
+V3-0064,rules,R-041,legal_basis,MRTP Act; MPCB circular 24-07-2025,"MRTP Act 1966 s.18, s.44, s.45, s.46; UDCPR Reg.2.1.1 (where UDCPR applies)",Primary law replaces circular-only basis,SRC-123;SRC-124,ss.44-45,T1;T2,1966,HIGH,CORRECTION
+V3-0065,rules,R-041,source_id,SRC-067,SRC-123;SRC-124;SRC-067,add T1/T2,SRC-123,s.44,T1,1966,HIGH,CORRECTION
+V3-0066,rules,R-041,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,Applicability and authority determination sourced; timelines/fees per planning authority NOT uniform,SRC-123;SRC-124,ss.44-45; Reg.1.1,T1;T2,1966,HIGH,CORRECTION
+V3-0067,approvals,APR-038,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,MRTP s.44/45 permission + commencement certificate; authority depends on the particular planning authority (see planning_fire_tree),SRC-123,"s.44, s.45(2)",T1,1966,HIGH,CORRECTION
+V3-0068,rules,R-042,condition,NONMIDC_FIRE := F-LOC-01 == FALSE AND building requires fire NOC,NONMIDC_FIRE := F-LOC-01 == FALSE AND R-079 == TRUE ; authority := R-078 ; renewal requirement := UNKNOWN (CON-013),Link to sourced applicability/authority rules,SRC-121,s.3(1),T1,2006,HIGH,CORRECTION
+V3-0069,rules,R-042,notes,Building-type thresholds for fire NOC not researched -> UNKNOWN,"Applicability: Schedule-I lists Industrial (G-1/G-2/G-3), Storage (H) and Hazardous (J) buildings with rows starting at 'up to 500 m2' -> industrial buildings are within Schedule-I. Authority: CFO of the local/planning authority, or Director where no CFO / outside local limits. Renewal: conflicting MFS circulars (CON-013).",Replace 'not researched',SRC-121;SRC-122,s.3(1); Schedule-I,T1;T3,2006,HIGH,CORRECTION
+V3-0070,approvals,APR-039,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,MFPLSM s.3(1) Provisional Fire Safety Approval; authority jurisdiction-dependent,SRC-121,s.3(1),T1,2006,HIGH,CORRECTION
+V3-0071,approvals,APR-040,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,MFPLSM s.3(1) Final Fire Safety Approval; renewal under CON-013,SRC-121,s.3(1),T1,2006,HIGH,CORRECTION
+V3-0072,rules,R-019,notes,Chemical not in mapping -> UNKNOWN (not FALSE). Examples: ammonia Sch3 col3 50 t; chlorine 10 t; hydrogen 2 t,Chemical not in mapping -> UNKNOWN (not FALSE). Per-chemical thresholds are held in msihc_chemical_mapping.csv. v2 example 'hydrogen 2 t' conflicts with the SPCB-hosted scan (two extractions: 50 t) -> CON-021; no example value is asserted here.,Remove unverified example value; do not silently overwrite - conflict registered,SRC-016;SRC-134,Sch 3 Part I,T1;T2,1989,MEDIUM,CORRECTION
+V3-0073,rules,R-020,notes,Examples: ammonia 500 t; chlorine 25 t,Per-chemical col 4 values in msihc_chemical_mapping.csv. v2 examples (ammonia 500 t; chlorine 25 t) differ from the SPCB-hosted scan extraction (ammonia 200 t; chlorine 25 t or 75 t) -> CON-021.,"Conflict registered, example removed",SRC-016;SRC-134,Sch 3 Part I,T1;T2,1989,MEDIUM,CORRECTION
+V3-0074,rules,R-021,notes,Definition column to be confirmed (UNK-015). Aggregation for Sch 3 Part II categories: rule text not re-verified,"MAH is DERIVED by the msihc_mapping_steps pipeline (never user-asserted). Output TRUE/FALSE/UNKNOWN with evidence chain (chemical -> schedule entry -> column 3 value -> aggregated qty -> comparison). FALSE only if every hazardous chemical on site is identity-resolved, class-resolved and quantity-known and none reaches col 3.",Stage-3 point 11,SRC-016;SRC-134,r.2(ja); Sch 2-3,T1;T2,1989,HIGH,CORRECTION
+V3-0075,rules,R-058,notes,Annexure not digitised in this pack,PSI under IISP 2025 not found after exhaustive search (incentive_search_log.csv). PSI 2019 period clause: till 31-03-2024 or till new PSI (SRC-125); 2025 corrigendum shows continued administration (SRC-126). DO_NOT_IMPLEMENT_YET retained.,Exhaustive search documented,SRC-125;SRC-126;SRC-061,PSI 2019 operative period; IISP 2025 GR,T1,2025-12-31,HIGH,CORRECTION
+V3-0076,rules,R-075,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-001,para 9,T1,2026-07-13,HIGH,ADDITION
+V3-0077,rules,R-076,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-001,para 10(ii),T1,2026-07-13,HIGH,ADDITION
+V3-0078,rules,R-077,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-052,para 4.1,T1,2020-09-24,HIGH,ADDITION
+V3-0079,rules,R-078,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-121,s.3(1),T1,2006,HIGH,ADDITION
+V3-0080,rules,R-079,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-121,Schedule-I Industrial (G) rows (i)-(iv),T1,2006,MEDIUM,ADDITION
+V3-0081,rules,R-080,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-123,s.18(1); s.44(1),T1,1966,HIGH,ADDITION
+V3-0082,rules,R-081,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-123,s.45(5) and provisos,T1,1966,HIGH,ADDITION
+V3-0083,rules,R-082,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-124,Reg. 1.1,T2,2020-12-03,MEDIUM,ADDITION
+V3-0084,rules,R-083,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-112,"paras 4(i), 4(ii), 4(xi)",T1,2019-01-18,HIGH,ADDITION
+V3-0085,rules,R-084,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-113,"r.9, r.10",T1,2023-12-01,HIGH,ADDITION
+V3-0086,rules,R-085,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-114,order text,T2,2006-12-04,MEDIUM,ADDITION
+V3-0087,rules,R-086,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-034,s.12(1)-(6),T1,2025-05-01,HIGH,ADDITION
+V3-0088,rules,R-087,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-034,s.45(2),T1,2025-05-01,HIGH,ADDITION
+V3-0089,rules,R-088,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-034,s.13(1)(a)-(f); s.15,T1,2025-05-01,HIGH,ADDITION
+V3-0090,rules,R-089,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-081,s.59,T1,2025-11-21,HIGH,ADDITION
+V3-0091,rules,R-090,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-081,s.2(1)(h),T1,2025-11-21,MEDIUM,ADDITION
+V3-0092,rules,R-091,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-016;SRC-134,r.2; Schedules 1-3,T1;T2,1989-11-27,MEDIUM,ADDITION
+V3-0093,rules,R-092,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-117,r.144,T1,2002,HIGH,ADDITION
+V3-0094,rules,R-093,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-102,r.131,T1,1993,HIGH,ADDITION
+V3-0095,rules,R-094,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-135,r.3; r.8,T1,2023-04-01,HIGH,ADDITION
+V3-0096,rules,R-095,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-127,r.8,T1,2000,MEDIUM,ADDITION
+V3-0097,rules,R-096,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-120,Schedule II Class A/B/C,T2,2016-04-04,MEDIUM,ADDITION
+V3-0098,rules,R-097,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-132;SRC-131,s.2 (deep well); s.8,T1,2014-06-01,MEDIUM,ADDITION
+V3-0099,rules,R-098,(record),(did not exist in v2),ADDED,Stage-3 closure rule,SRC-128,s.1(4A); footnotes,T1,1969,MEDIUM,ADDITION
+V3-0100,compliance,CMP-024,(record),(did not exist in v2),ADDED,Stage-3 closure obligation,SRC-102,r.131,T1,1993,HIGH,ADDITION
+V3-0101,compliance,CMP-025,(record),(did not exist in v2),ADDED,Stage-3 closure obligation,SRC-135,r.8,T1,2023-04-01,HIGH,ADDITION
+V3-0102,compliance,CMP-026,(record),(did not exist in v2),ADDED,Stage-3 closure obligation,SRC-081,s.84,T1,2025-11-21,HIGH,ADDITION
+V3-0103,compliance,CMP-027,(record),(did not exist in v2),ADDED,Stage-3 closure obligation,SRC-081,s.85,T1,2025-11-21,HIGH,ADDITION
+V3-0104,compliance,CMP-028,(record),(did not exist in v2),ADDED,Stage-3 closure obligation,SRC-034,s.15,T1,2025-05-01,HIGH,ADDITION
+V3-0105,compliance,CMP-029,(record),(did not exist in v2),ADDED,Stage-3 closure obligation,SRC-081,s.3,T1,2025-11-21,HIGH,ADDITION
+V3-0106,conditional_regs,CND-025,(record),(did not exist in v2),ADDED,Mathadi branch added,SRC-128,s.1(4A),T1,1969,MEDIUM,ADDITION
+V3-0107,facts,F-LOC-05,allowed_values_unit,MUNICIPAL_CORP/MUNICIPAL_COUNCIL/NAGAR_PANCHAYAT/SPA/COLLECTOR/OTHER/UNKNOWN,MIDC/MUNICIPAL_CORP:<name>/MUNICIPAL_COUNCIL:<name>/NAGAR_PANCHAYAT:<name>/SPA:<name>/RP_AREA_COLLECTOR/GAOTHAN_PANCHAYAT/UNKNOWN,Planning authority must be named - rules depend on the particular planning authority,SRC-123,"s.2(19), s.18(1), s.40",T1,1966,HIGH,CORRECTION
+V3-0108,facts,F-LOC-05,required_for,Non-MIDC building permission,R-041;R-078;R-080;R-082,link new rules,SRC-123,-,T1,1966,HIGH,CORRECTION
+V3-0109,facts,F-PA-02,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0110,facts,F-BLD-10,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0111,facts,F-BLD-11,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0112,facts,F-GEO-01,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0113,facts,F-GEO-03,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0114,facts,F-GEO-04,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0115,facts,F-GEO-05,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0116,facts,F-GEO-06,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0117,facts,F-GW-01,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0118,facts,F-GW-02,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0119,facts,F-GW-03,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0120,facts,F-BLR-07,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0121,facts,F-BLR-08,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0122,facts,F-LAB-10,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0123,facts,F-LOC-19,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0124,facts,F-HAZ-04,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0125,facts,F-HW-04,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0126,facts,F-TRN-01,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0127,facts,F-EEE-01,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0128,facts,F-ODS-01,(record),(did not exist in v2),ADDED,Fact needed by Stage-3 rule,USER-BRIEF-V3,input-fact schema,N/A,,HIGH,ADDITION
+V3-0129,sla,SLA-040,(record),(did not exist in v2),ADDED,Statutory timeline extracted in Stage 3,SRC-034,s.12(3)-(4),T1,2025-05-01,HIGH,ADDITION
+V3-0130,sla,SLA-041,(record),(did not exist in v2),ADDED,Statutory timeline extracted in Stage 3,SRC-034,s.13(4)-(5),T1,2025-05-01,HIGH,ADDITION
+V3-0131,sla,SLA-042,(record),(did not exist in v2),ADDED,Statutory timeline extracted in Stage 3,SRC-123,s.45(5),T1,1966,HIGH,ADDITION
+V3-0132,sla,SLA-043,(record),(did not exist in v2),ADDED,Statutory timeline extracted in Stage 3,SRC-123,s.47(1),T1,1966,HIGH,ADDITION
+V3-0133,sla,SLA-044,(record),(did not exist in v2),ADDED,Statutory timeline extracted in Stage 3,SRC-112,para 8,T1,2019-01-18,HIGH,ADDITION
+V3-0134,sla,SLA-045,(record),(did not exist in v2),ADDED,Statutory timeline extracted in Stage 3,SRC-117,r.144,T1,2002,HIGH,ADDITION
+V3-0135,sla,SLA-046,(record),(did not exist in v2),ADDED,Statutory timeline extracted in Stage 3,SRC-136,DISH rows 1-7,T3,2026-09-01,HIGH,ADDITION
+V3-0136,sla,SLA-047,(record),(did not exist in v2),ADDED,Statutory timeline extracted in Stage 3,SRC-136,Steam Boilers row 3,T3,2026-09-01,HIGH,ADDITION
+V3-0137,conflicts,CON-013,(record),(did not exist in v2),ADDED,Stage-3 conflict registered,SRC-122;SRC-121,"rows 10, 42",T1;T3,,LOW,ADDITION
+V3-0138,conflicts,CON-014,(record),(did not exist in v2),ADDED,Stage-3 conflict registered,SRC-017;SRC-117,r.42; r.62,T1;T3,,MEDIUM,ADDITION
+V3-0139,conflicts,CON-015,(record),(did not exist in v2),ADDED,Stage-3 conflict registered,SRC-131,s.1(3) footnote,T1,,HIGH,ADDITION
+V3-0140,conflicts,CON-016,(record),(did not exist in v2),ADDED,Stage-3 conflict registered,SRC-136;SRC-081;SRC-034,s.143; s.45,T1;T3,,HIGH,ADDITION
+V3-0141,conflicts,CON-018,(record),(did not exist in v2),ADDED,Stage-3 conflict registered,SRC-125;SRC-126;SRC-061,operative period clause,T1,,MEDIUM,ADDITION
+V3-0142,conflicts,CON-019,(record),(did not exist in v2),ADDED,Stage-3 conflict registered,SRC-052;SRC-132,Annexure VIII; s.8,T1,,MEDIUM,ADDITION
+V3-0143,conflicts,CON-020,(record),(did not exist in v2),ADDED,Stage-3 conflict registered,SRC-034;SRC-136,s.12(3),T1;T3,,HIGH,ADDITION
+V3-0144,conflicts,CON-021,(record),(did not exist in v2),ADDED,Stage-3 conflict registered,SRC-016;SRC-134,Sch 3 Part I,T1;T2,,LOW,ADDITION
+V3-0145,edge_tests,ET-114,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-001,para 9,T1,,HIGH,ADDITION
+V3-0146,edge_tests,ET-115,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-052,para 4.1,T1,,HIGH,ADDITION
+V3-0147,edge_tests,ET-116,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-052,UNKNOWN rule,T1,,HIGH,ADDITION
+V3-0148,edge_tests,ET-117,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-121,jurisdiction-aware,T1,,HIGH,ADDITION
+V3-0149,edge_tests,ET-118,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-123,MRTP s.18(1),T1,,HIGH,ADDITION
+V3-0150,edge_tests,ET-119,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-124,UDCPR 1.1,T2,,HIGH,ADDITION
+V3-0151,edge_tests,ET-120,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-112,CRZ,T1,,HIGH,ADDITION
+V3-0152,edge_tests,ET-121,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-114,SC order,T2,,HIGH,ADDITION
+V3-0153,edge_tests,ET-122,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-034,s.45(2),T1,,HIGH,ADDITION
+V3-0154,edge_tests,ET-123,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-034,s.13(1)(c),T1,,HIGH,ADDITION
+V3-0155,edge_tests,ET-124,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-034,s.15,T1,,HIGH,ADDITION
+V3-0156,edge_tests,ET-125,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-081;SRC-027,s.2(1)(v),T1;T5,,HIGH,ADDITION
+V3-0157,edge_tests,ET-126,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-081,s.2(1)(h),T1,,HIGH,ADDITION
+V3-0158,edge_tests,ET-127,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-016;SRC-134,R-091,T1;T2,,HIGH,ADDITION
+V3-0159,edge_tests,ET-128,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-016;SRC-134,R-091,T1;T2,,HIGH,ADDITION
+V3-0160,edge_tests,ET-129,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-120,Sch II,T2,,HIGH,ADDITION
+V3-0161,edge_tests,ET-130,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-017,CON-014,T3,,HIGH,ADDITION
+V3-0162,edge_tests,ET-131,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-117,r.144,T1,,HIGH,ADDITION
+V3-0163,edge_tests,ET-132,(record),(did not exist in v2),ADDED,Stage-3 edge test,SRC-135,r.8,T1,,HIGH,ADDITION
+V3-0164,boiler_lifecycle,(table),(table),(did not exist in v2),ADDED 17 rows,Stage-3 point 3: boiler registration/inspection/certificate/renewal/transition,SRC-034,"ss.2, 9, 11-21, 42, 45",T1,2025-05-01,HIGH,NEW_TABLE
+V3-0165,labour_matrix,(table),(table),(did not exist in v2),ADDED 15 rows,Stage-3 point 4: state-vs-central labour matrix (s.143 savings),SRC-081;SRC-111;SRC-136,"OSH s.2, 3, 6, 22, 33, 45, 47, 59, 79, 83-88, 143",T1;T3,2025-11-21,HIGH,NEW_TABLE
+V3-0166,planning_fire_tree,(table),(table),(did not exist in v2),ADDED 11 rows,Stage-3 point 5: jurisdiction-aware non-MIDC planning/fire path,SRC-123;SRC-124;SRC-121,"MRTP ss.18,44-47; UDCPR 1.1; MFPLSM s.3",T1;T2,2026-09-26,HIGH,NEW_TABLE
+V3-0167,location_triggers,(table),(table),(did not exist in v2),ADDED 6 rows,Stage-3 point 6: location trigger framework,SRC-112;SRC-113;SRC-114;SRC-052,see rows,T1;T2,2026-09-26,HIGH,NEW_TABLE
+V3-0168,groundwater_matrix,(table),(table),(did not exist in v2),ADDED 4 rows,Stage-3 point 7: groundwater use-type separation,SRC-052;SRC-131;SRC-132,"CGWA paras 1.0, 4.1, 4.3, Annexure VIII; MH Act s.1(3), s.8",T1,2026-09-26,HIGH,NEW_TABLE
+V3-0169,incentive_search_log,(table),(table),(did not exist in v2),ADDED 9 rows,Stage-3 point 8: exhaustive incentive instrument search log,SRC-061;SRC-073;SRC-074;SRC-125;SRC-126,see rows,T1;T3,2026-09-26,HIGH,NEW_TABLE
+V3-0170,incentive_status,(table),(table),(did not exist in v2),ADDED 12 rows,Stage-3 point 8: incentive status per component,SRC-061;SRC-125,IISP 2025; PSI 2019,T1,2025-12-31,HIGH,NEW_TABLE
+V3-0171,howm_decision_path,(table),(table),(did not exist in v2),ADDED 12 rows,Stage-3 point 9: HOWM decision path with INSUFFICIENT_DATA,SRC-013;SRC-120,"rules 3-20, Schedules I-II",T1;T2,2016-04-04,MEDIUM,NEW_TABLE
+V3-0172,msihc_mapping_steps,(table),(table),(did not exist in v2),ADDED 9 rows,Stage-3 point 11: MSIHC chemical mapping pipeline,SRC-016;SRC-134,r.2; Schedules 1-3,T1;T2,1989-11-27,HIGH,NEW_TABLE
+V3-0173,msihc_chemical_mapping,(table),(table),(did not exist in v2),ADDED 54 rows,Stage-3 point 11: reference mapping; values held as REQUIRES_OFFICIAL_CONFIRMATION (CON-021); no CAS numbers invented,SRC-134;SRC-016,"Schedules 2, 3",T1;T2,1989-11-27,LOW,NEW_TABLE
+V3-0174,peso_gating,(table),(table),(did not exist in v2),ADDED 7 rows,Stage-3 point 12: PESO primary-source gating,SRC-117;SRC-118;SRC-119,see rows,T1,2026-09-26,HIGH,NEW_TABLE
+V3-0175,chem_specific_branches,(table),(table),(did not exist in v2),ADDED 9 rows,"Stage-3: chemical-specific branches with applicability, trigger, authority",SRC-098;SRC-099;SRC-100;SRC-101;SRC-102;SRC-119;SRC-127;SRC-128;SRC-129,see rows,T1;T2;T3,2026-09-26,MEDIUM,NEW_TABLE
+V3-0176,maitri_integration,APR-001,maitri_integrated,NO (central PARIVESH),UNKNOWN (not listed on SRC-070),Absence of listing is not evidence of absence of integration (Stage-3 point 13),SRC-070,integrated-services page,T3,2026-09-26,HIGH,CORRECTION
+V3-0177,maitri_fields,(table),(table),(did not exist in v2),ADDED 58 rows,Stage-3 point 13: per-approval MAITRI fields; failed/empty portal visit never read as 'not integrated',SRC-070;SRC-142,services list rendered empty 26-09-2026,T3,2026-09-26,MEDIUM,NEW_TABLE
+V3-0178,approvals,APR-001,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0179,approvals,APR-001,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0180,approvals,APR-001,trigger_event,,Proposal of 5(f) project,Stage-3 point 14 lifecycle field,SRC-001,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0181,approvals,APR-001,precondition,,Form-1/ToR; public consultation for Cat A,Stage-3 point 14 lifecycle field,SRC-001,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0182,approvals,APR-001,validity,,10 years to start of production (R-075),Stage-3 point 14 lifecycle field,SRC-001,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0183,approvals,APR-001,renewal_trigger,,Extension <=1 y if applied within validity,Stage-3 point 14 lifecycle field,SRC-001,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0184,approvals,APR-001,change_trigger,,Expansion -> APR-052,Stage-3 point 14 lifecycle field,SRC-001,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0185,approvals,APR-001,closure_trigger,,Not stated,Stage-3 point 14 lifecycle field,SRC-001,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0186,approvals,APR-002,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0187,approvals,APR-002,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0188,approvals,APR-002,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0189,approvals,APR-002,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0190,approvals,APR-002,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0191,approvals,APR-002,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0192,approvals,APR-002,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0193,approvals,APR-002,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0194,approvals,APR-003,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0195,approvals,APR-003,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0196,approvals,APR-003,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0197,approvals,APR-003,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0198,approvals,APR-003,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0199,approvals,APR-003,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0200,approvals,APR-003,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0201,approvals,APR-003,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0202,approvals,APR-004,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0203,approvals,APR-004,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0204,approvals,APR-004,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0205,approvals,APR-004,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0206,approvals,APR-004,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0207,approvals,APR-004,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0208,approvals,APR-004,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0209,approvals,APR-004,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0210,approvals,APR-005,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0211,approvals,APR-005,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0212,approvals,APR-005,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0213,approvals,APR-005,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0214,approvals,APR-005,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0215,approvals,APR-005,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0216,approvals,APR-005,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0217,approvals,APR-005,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0218,approvals,APR-006,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0219,approvals,APR-006,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0220,approvals,APR-006,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0221,approvals,APR-006,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0222,approvals,APR-006,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0223,approvals,APR-006,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0224,approvals,APR-006,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0225,approvals,APR-006,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0226,approvals,APR-007,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0227,approvals,APR-007,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0228,approvals,APR-007,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0229,approvals,APR-007,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0230,approvals,APR-007,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0231,approvals,APR-007,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0232,approvals,APR-007,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0233,approvals,APR-007,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0234,approvals,APR-008,record_type,,CONSENT,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0235,approvals,APR-008,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0236,approvals,APR-008,trigger_event,,Before establishing / taking steps to establish,Stage-3 point 14 lifecycle field,SRC-004,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0237,approvals,APR-008,precondition,,EC where applicable (MPCB verifies),Stage-3 point 14 lifecycle field,SRC-004,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0238,approvals,APR-008,validity,,As granted,Stage-3 point 14 lifecycle field,SRC-004,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0239,approvals,APR-008,renewal_trigger,,Not stated in pack,Stage-3 point 14 lifecycle field,SRC-004,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0240,approvals,APR-008,change_trigger,,Change in product/capacity -> APR-053,Stage-3 point 14 lifecycle field,SRC-004,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0241,approvals,APR-008,closure_trigger,,Not stated,Stage-3 point 14 lifecycle field,SRC-004,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0242,approvals,APR-009,record_type,,CONSENT,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0243,approvals,APR-009,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0244,approvals,APR-009,trigger_event,,Before commencing operation,Stage-3 point 14 lifecycle field,SRC-006,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0245,approvals,APR-009,precondition,,CTE,Stage-3 point 14 lifecycle field,SRC-006,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0246,approvals,APR-009,validity,,Valid till cancelled for CTO granted under 2026 amendment (R-062) - MH treatment REQUIRES_OFFICIAL_CONFIRMATION,Stage-3 point 14 lifecycle field,SRC-006,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0247,approvals,APR-009,renewal_trigger,,UNK-001,Stage-3 point 14 lifecycle field,SRC-006,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0248,approvals,APR-009,change_trigger,,APR-053,Stage-3 point 14 lifecycle field,SRC-006,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0249,approvals,APR-009,closure_trigger,,Not stated,Stage-3 point 14 lifecycle field,SRC-006,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0250,approvals,APR-010,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0251,approvals,APR-010,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0252,approvals,APR-010,trigger_event,,Generation/handling of HW,Stage-3 point 14 lifecycle field,SRC-013,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0253,approvals,APR-010,precondition,,Consent,Stage-3 point 14 lifecycle field,SRC-013,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0254,approvals,APR-010,validity,,As granted,Stage-3 point 14 lifecycle field,SRC-013,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0255,approvals,APR-010,renewal_trigger,,As granted,Stage-3 point 14 lifecycle field,SRC-013,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0256,approvals,APR-010,change_trigger,,Change in HW streams,Stage-3 point 14 lifecycle field,SRC-013,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0257,approvals,APR-010,closure_trigger,,Not stated,Stage-3 point 14 lifecycle field,SRC-013,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0258,approvals,APR-011,record_type,,CONSENT,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0259,approvals,APR-011,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0260,approvals,APR-011,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0261,approvals,APR-011,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0262,approvals,APR-011,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0263,approvals,APR-011,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0264,approvals,APR-011,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0265,approvals,APR-011,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0266,approvals,APR-012,record_type,,REPORT,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0267,approvals,APR-012,lifecycle_stage,,PRE_OPERATION;OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0268,approvals,APR-012,trigger_event,,Hazardous chemical above Sch 2/3 thresholds,Stage-3 point 14 lifecycle field,SRC-016,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0269,approvals,APR-012,precondition,,MAH derivation (R-091),Stage-3 point 14 lifecycle field,SRC-016,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0270,approvals,APR-012,validity,,-,Stage-3 point 14 lifecycle field,SRC-016,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0271,approvals,APR-012,renewal_trigger,,Safety report update (CMP-010),Stage-3 point 14 lifecycle field,SRC-016,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0272,approvals,APR-012,change_trigger,,Further site report on change (CMP-020),Stage-3 point 14 lifecycle field,SRC-016,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0273,approvals,APR-012,closure_trigger,,Not stated,Stage-3 point 14 lifecycle field,SRC-016,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0274,approvals,APR-013,record_type,,REPORT,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0275,approvals,APR-013,lifecycle_stage,,OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0276,approvals,APR-013,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0277,approvals,APR-013,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0278,approvals,APR-013,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0279,approvals,APR-013,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0280,approvals,APR-013,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0281,approvals,APR-013,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0282,approvals,APR-015,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0283,approvals,APR-015,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0284,approvals,APR-015,trigger_event,,Before construction/extension of factory building,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0285,approvals,APR-015,precondition,,Site/building permission,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0286,approvals,APR-015,validity,,-,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0287,approvals,APR-015,renewal_trigger,,-,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0288,approvals,APR-015,change_trigger,,Extension/alteration of factory -> fresh plan approval,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0289,approvals,APR-015,closure_trigger,,-,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0290,approvals,APR-016,record_type,,LICENCE,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0291,approvals,APR-016,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0292,approvals,APR-016,trigger_event,,Before operating a factory,Stage-3 point 14 lifecycle field,SRC-081;SRC-136,see source,T1;T3,2026-09-26,MEDIUM,CORRECTION
+V3-0293,approvals,APR-016,precondition,,Plan approval,Stage-3 point 14 lifecycle field,SRC-081;SRC-136,see source,T1;T3,2026-09-26,MEDIUM,CORRECTION
+V3-0294,approvals,APR-016,validity,,As per saved MFR / State rules,Stage-3 point 14 lifecycle field,SRC-081;SRC-136,see source,T1;T3,2026-09-26,MEDIUM,CORRECTION
+V3-0295,approvals,APR-016,renewal_trigger,,Licence renewal (DISH portal),Stage-3 point 14 lifecycle field,SRC-081;SRC-136,see source,T1;T3,2026-09-26,MEDIUM,CORRECTION
+V3-0296,approvals,APR-016,change_trigger,,Amendment of licence,Stage-3 point 14 lifecycle field,SRC-081;SRC-136,see source,T1;T3,2026-09-26,MEDIUM,CORRECTION
+V3-0297,approvals,APR-016,closure_trigger,,Not stated,Stage-3 point 14 lifecycle field,SRC-081;SRC-136,see source,T1;T3,2026-09-26,MEDIUM,CORRECTION
+V3-0298,approvals,APR-017,record_type,,REGISTRATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0299,approvals,APR-017,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0300,approvals,APR-017,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0301,approvals,APR-017,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0302,approvals,APR-017,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0303,approvals,APR-017,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0304,approvals,APR-017,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0305,approvals,APR-017,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0306,approvals,APR-018,record_type,,REGISTRATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0307,approvals,APR-018,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0308,approvals,APR-018,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0309,approvals,APR-018,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0310,approvals,APR-018,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0311,approvals,APR-018,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0312,approvals,APR-018,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0313,approvals,APR-018,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0314,approvals,APR-019,record_type,,REGISTRATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0315,approvals,APR-019,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0316,approvals,APR-019,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0317,approvals,APR-019,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0318,approvals,APR-019,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0319,approvals,APR-019,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0320,approvals,APR-019,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0321,approvals,APR-019,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0322,approvals,APR-020,record_type,,LICENCE,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0323,approvals,APR-020,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0324,approvals,APR-020,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0325,approvals,APR-020,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0326,approvals,APR-020,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0327,approvals,APR-020,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0328,approvals,APR-020,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0329,approvals,APR-020,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0330,approvals,APR-021,record_type,,REGISTRATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0331,approvals,APR-021,lifecycle_stage,,CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0332,approvals,APR-021,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0333,approvals,APR-021,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0334,approvals,APR-021,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0335,approvals,APR-021,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0336,approvals,APR-021,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0337,approvals,APR-021,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0338,approvals,APR-022,record_type,,REGISTRATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0339,approvals,APR-022,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0340,approvals,APR-022,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0341,approvals,APR-022,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0342,approvals,APR-022,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0343,approvals,APR-022,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0344,approvals,APR-022,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0345,approvals,APR-022,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0346,approvals,APR-023,record_type,,REGISTRATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0347,approvals,APR-023,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0348,approvals,APR-023,trigger_event,,Before use of boiler,Stage-3 point 14 lifecycle field,SRC-034,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0349,approvals,APR-023,precondition,,Erection inspection (s.9),Stage-3 point 14 lifecycle field,SRC-034,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0350,approvals,APR-023,validity,,Certificate <=12 months,Stage-3 point 14 lifecycle field,SRC-034,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0351,approvals,APR-023,renewal_trigger,,"Before expiry (s.13, s.15)",Stage-3 point 14 lifecycle field,SRC-034,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0352,approvals,APR-023,change_trigger,,Move/alteration/accident ends certificate (s.13(1)),Stage-3 point 14 lifecycle field,SRC-034,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0353,approvals,APR-023,closure_trigger,,Not stated,Stage-3 point 14 lifecycle field,SRC-034,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0354,approvals,APR-026,record_type,,LICENCE,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0355,approvals,APR-026,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0356,approvals,APR-026,trigger_event,,Storage above exemption,Stage-3 point 14 lifecycle field,SRC-117,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0357,approvals,APR-026,precondition,,Plan approval (r.131) for XIV-XVI; DA NOC (r.144),Stage-3 point 14 lifecycle field,SRC-117,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0358,approvals,APR-026,validity,,As per licence,Stage-3 point 14 lifecycle field,SRC-117,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0359,approvals,APR-026,renewal_trigger,,CMP-015,Stage-3 point 14 lifecycle field,SRC-117,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0360,approvals,APR-026,change_trigger,,Amendment of licence,Stage-3 point 14 lifecycle field,SRC-117,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0361,approvals,APR-026,closure_trigger,,Not stated,Stage-3 point 14 lifecycle field,SRC-117,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0362,approvals,APR-027,record_type,,LICENCE,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0363,approvals,APR-027,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0364,approvals,APR-027,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0365,approvals,APR-027,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0366,approvals,APR-027,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0367,approvals,APR-027,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0368,approvals,APR-027,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0369,approvals,APR-027,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0370,approvals,APR-028,record_type,,LICENCE,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0371,approvals,APR-028,lifecycle_stage,,PRE_CONSTRUCTION;PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0372,approvals,APR-028,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0373,approvals,APR-028,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0374,approvals,APR-028,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0375,approvals,APR-028,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0376,approvals,APR-028,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0377,approvals,APR-028,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0378,approvals,APR-029,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0379,approvals,APR-029,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0380,approvals,APR-029,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0381,approvals,APR-029,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0382,approvals,APR-029,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0383,approvals,APR-029,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0384,approvals,APR-029,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0385,approvals,APR-029,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0386,approvals,APR-030,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0387,approvals,APR-030,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0388,approvals,APR-030,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0389,approvals,APR-030,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0390,approvals,APR-030,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0391,approvals,APR-030,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0392,approvals,APR-030,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0393,approvals,APR-030,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0394,approvals,APR-031,record_type,,REPORT,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0395,approvals,APR-031,lifecycle_stage,,CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0396,approvals,APR-031,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0397,approvals,APR-031,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0398,approvals,APR-031,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0399,approvals,APR-031,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0400,approvals,APR-031,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0401,approvals,APR-031,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0402,approvals,APR-032,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0403,approvals,APR-032,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0404,approvals,APR-032,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0405,approvals,APR-032,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0406,approvals,APR-032,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0407,approvals,APR-032,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0408,approvals,APR-032,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0409,approvals,APR-032,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0410,approvals,APR-033,record_type,,NOC,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0411,approvals,APR-033,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0412,approvals,APR-033,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0413,approvals,APR-033,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0414,approvals,APR-033,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0415,approvals,APR-033,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0416,approvals,APR-033,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0417,approvals,APR-033,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0418,approvals,APR-034,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0419,approvals,APR-034,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0420,approvals,APR-034,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0421,approvals,APR-034,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0422,approvals,APR-034,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0423,approvals,APR-034,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0424,approvals,APR-034,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0425,approvals,APR-034,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0426,approvals,APR-035,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0427,approvals,APR-035,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0428,approvals,APR-035,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0429,approvals,APR-035,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0430,approvals,APR-035,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0431,approvals,APR-035,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0432,approvals,APR-035,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0433,approvals,APR-035,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0434,approvals,APR-036,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0435,approvals,APR-036,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0436,approvals,APR-036,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0437,approvals,APR-036,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0438,approvals,APR-036,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0439,approvals,APR-036,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0440,approvals,APR-036,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0441,approvals,APR-036,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0442,approvals,APR-037,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0443,approvals,APR-037,lifecycle_stage,,MODIFICATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0444,approvals,APR-037,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0445,approvals,APR-037,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0446,approvals,APR-037,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0447,approvals,APR-037,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0448,approvals,APR-037,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0449,approvals,APR-037,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0450,approvals,APR-038,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0451,approvals,APR-038,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0452,approvals,APR-038,trigger_event,,Any development (s.44),Stage-3 point 14 lifecycle field,SRC-123,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0453,approvals,APR-038,precondition,,Title/DP-RP conformity,Stage-3 point 14 lifecycle field,SRC-123,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0454,approvals,APR-038,validity,,Per DCR,Stage-3 point 14 lifecycle field,SRC-123,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0455,approvals,APR-038,renewal_trigger,,Per DCR,Stage-3 point 14 lifecycle field,SRC-123,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0456,approvals,APR-038,change_trigger,,Revised permission (UDCPR 1.4),Stage-3 point 14 lifecycle field,SRC-123,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0457,approvals,APR-038,closure_trigger,,-,Stage-3 point 14 lifecycle field,SRC-123,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0458,approvals,APR-039,record_type,,NOC,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0459,approvals,APR-039,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0460,approvals,APR-039,trigger_event,,Before construction of Schedule-I building,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0461,approvals,APR-039,precondition,,Building plans,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0462,approvals,APR-039,validity,,Provisional,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0463,approvals,APR-039,renewal_trigger,,-,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0464,approvals,APR-039,change_trigger,,-,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0465,approvals,APR-039,closure_trigger,,-,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0466,approvals,APR-040,record_type,,NOC,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0467,approvals,APR-040,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0468,approvals,APR-040,trigger_event,,Before occupation,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0469,approvals,APR-040,precondition,,"Installations completed, Form A",Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0470,approvals,APR-040,validity,,Final; renewal CON-013,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0471,approvals,APR-040,renewal_trigger,,UNKNOWN (CON-013),Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0472,approvals,APR-040,change_trigger,,Change of occupancy,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0473,approvals,APR-040,closure_trigger,,-,Stage-3 point 14 lifecycle field,SRC-121,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0474,approvals,APR-041,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0475,approvals,APR-041,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0476,approvals,APR-041,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0477,approvals,APR-041,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0478,approvals,APR-041,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0479,approvals,APR-041,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0480,approvals,APR-041,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0481,approvals,APR-041,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0482,approvals,APR-042,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0483,approvals,APR-042,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0484,approvals,APR-042,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0485,approvals,APR-042,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0486,approvals,APR-042,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0487,approvals,APR-042,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0488,approvals,APR-042,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0489,approvals,APR-042,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0490,approvals,APR-043,record_type,,NOC,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0491,approvals,APR-043,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0492,approvals,APR-043,trigger_event,,Groundwater abstraction,Stage-3 point 14 lifecycle field,SRC-052,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0493,approvals,APR-043,precondition,,-,Stage-3 point 14 lifecycle field,SRC-052,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0494,approvals,APR-043,validity,,As per NOC,Stage-3 point 14 lifecycle field,SRC-052,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0495,approvals,APR-043,renewal_trigger,,NOC renewal per guidelines (not extracted),Stage-3 point 14 lifecycle field,SRC-052,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0496,approvals,APR-043,change_trigger,,Increase in abstraction,Stage-3 point 14 lifecycle field,SRC-052,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0497,approvals,APR-043,closure_trigger,,-,Stage-3 point 14 lifecycle field,SRC-052,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0498,approvals,APR-044,record_type,,NOC,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0499,approvals,APR-044,lifecycle_stage,,CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0500,approvals,APR-044,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0501,approvals,APR-044,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0502,approvals,APR-044,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0503,approvals,APR-044,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0504,approvals,APR-044,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0505,approvals,APR-044,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0506,approvals,APR-045,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0507,approvals,APR-045,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0508,approvals,APR-045,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0509,approvals,APR-045,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0510,approvals,APR-045,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0511,approvals,APR-045,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0512,approvals,APR-045,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0513,approvals,APR-045,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0514,approvals,APR-046,record_type,,INSPECTION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0515,approvals,APR-046,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0516,approvals,APR-046,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0517,approvals,APR-046,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0518,approvals,APR-046,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0519,approvals,APR-046,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0520,approvals,APR-046,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0521,approvals,APR-046,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0522,approvals,APR-047,record_type,,LICENCE,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0523,approvals,APR-047,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0524,approvals,APR-047,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0525,approvals,APR-047,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0526,approvals,APR-047,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0527,approvals,APR-047,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0528,approvals,APR-047,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0529,approvals,APR-047,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0530,approvals,APR-048,record_type,,REGISTRATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0531,approvals,APR-048,lifecycle_stage,,OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0532,approvals,APR-048,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0533,approvals,APR-048,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0534,approvals,APR-048,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0535,approvals,APR-048,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0536,approvals,APR-048,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0537,approvals,APR-048,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0538,approvals,APR-049,record_type,,NOC,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0539,approvals,APR-049,lifecycle_stage,,PRE_CONSTRUCTION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0540,approvals,APR-049,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0541,approvals,APR-049,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0542,approvals,APR-049,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0543,approvals,APR-049,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0544,approvals,APR-049,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0545,approvals,APR-049,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0546,approvals,APR-050,record_type,,NOC,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0547,approvals,APR-050,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0548,approvals,APR-050,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0549,approvals,APR-050,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0550,approvals,APR-050,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0551,approvals,APR-050,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0552,approvals,APR-050,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0553,approvals,APR-050,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0554,approvals,APR-051,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0555,approvals,APR-051,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0556,approvals,APR-051,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0557,approvals,APR-051,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0558,approvals,APR-051,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0559,approvals,APR-051,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0560,approvals,APR-051,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0561,approvals,APR-051,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0562,approvals,APR-052,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0563,approvals,APR-052,lifecycle_stage,,EXPANSION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0564,approvals,APR-052,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0565,approvals,APR-052,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0566,approvals,APR-052,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0567,approvals,APR-052,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0568,approvals,APR-052,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0569,approvals,APR-052,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0570,approvals,APR-053,record_type,,CONSENT,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0571,approvals,APR-053,lifecycle_stage,,MODIFICATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0572,approvals,APR-053,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0573,approvals,APR-053,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0574,approvals,APR-053,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0575,approvals,APR-053,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0576,approvals,APR-053,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0577,approvals,APR-053,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0578,approvals,APR-054,record_type,,APPROVAL,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0579,approvals,APR-054,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0580,approvals,APR-054,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0581,approvals,APR-054,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0582,approvals,APR-054,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0583,approvals,APR-054,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0584,approvals,APR-054,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0585,approvals,APR-054,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0586,approvals,FAC-001,record_type,,FACILITATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0587,approvals,FAC-001,lifecycle_stage,,ALL,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0588,approvals,FAC-001,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0589,approvals,FAC-001,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0590,approvals,FAC-001,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0591,approvals,FAC-001,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0592,approvals,FAC-001,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0593,approvals,FAC-001,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0594,approvals,APR-055,record_type,,LICENCE,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0595,approvals,APR-055,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0596,approvals,APR-055,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0597,approvals,APR-055,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0598,approvals,APR-055,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0599,approvals,APR-055,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0600,approvals,APR-055,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0601,approvals,APR-055,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0602,approvals,APR-056,record_type,,LICENCE,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0603,approvals,APR-056,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0604,approvals,APR-056,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0605,approvals,APR-056,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0606,approvals,APR-056,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0607,approvals,APR-056,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0608,approvals,APR-056,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0609,approvals,APR-056,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0610,approvals,APR-057,record_type,,REGISTRATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0611,approvals,APR-057,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0612,approvals,APR-057,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0613,approvals,APR-057,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0614,approvals,APR-057,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0615,approvals,APR-057,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0616,approvals,APR-057,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0617,approvals,APR-057,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0618,approvals,APR-058,record_type,,RETURN,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0619,approvals,APR-058,lifecycle_stage,,OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0620,approvals,APR-058,trigger_event,,Activity above CWC thresholds,Stage-3 point 14 lifecycle field,SRC-098,see source,T3,2026-09-26,MEDIUM,CORRECTION
+V3-0621,approvals,APR-058,precondition,,-,Stage-3 point 14 lifecycle field,SRC-098,see source,T3,2026-09-26,MEDIUM,CORRECTION
+V3-0622,approvals,APR-058,validity,,Annual,Stage-3 point 14 lifecycle field,SRC-098,see source,T3,2026-09-26,MEDIUM,CORRECTION
+V3-0623,approvals,APR-058,renewal_trigger,,ADAA/ADPA each year,Stage-3 point 14 lifecycle field,SRC-098,see source,T3,2026-09-26,MEDIUM,CORRECTION
+V3-0624,approvals,APR-058,change_trigger,,-,Stage-3 point 14 lifecycle field,SRC-098,see source,T3,2026-09-26,MEDIUM,CORRECTION
+V3-0625,approvals,APR-058,closure_trigger,,-,Stage-3 point 14 lifecycle field,SRC-098,see source,T3,2026-09-26,MEDIUM,CORRECTION
+V3-0626,approvals,APR-059,record_type,,LICENCE,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0627,approvals,APR-059,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0628,approvals,APR-059,trigger_event,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0629,approvals,APR-059,precondition,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0630,approvals,APR-059,validity,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0631,approvals,APR-059,renewal_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0632,approvals,APR-059,change_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0633,approvals,APR-059,closure_trigger,,UNKNOWN,Stage-3 point 14 lifecycle field,-,see source,N/A,2026-09-26,LOW,CORRECTION
+V3-0634,approvals,APR-060,record_type,,REGISTRATION,Stage-3 point 15 record-type reclassification (returns/audits/reports/facilitation are not approvals),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0635,approvals,APR-060,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14 lifecycle stage vocabulary,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0636,approvals,APR-060,trigger_event,,Code applies (>=10 workers or hazardous activity),Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0637,approvals,APR-060,precondition,,-,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0638,approvals,APR-060,validity,,Deemed/issued registration,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0639,approvals,APR-060,renewal_trigger,,-,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0640,approvals,APR-060,change_trigger,,Change within 30 d (CMP-029),Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0641,approvals,APR-060,closure_trigger,,Closure intimation within 30 d,Stage-3 point 14 lifecycle field,SRC-081,see source,T1,2026-09-26,MEDIUM,CORRECTION
+V3-0642,compliance,CMP-001,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0643,compliance,CMP-001,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0644,compliance,CMP-002,record_type,,RETURN,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0645,compliance,CMP-002,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0646,compliance,CMP-003,record_type,,OPERATING_DUTY,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0647,compliance,CMP-003,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0648,compliance,CMP-004,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0649,compliance,CMP-004,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0650,compliance,CMP-005,record_type,,RETURN,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0651,compliance,CMP-005,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0652,compliance,CMP-006,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0653,compliance,CMP-006,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0654,compliance,CMP-007,record_type,,RENEWAL,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0655,compliance,CMP-007,lifecycle_stage,,RENEWAL,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0656,compliance,CMP-008,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0657,compliance,CMP-008,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0658,compliance,CMP-009,record_type,,RENEWAL,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0659,compliance,CMP-009,lifecycle_stage,,RENEWAL,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0660,compliance,CMP-010,record_type,,AUDIT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0661,compliance,CMP-010,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0662,compliance,CMP-011,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0663,compliance,CMP-011,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0664,compliance,CMP-012,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0665,compliance,CMP-012,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0666,compliance,CMP-013,record_type,,RETURN,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0667,compliance,CMP-013,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0668,compliance,CMP-014,record_type,,AUDIT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0669,compliance,CMP-014,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0670,compliance,CMP-015,record_type,,RENEWAL,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0671,compliance,CMP-015,lifecycle_stage,,RENEWAL,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0672,compliance,CMP-016,record_type,,RETURN,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0673,compliance,CMP-016,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0674,compliance,CMP-017,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0675,compliance,CMP-017,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0676,compliance,CMP-018,record_type,,OPERATING_DUTY,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0677,compliance,CMP-018,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0678,compliance,CMP-019,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0679,compliance,CMP-019,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0680,compliance,CMP-020,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0681,compliance,CMP-020,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0682,compliance,CMP-021,record_type,,RETURN,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0683,compliance,CMP-021,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0684,compliance,CMP-022,record_type,,OPERATING_DUTY,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0685,compliance,CMP-022,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0686,compliance,CMP-023,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0687,compliance,CMP-023,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0688,compliance,CMP-024,record_type,,OPERATING_DUTY,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0689,compliance,CMP-024,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0690,compliance,CMP-025,record_type,,EPR,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0691,compliance,CMP-025,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0692,compliance,CMP-026,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0693,compliance,CMP-026,lifecycle_stage,,PRE_OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0694,compliance,CMP-027,record_type,,INSPECTION,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0695,compliance,CMP-027,lifecycle_stage,,OPERATION,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0696,compliance,CMP-028,record_type,,RENEWAL,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0697,compliance,CMP-028,lifecycle_stage,,RENEWAL,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0698,compliance,CMP-029,record_type,,REPORT,Stage-3 point 15 record type (OPERATING_DUTY = continuing obligation that is neither a filing nor an approval; taxonomy extension),USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0699,compliance,CMP-029,lifecycle_stage,,OPERATION;CLOSURE,Stage-3 point 14,USER-BRIEF-V3,lifecycle taxonomy,N/A,2026-09-26,MEDIUM,CORRECTION
+V3-0700,incentives,INC-001,record_type,,INCENTIVE,Stage-3 point 15,USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0701,incentives,INC-002,record_type,,INCENTIVE,Stage-3 point 15,USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0702,incentives,INC-003,record_type,,INCENTIVE,Stage-3 point 15,USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0703,incentives,INC-004,record_type,,INCENTIVE,Stage-3 point 15,USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0704,incentives,INC-005,record_type,,INCENTIVE,Stage-3 point 15,USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0705,incentives,INC-006,record_type,,INCENTIVE,Stage-3 point 15,USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0706,incentives,INC-007,record_type,,INCENTIVE,Stage-3 point 15,USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0707,incentives,INC-008,record_type,,INCENTIVE,Stage-3 point 15,USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0708,incentives,INC-009,record_type,,INCENTIVE,Stage-3 point 15,USER-BRIEF-V3,record taxonomy,N/A,2026-09-26,HIGH,CORRECTION
+V3-0709,dependencies,DEP-027,(record),(did not exist in v2),ADDED,Stage-3 explicit legal dependency,SRC-034,s.9(1),T1,,HIGH,ADDITION
+V3-0710,dependencies,DEP-028,(record),(did not exist in v2),ADDED,Stage-3 explicit legal dependency,SRC-117,r.131,T1,,HIGH,ADDITION
+V3-0711,dependencies,DEP-029,(record),(did not exist in v2),ADDED,Stage-3 explicit legal dependency,SRC-117,r.144,T1,,HIGH,ADDITION
+V3-0712,dependencies,DEP-030,(record),(did not exist in v2),ADDED,Stage-3 explicit legal dependency,SRC-114,SC order 04-12-2006,T2,,HIGH,ADDITION
+V3-0713,dependencies,DEP-031,(record),(did not exist in v2),ADDED,Stage-3 explicit legal dependency,SRC-121,s.3(1),T1,,HIGH,ADDITION
+V3-0714,dependencies,DEP-032,(record),(did not exist in v2),ADDED,Stage-3 explicit legal dependency,SRC-123,s.44-45,T1,,HIGH,ADDITION
+V3-0715,dependencies,DEP-033,(record),(did not exist in v2),ADDED,Stage-3 explicit legal dependency,SRC-113,r.9,T1,,HIGH,ADDITION
+V3-0716,dependencies,DEP-034,(record),(did not exist in v2),ADDED,Stage-3 explicit legal dependency,SRC-112,paras 7-8,T1,,HIGH,ADDITION
+V3-0717,completeness_matrix,Environment (EIA),research_status,VERIFIED (paras 9-10 not extracted),VERIFIED (paras 9-10 extracted in v3),Stage-3 research,SRC-001,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0718,completeness_matrix,PESO,research_status,PARTIAL (Act T1; Rules via SOP/T5 copies),PARTIAL - Petroleum Rules T1 read; GCR/SMPV confirmation-gated,Stage-3 research,SRC-117,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0719,completeness_matrix,Labour,research_status,PARTIAL (BOCW/ISMW thresholds not extracted),MODELLED (labour_matrix); MH State rules DRAFT,Stage-3 research,SRC-081,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0720,completeness_matrix,Building,research_status,PARTIAL (non-MIDC DCR not researched),"RESEARCHED (MRTP ss.18,44-47; UDCPR 1.1, 2.1) - jurisdiction dependent",Stage-3 research,SRC-123,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0721,completeness_matrix,Fire,research_status,PARTIAL (thresholds UNK-020),"RESEARCHED (MFPLSM s.3, Schedule-I); renewal CON-013",Stage-3 research,SRC-121,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0722,completeness_matrix,Local planning,research_status,NOT RESEARCHED in detail,RESEARCHED - depends on the particular planning authority,Stage-3 research,SRC-123,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0723,completeness_matrix,Groundwater,research_status,PARTIAL,RESEARCHED (groundwater_matrix); Rules 2018 draft,Stage-3 research,SRC-052,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0724,completeness_matrix,Boilers,research_status,VERIFIED (definition),VERIFIED (Act 2025 registration/renewal/savings),Stage-3 research,SRC-034,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0725,completeness_matrix,Forest,research_status,NOT RESEARCHED in stage 2,"SCREENED - trigger framework (CONDITIONAL, geospatial)",Stage-3 research,SRC-113,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0726,completeness_matrix,Wildlife,research_status,PARTIAL (EIA GC link only),"SCREENED - NBWL/ESZ triggers (CONDITIONAL, geospatial)",Stage-3 research,SRC-114,see domain tables,T2,2026-09-26,HIGH,CORRECTION
+V3-0727,completeness_matrix,CRZ,research_status,NOT RESEARCHED in stage 2,"SCREENED - trigger framework (CONDITIONAL, geospatial)",Stage-3 research,SRC-112,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0728,completeness_matrix,E-waste,research_status,NOT RE-VERIFIED,PARTIAL - bulk consumer r.8 verified,Stage-3 research,SRC-135,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0729,completeness_matrix,"Other chemical-specific (Insecticides, Drugs, NDPS, CWC, Explosives, ODS, Excise, EC Act)",research_status,"PARTIAL (ODS, Excise, EC Act not researched)",SCREENED; several CONDITIONAL (chem_specific_branches); EC Act not researched,Stage-3 research,SRC-127,see domain tables,T1,2026-09-26,HIGH,CORRECTION
+V3-0730,completeness_matrix,Forest,domain_result,UNKNOWN,CONDITIONAL,Framework built; outcome depends on facts,SRC-113,location_triggers / R-094,T1,2026-09-26,HIGH,CORRECTION
+V3-0731,completeness_matrix,Wildlife,domain_result,UNKNOWN,CONDITIONAL,Framework built; outcome depends on facts,SRC-114,location_triggers / R-094,T2,2026-09-26,HIGH,CORRECTION
+V3-0732,completeness_matrix,CRZ,domain_result,UNKNOWN,CONDITIONAL,Framework built; outcome depends on facts,SRC-112,location_triggers / R-094,T1,2026-09-26,HIGH,CORRECTION
+V3-0733,completeness_matrix,E-waste,domain_result,UNKNOWN,CONDITIONAL,Framework built; outcome depends on facts,SRC-135,location_triggers / R-094,T1,2026-09-26,HIGH,CORRECTION
+V3-0734,unknowns,UNK-007,status,PARTIALLY_RESOLVED - Act in force; several final central rules notified (GSR 705(E) etc.); MH services run as PORTAL LEGACY SERVICE citing MRTPS only,CLOSED_V3 - Boilers Act 2025 registration/certificate/renewal/savings extracted; MH services classified PORTAL_LEGACY; State rules 1962 saved under s.45(2)(a) (boiler_lifecycle.csv),Stage-3 closure,SRC-034;SRC-136,closure_matrix,T1;T3,2026-09-26,HIGH,CORRECTION
+V3-0735,unknowns,UNK-007,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,Stage-3 closure,SRC-034;SRC-136,closure_matrix,T1;T3,2026-09-26,HIGH,CORRECTION
+V3-0736,unknowns,UNK-015,status,RESOLVED - r.2(ja) MAH = col 3; r.2(n)(iii) Part II total per class; 500 m grouping notes; no sum-of-ratios rule,CLOSED_V3 - Resolved in v2 (VERIFIED),Stage-3 closure,SRC-016,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0737,unknowns,UNK-017,status,OPEN - paras 9 and 10 not extracted,"CLOSED_V3 - EIA para 9 (validity 10 y, extension 1 y, condonation windows) and para 10 (half-yearly 1 Jun/1 Dec) extracted",Stage-3 closure,SRC-001,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0738,unknowns,UNK-017,final_status,UNKNOWN,VERIFIED,Stage-3 closure,SRC-001,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0739,unknowns,UNK-018,status,OPEN,"CLOSED_V3 - MFPLSM s.3(1): CFO of local/planning authority, else Director; jurisdiction-aware R-078 returns UNKNOWN when CFO status unknown",Stage-3 closure,SRC-121,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0740,unknowns,UNK-018,final_status,UNKNOWN,VERIFIED_CONDITIONAL,Stage-3 closure,SRC-121,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0741,unknowns,UNK-019,status,PARTIALLY_RESOLVED - contract labour s.45 threshold verified; BOCW/ISMW employer thresholds not extracted,"CLOSED_V3 - BOCW (s.2(1)(h), >=10) and ISMW (s.59, >=10) thresholds extracted",Stage-3 closure,SRC-081,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0742,unknowns,UNK-019,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,Stage-3 closure,SRC-081,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0743,unknowns,UNK-020,status,OPEN,CLOSED_V3 - Schedule-I industrial/storage/hazardous classes with floor-area rows; R-079,Stage-3 closure,SRC-121,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0744,unknowns,UNK-020,final_status,UNKNOWN,VERIFIED_CONDITIONAL,Stage-3 closure,SRC-121,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0745,unknowns,UNK-021,status,RESOLVED - Boilers Act 2025 s.2(c),CLOSED_V3 - Resolved in v2,Stage-3 closure,SRC-034,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0746,unknowns,UNK-022,status,"RESOLVED (classification) - each branch now has an evidenced CONDITIONAL row (CND-012..016, 019) or remains UNKNOWN with reason (CND-017, 018, 021, 022)",CLOSED_V3 - chem_specific_branches: all 9 branches classified with trigger/authority/source; residual items tracked per branch,Stage-3 closure,SRC-098;SRC-099;SRC-100;SRC-101;SRC-102;SRC-119;SRC-127;SRC-128;SRC-129,closure_matrix,T1;T2;T3,2026-09-26,HIGH,CORRECTION
+V3-0747,unknowns,UNK-022,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED_CONDITIONAL,Stage-3 closure,SRC-098;SRC-099;SRC-100;SRC-101;SRC-102;SRC-119;SRC-127;SRC-128;SRC-129,closure_matrix,T1;T2;T3,2026-09-26,HIGH,CORRECTION
+V3-0748,unknowns,UNK-030,status,OPEN,CLOSED_V3 - OSH s.143(3): rules/notifications under repealed Acts deemed made under the Code and continue to the extent not contrary -> s.85 notifications TRANSITIONAL_SAVED,Stage-3 closure,SRC-081,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0749,unknowns,UNK-030,final_status,UNKNOWN,VERIFIED_CONDITIONAL,Stage-3 closure,SRC-081,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0750,unknowns,UNK-038,status,OPEN,CLOSED_V3 - Boilers Act 2025 s.11-16 and s.45 extracted; State rules saved,Stage-3 closure,SRC-034,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0751,unknowns,UNK-038,final_status,UNKNOWN,VERIFIED_CONDITIONAL,Stage-3 closure,SRC-034,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0752,unknowns,UNK-039,status,OPEN - input fact,"NOT_APPLICABLE_V3 - Gas classification is only needed by GCR r.44 branch, now DO_NOT_IMPLEMENT_YET; will reopen when official GCR text is captured",Stage-3 closure,SRC-118,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0753,unknowns,UNK-039,final_status,UNKNOWN,DO_NOT_IMPLEMENT_YET,Stage-3 closure,SRC-118,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0754,unknowns,UNK-041,status,OPEN - not researched in stage 2,CLOSED_V3 - ODS Rules r.3/r.6/r.8 extracted; branch CONDITIONAL on use of ODS in Schedule IV activity (R-095),Stage-3 closure,SRC-127,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0755,unknowns,UNK-041,final_status,UNKNOWN,VERIFIED_CONDITIONAL,Stage-3 closure,SRC-127,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0756,unknowns,UNK-042,status,OPEN - location-dependent,"CLOSED_V3 - location_triggers framework (CRZ, forest, NBWL, ESZ, GC 5 km, OE groundwater); outcomes CONDITIONAL - requires geospatial fact",Stage-3 closure,SRC-112;SRC-113;SRC-114,closure_matrix,T1;T2,2026-09-26,HIGH,CORRECTION
+V3-0757,unknowns,UNK-042,final_status,UNKNOWN,VERIFIED_CONDITIONAL,Stage-3 closure,SRC-112;SRC-113;SRC-114,closure_matrix,T1;T2,2026-09-26,HIGH,CORRECTION
+V3-0758,unknowns,UNK-043,status,REQUIRES_OFFICIAL_CONFIRMATION,CLOSED_V3 - T1 Petroleum Rules read: exemption not present; R-029 DO_NOT_IMPLEMENT_YET (CON-014),Stage-3 closure,SRC-117,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0759,unknowns,UNK-043,final_status,REQUIRES_OFFICIAL_CONFIRMATION,VERIFIED,Stage-3 closure,SRC-117,closure_matrix,T1,2026-09-26,HIGH,CORRECTION
+V3-0760,closure_matrix,(table),(table),(did not exist in v2),ADDED 44 rows,Stage-3 required closure matrix for UNK-001..044,-,closure_matrix,N/A,2026-09-26,HIGH,NEW_TABLE
+V3-0761,rules,R-014,source_id,SRC-011,SRC-011;SRC-010,Add T2 MPCB adoption circular so the lookup has an official regulator source,SRC-010,MPCB circular 23-06-2025,T2,2025-06-23,HIGH,CORRECTION
+V3-0762,implementation_safe_rules,(table),(table),(did not exist in v2),ADDED 71 rows,Final implementation-safe rule list (derived),-,rules.csv final_status,N/A,2026-09-26,HIGH,NEW_TABLE
+V3-0763,do_not_implement,(table),(table),(did not exist in v2),ADDED 20 rows,Final DO_NOT_IMPLEMENT list (derived),-,final_status,N/A,2026-09-26,HIGH,NEW_TABLE
+V3-0764,requires_confirmation,(table),(table),(did not exist in v2),ADDED 41 rows,Final REQUIRES_OFFICIAL_CONFIRMATION / UNKNOWN list (derived),-,final_status,N/A,2026-09-26,HIGH,NEW_TABLE
+V3-0765,quality_gate,(table),(table),(did not exist in v2),ADDED 9 rows,Stage-3 point 1/2/12 wording + V3 gate semantics,USER-BRIEF-V3,quality gate,N/A,2026-09-26,HIGH,NEW_TABLE
+V3-0766,readiness_checklist,(table),(table),(did not exist in v2),ADDED 19 rows,V3 brief readiness conditions,USER-BRIEF-V3,readiness,N/A,2026-09-26,HIGH,NEW_TABLE

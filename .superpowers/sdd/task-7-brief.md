@@ -1,63 +1,63 @@
-﻿## Task 7: Trigger Background Extraction on Upload
+﻿Task 7: Add ReadinessCard to Applicant Application Detail
 
 **Files:**
-- Modify: `backend/app/api/documents.py` (add BackgroundTasks to upload endpoint)
+- Modify: `frontend/src/pages/applicant/ApplicationDetailPage.tsx`
 
-**Interfaces:**
-- Consumes: `run_extraction_background()` from Task 6
-- Produces: Upload returns immediately, extraction runs in background
+## Implementation
 
-- [ ] **Step 1: Modify upload endpoint**
+Add a simplified "Readiness / Next Action" card to the applicant application detail page. This is a simpler version than the staff page — show status, next action, and blockers; hide internal dependency details.
 
-In `backend/app/api/documents.py`:
+### 1. Add imports
 
-1. Add import at top:
-```python
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, BackgroundTasks
+Add `ApplicationOrchestration` to the type imports at the top of the file.
+
+### 2. Add state and data fetching
+
+After the existing `sla` state, add:
+```typescript
+const [orchestration, setOrchestration] = useState<ApplicationOrchestration | null>(null)
 ```
 
-2. Add `BackgroundTasks` parameter to `upload_document` endpoint:
-```python
-@router.post("/applications/{application_id}/documents/{requirement_key}/upload")
-async def upload_document(
-    application_id: str,
-    requirement_key: str,
-    file: UploadFile = File(...),
-    background_tasks: BackgroundTasks = BackgroundTasks(),  # NEW
-    repo: DocumentsRepository = Depends(get_documents_repository),
-    user: UserContext = Depends(
-        require_any_permission(
-            Permission.APPLICATION_CREATE,
-        )
-    ),
-):
+After the existing SLA useEffect, add:
+```typescript
+useEffect(() => {
+  if (!id) return
+  api.orchestration.get(id).then(setOrchestration).catch(() => {})
+}, [id])
 ```
 
-3. After the audit record creation (before `return`), add:
-```python
-    # Trigger background extraction
-    from app.extraction.background import run_extraction_background
-    background_tasks.add_task(
-        run_extraction_background, document["id"], application_id
-    )
-```
+### 3. Add ReadinessCard component
 
-- [ ] **Step 2: Verify syntax**
+Add a Card after the SLA Status card and before the Actions card. Simplified for applicants:
 
-Run: `cd backend && python -c "from app.api.documents import router; print('OK')"`
-Expected: `OK`
+**Header:** "Next Steps"
 
-- [ ] **Step 3: Run existing document tests**
+**Content:**
+1. **Overall Status Badge** — same color scheme as staff page
+2. **Next Action** (if present):
+   - Description text
+   - Affected approval ID (if present)
+3. **Blockers** (if any):
+   - Show user-friendly descriptions
+   - Don't show internal dependency graph details
+   - Focus on actionable items: "Upload document X", "Wait for prerequisite approval Y"
 
-Run: `cd backend && python -m pytest tests/test_document_upload.py -v`
-Expected: All tests PASS (BackgroundTasks is a no-op in TestClient by default)
+### 4. Place the card
 
-- [ ] **Step 4: Commit**
+Insert after the SLA Status card (around line 341, after the `)}` closing the SLA card), before the Actions card.
+
+### Style
+
+Use existing UI components. Keep it simpler than the staff version — no per-approval breakdown, no expandable sections.
+
+## Verification
+
+Run: `cd frontend && npx tsc --noEmit && npx vite build`
+Expected: tsc 0 errors, build success
+
+## Commit
 
 ```bash
-git add backend/app/api/documents.py
-git commit -m "feat: trigger background extraction on document upload"
+git add frontend/src/pages/applicant/ApplicationDetailPage.tsx
+git commit -m "feat(orchestration): add readiness card to applicant application detail"
 ```
-
----
-

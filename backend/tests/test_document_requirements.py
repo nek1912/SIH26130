@@ -2,10 +2,8 @@
 from __future__ import annotations
 
 from app.seed.documents import (
-    APPROVAL_TO_DOCS,
     get_requirements_for_approval,
     load_document_requirements,
-    parse_used_for,
 )
 
 
@@ -43,22 +41,6 @@ class TestLoadDocumentRequirements:
         assert len(conditional) >= 3  # D15, D16, D17 are conditional
 
 
-class TestParseUsedFor:
-    def test_single_approval(self):
-        result = parse_used_for("GIDC Plan")
-        assert "A01" in result
-
-    def test_multiple_approvals(self):
-        result = parse_used_for("GIDC Plan/Water/Drainage")
-        assert "A01" in result
-        assert "A02" in result
-        assert "A03" in result
-
-    def test_conditional_text(self):
-        result = parse_used_for("MSIHC")
-        assert "A12" in result
-
-
 class TestGetRequirementsForApproval:
     def test_gidc_plan_returns_documents(self):
         reqs = get_requirements_for_approval("A01")
@@ -77,18 +59,8 @@ class TestGetRequirementsForApproval:
         assert reqs == []
 
 
-class TestApprovalToDocsMapping:
-    def test_all_18_approvals_mapped(self):
-        for i in range(1, 19):
-            aid = f"A{i:02d}"
-            assert aid in APPROVAL_TO_DOCS, f"Approval {aid} not mapped"
-
-    def test_gidc_plan_maps_to_three_docs(self):
-        assert len(APPROVAL_TO_DOCS["A01"]) >= 3
-
-
 class TestDocumentsRepository:
-    """Tests for DocumentsRepository (unit tests with mocked Supabase client)."""
+    """Tests for DocumentsRepository (unit tests with mocked PostgresDB)."""
 
     def test_list_requirements_for_application(self):
         from unittest.mock import MagicMock
@@ -96,9 +68,7 @@ class TestDocumentsRepository:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        chain = mock_client.table.return_value.select.return_value
-        chain = chain.eq.return_value.order.return_value
-        chain.execute.return_value.data = [
+        mock_client.fetch_all.return_value = [
             {
                 "id": "1",
                 "application_id": "app-1",
@@ -117,11 +87,7 @@ class TestDocumentsRepository:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        chain = mock_client.table.return_value.select.return_value
-        chain = chain.eq.return_value.eq.return_value
-        chain.execute.return_value.data = [
-            {"id": "1", "requirement_key": "D01"},
-        ]
+        mock_client.fetch_one.return_value = {"id": "1", "requirement_key": "D01"}
         repo = DocumentsRepository(mock_client)
         result = repo.get_requirement("app-1", "D01")
         assert result is not None
@@ -132,9 +98,7 @@ class TestDocumentsRepository:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        chain = mock_client.table.return_value.update.return_value
-        chain = chain.eq.return_value.eq.return_value
-        chain.execute.return_value.data = [
+        mock_client.update_where.return_value = [
             {"id": "1", "readiness": "uploaded"},
         ]
         repo = DocumentsRepository(mock_client)
@@ -147,9 +111,7 @@ class TestDocumentsRepository:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        chain = mock_client.table.return_value.select.return_value
-        chain = chain.eq.return_value.order.return_value
-        chain.execute.return_value.data = [
+        mock_client.fetch_all.return_value = [
             {
                 "id": "doc-1",
                 "application_id": "app-1",
@@ -166,10 +128,10 @@ class TestDocumentsRepository:
         from app.repositories.documents import DocumentsRepository
 
         mock_client = MagicMock()
-        mock_client.table.return_value.insert.return_value \
-            .execute.return_value.data = [
-            {"id": "doc-1", "requirement_key": "D01"},
-        ]
+        mock_client.insert_one.return_value = {
+            "id": "doc-1",
+            "requirement_key": "D01",
+        }
         repo = DocumentsRepository(mock_client)
         result = repo.create_document(
             {"requirement_key": "D01", "application_id": "app-1"}

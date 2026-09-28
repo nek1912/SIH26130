@@ -1,0 +1,55 @@
+map_id,schedule,entry_as_printed,group,col3_threshold,col4_threshold,unit,value_verification,source_ids,locator,status
+MS2-01,Schedule 2,Acrylonitrile,-,350,"5,000",t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.1,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-02,Schedule 2,Ammonia,-,60,600,t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.2,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-03,Schedule 2,Ammonium nitrate (note a),-,350,"2,500",t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.3,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-04,Schedule 2,Ammonium nitrate fertilizers (note b),-,"1,250","10,000",t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.4,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-05,Schedule 2,Chlorine,-,10,25,t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.5,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-06,Schedule 2,Flammable gases (Sch 1 (b)(i)),-,50,300,t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.6,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-07,Schedule 2,Highly flammable liquids (Sch 1 (b)(ii)),-,"10,000","100,000 (printed '10,0000')",t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.7,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-08,Schedule 2,Liquid oxygen,-,200,"2,000",t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.8,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-09,Schedule 2,Sodium chlorate,-,25,250,t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.9,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-10,Schedule 2,Sulphur dioxide,-,20,500,t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.10,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS2-11,Schedule 2,Sulphur trioxide,-,15,100,t,single extraction of scanned SPCB-hosted copy,SRC-134,Schedule 2 Sl.11,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-01,Schedule 3 Part I,Acrylonitrile,Group 2,20,200,t,two extractions consistent,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-02,Schedule 3 Part I,Acrolein (2-Propenal),Group 2,20,200,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-03,Schedule 3 Part I,Allyl alcohol,Group 2,200,500,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-04,Schedule 3 Part I,Ammonia,Group 2,50,200,t,two extractions consistent,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-05,Schedule 3 Part I,Bromine,Group 2,40 or 20,200 or 100,t,INCONSISTENT,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-06,Schedule 3 Part I,Carbon disulphide,Group 2,20,200,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-07,Schedule 3 Part I,Chlorine,Group 2,10,75 or 25,t,INCONSISTENT,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-08,Schedule 3 Part I,Ethylene dibromide,Group 2,5,50,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-09,Schedule 3 Part I,Ethylene oxide,Group 3,5,50,t,two extractions consistent,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-10,Schedule 3 Part I,Formaldehyde (<=90%),Group 2,5,50,t,two extractions consistent,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-11,Schedule 3 Part I,Hydrogen,Group 3,50 (v2 note: 2),200,t,INCONSISTENT with v2,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-12,Schedule 3 Part I,Hydrogen chloride (liquefied gas),Group 2,25,250,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-13,Schedule 3 Part I,Hydrogen cyanide,Group 2,5,20,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-14,Schedule 3 Part I,Hydrogen fluoride,Group 2,5,50,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-15,Schedule 3 Part I,Hydrogen sulphide,Group 2,5,50 or 20,t,INCONSISTENT,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-16,Schedule 3 Part I,Methyl isocyanate,Group 1,0.15,0.75,t,two extractions consistent,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-17,Schedule 3 Part I,Nitrogen oxides,Group 2,50,"2,500",t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-18,Schedule 3 Part I,Phosgene,Group 1,0.10,0.75,t,two extractions consistent,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-19,Schedule 3 Part I,Propylene oxide,Group 3,5,50,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-20,Schedule 3 Part I,Propyleneimine,Group 2,50,250,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-21,Schedule 3 Part I,Sulphur dioxide,Group 2,20,250 or 200,t,INCONSISTENT,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-22,Schedule 3 Part I,Sulphur trioxide,Group 2,15,75,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MS3-23,Schedule 3 Part I,Toluene di-isocyanate,Group 2,10,250,t,single extraction,SRC-134;SRC-016,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MP2-01,Schedule 3 Part II,Flammable gases (bp <=20 C),Group 5,15,200,t,two extractions consistent,SRC-134,Schedule 3 Part II,SUPERSEDED (v4) - use msihc_t1_thresholds
+MP2-02,Schedule 3 Part II,"Highly flammable liquids (fp <21 C, bp >20 C)",Group 5,"1,000","50,000",t,two extractions consistent,SRC-134,Schedule 3 Part II,SUPERSEDED (v4) - use msihc_t1_thresholds
+MP2-03,Schedule 3 Part II,"Flammable liquids (fp <55 C, under processing conditions)",Group 5,25,200,t,two extractions consistent,SRC-134,Schedule 3 Part II,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-01,Not found among extracted Part I names,Methanol,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-02,Not found among extracted Part I names,Benzene,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-03,Not found among extracted Part I names,Nitric acid,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-04,Not found among extracted Part I names,Epichlorohydrin,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-05,Not found among extracted Part I names,Dimethyl sulphate,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-06,Not found among extracted Part I names,Hydrazine,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-07,Not found among extracted Part I names,Sodium cyanide,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-08,Not found among extracted Part I names,Phosphorus trichloride,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-09,Not found among extracted Part I names,Phosphorus oxychloride,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-10,Not found among extracted Part I names,Thionyl chloride,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-11,Not found among extracted Part I names,Vinyl chloride,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-12,Not found among extracted Part I names,Nitrobenzene,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-13,Not found among extracted Part I names,Aniline,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-14,Not found among extracted Part I names,Phenol,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-15,Not found among extracted Part I names,Cyclohexane,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-16,Not found among extracted Part I names,LPG,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds
+MNL-17,Not found among extracted Part I names,Butadiene,-,DERIVE via M5 (Part II class) or UNKNOWN,-,t,extraction reported not named; full 179-entry list not verified,SRC-134,Schedule 3 Part I,SUPERSEDED (v4) - use msihc_t1_thresholds

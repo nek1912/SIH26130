@@ -1,0 +1,22 @@
+tree,node_id,question,fact_ids,if_true,if_false,if_unknown,outcome_or_note,source_id,locator
+PETROLEUM,P0,Is the substance 'petroleum' (per Act s.2)?,F-PET-01,P1,EXIT: Petroleum Act not engaged,UNKNOWN,,SRC-092,s.2
+PETROLEUM,P1,Flash point < 23 C?,F-PET-01,CLASS_A -> P5,P2,UNKNOWN,,SRC-092,s.2(b)
+PETROLEUM,P2,23 C <= flash point < 65 C?,F-PET-01,CLASS_B -> P3,P2C,UNKNOWN,,SRC-092,s.2(c)
+PETROLEUM,P2C,65 C <= flash point < 93 C?,F-PET-01,CLASS_C -> P4,EXIT: outside Classes A/B/C -> REQUIRES_OFFICIAL_CONFIRMATION,UNKNOWN,,SRC-092,s.2(d)
+PETROLEUM,P3,"Total Class B at one place <= 2,500 L AND no receptacle > 1,000 L?",F-PET-02;F-PET-04,EXEMPT (s.7(i)),"LICENCE: form/authority per PESO SOP (XIII by District Authority if <=25,000 L non-bulk; else PESO) -> P6",UNKNOWN,,SRC-092;SRC-017,s.7(i); SOP
+PETROLEUM,P4,"Total Class C at one place <= 45,000 L (stored per rules)?",F-PET-02,EXEMPT (s.7(ii)),LICENCE per SOP -> P6,UNKNOWN,,SRC-092;SRC-017,s.7(ii)
+PETROLEUM,P5,Class A quantity within SOP small-quantity exemption (<=30 L)?,F-PET-02,"EXEMPT per SOP (REQUIRES_OFFICIAL_CONFIRMATION, UNK-043)",LICENCE per SOP (XII by DA if <=300 L non-bulk; else PESO) -> P6,UNKNOWN,Import of Class A always needs licence (s.3(2)),SRC-017;SRC-092,SOP; s.3(2)
+PETROLEUM,P6,Does the licence form require District Authority NOC (Rule 144)?,-,Obtain NOC before licence (DEP-013),-,UNKNOWN,Per SOP,SRC-017,SOP
+GAS_CYLINDERS,G0,Cylinders possessed only by carrier for transport per rules?,-,EXEMPT r.44(a),G1,UNKNOWN,,SRC-093,r.44(a)
+GAS_CYLINDERS,G1,Own use and not for sale/trading?,-,G2,LICENCE (r.43),UNKNOWN,,SRC-093,r.44(b)
+GAS_CYLINDERS,G2,For each gas group (F-GAS-03): flammable non-toxic <=25 cyl & <=200 kg; non-flammable non-toxic <=200 cyl; toxic <=5 cyl; dissolved acetylene <=25 cyl?,F-GAS-01;F-GAS-03,EXEMPT r.44(b),LICENCE (Form per GCR SOP),UNKNOWN,Gas group never inferred (UNK-039); LPG see r.44(c),SRC-093;SRC-018,"r.44(b),(c)"
+SMPV,S0,"Any vessel storing compressed gas with water capacity > 1,000 L?",F-PV-01,S1,EXIT: SMPV not engaged (GCR may apply),UNKNOWN,,SRC-094;SRC-020,r.2(xxxvii)
+SMPV,S1,"Is the vessel in the r.2 exclusion list (reactor, heat exchanger, evaporator, air receiver, autoclave, steam vessel...) or part of a processing plant (r.3)?",F-PV-01,EXIT: exempt,S2,UNKNOWN,,SRC-094,r.2; r.3
+SMPV,S2,Gas is non-toxic non-flammable?,F-GAS-03,"LICENCE r.45 (no DA NOC needed, r.47(1))",Prior approval of plans -> DA NOC (r.47) -> LICENCE r.45 (LS-1A per SOP),UNKNOWN,,SRC-094;SRC-020,r.45; r.47(1)
+EXPLOSIVES,X0,Does the unit manufacture any explosive?,F-PRD-04,LICENCE required (Explosives Rules 2008) even for small quantity,X1,UNKNOWN,,SRC-107,FAQ
+EXPLOSIVES,X1,Possession/use of explosives?,F-PRD-04,Licence form per quantity (AE-2/AE-3...) - thresholds not extracted -> REQUIRES_OFFICIAL_CONFIRMATION,EXIT,UNKNOWN,,SRC-107,forms list
+MSIHC,M0,Any chemical meeting Sch 1 Part I criteria or listed in Sch 1 Part II / Sch 2 / Sch 3?,F-HAZ-02,M1 (r.4 general duty applies to industrial activity),EXIT: MSIHC not engaged,UNKNOWN,,SRC-016,r.2(e); r.4
+MSIHC,M1,Is the operation in a Sch 4 installation (industrial activity) or isolated storage or pipeline?,F-PRD-03;F-HAZ-03,M2,UNKNOWN (classify),UNKNOWN,Organic synthesis processes (alkylation...mixing) are listed in Sch 4 item 1,SRC-016,"r.2(h),(i); Sch 4"
+MSIHC,M2,Aggregated qty (R-061) >= col 3 of Sch 3 (industrial activity) / Sch 2 (isolated storage)?,F-HAZ-01;F-HAZ-03,"MAH (r.2(ja)); r.7-9, 13-15 apply: approval + Sch 7 report >=3 months before; on-site plan; M3",r.4 & r.5 only (industrial activity); isolated storage below Sch 2 col 3 not covered by r.4(1)(b),UNKNOWN,,SRC-016,r.2(ja); r.6; r.7
+MSIHC,M3,Aggregated qty >= col 4?,F-HAZ-01,"Safety report >=90 days before (r.10), annual audit, 3-yearly update (r.11)",Col 3 duties only,UNKNOWN,,SRC-016,r.6(1); r.10-12
+MSIHC,M4,Authority?,-,Sch 5: CIF (factories); SPCB (isolated storage not under factory law); CCE (PESO-licensed); District Collector (off-site plan),-,-,,SRC-016,Sch 5

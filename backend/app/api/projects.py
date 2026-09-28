@@ -1,10 +1,15 @@
 """Project endpoints."""
 
+from typing import Any
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 
-from app.api.deps import get_project_facts_repository, get_project_repository
+from app.api.deps import (
+    get_active_jurisdiction,
+    get_project_facts_repository,
+    get_project_repository,
+)
 from app.auth.dependencies import (
     check_project_ownership,
     require_any_permission,
@@ -25,9 +30,25 @@ async def create_project(
     applicant_id: UUID = None,
     repo: ProjectRepository = Depends(get_project_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
+    jurisdiction: str = Depends(get_active_jurisdiction),
 ):
-    """Create a new project."""
-    data = {"name": name, "description": description}
+    """Create a new project.
+
+    Regulatory identity is server-derived from the active default;
+    clients cannot supply or override jurisdiction/pack_version.
+    """
+    from app.seed.pack import DEFAULT_PACK_VERSIONS
+
+    if jurisdiction not in DEFAULT_PACK_VERSIONS:
+        raise HTTPException(
+            status_code=422, detail=f"Unknown jurisdiction {jurisdiction!r}"
+        )
+    data = {
+        "name": name,
+        "description": description,
+        "jurisdiction": jurisdiction,
+        "pack_version": DEFAULT_PACK_VERSIONS[jurisdiction],
+    }
     # Use the authenticated user's ID as the applicant unless explicitly provided
     # (and the caller has elevated privileges).
     if applicant_id and user.role in {
@@ -87,10 +108,38 @@ async def upsert_project_facts(
     jurisdictions: list[str] = [],
     headcount: int = 0,
     annual_turnover_inr: float = 0,
+    facts_json: dict[str, Any] | None = Body(default=None),
     repo: ProjectFactsRepository = Depends(get_project_facts_repository),
+    project_repo: ProjectRepository = Depends(get_project_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
 ):
-    """Create or update project facts."""
+    """Create or update project facts.
+
+    Extended ``facts_json`` keys are validated against the persisted
+    project's jurisdiction vocabulary (MH registry for IN-MH; legacy
+    permissive behavior for IN-GJ). ``jurisdictions[]`` remains
+    applicant entity data and never selects the vocabulary.
+    """
+    from app.rules.facts import (
+        GJ_JURISDICTION,
+        MH_JURISDICTION,
+        FactValidationError,
+        validate_fact_value,
+    )
+    from app.seed.pack import UnknownPackError, resolve_persisted_pack
+
+    project = project_repo.get_by_id(project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    check_project_ownership(user, project)
+
+    try:
+        pack = resolve_persisted_pack(
+            project.get("jurisdiction"), project.get("pack_version")
+        )
+    except UnknownPackError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
     data = {
         "entity_type": entity_type,
         "sector": sector,
@@ -98,4 +147,21 @@ async def upsert_project_facts(
         "headcount": headcount,
         "annual_turnover_inr": annual_turnover_inr,
     }
+    if facts_json is not None:
+        if pack.jurisdiction == MH_JURISDICTION:
+            for field_name, value in facts_json.items():
+                try:
+                    validate_fact_value(MH_JURISDICTION, field_name, value)
+                except FactValidationError as exc:
+                    raise HTTPException(
+                        status_code=422, detail=str(exc)
+                    ) from exc
+        elif pack.jurisdiction != GJ_JURISDICTION:  # pragma: no cover
+            raise HTTPException(
+                status_code=422,
+                detail=f"Unknown jurisdiction {pack.jurisdiction!r}",
+            )
+        # IN-GJ keeps legacy permissive behavior (typed params only
+        # were ever validated; facts_json historically open).
+        data["facts_json"] = facts_json
     return repo.upsert(project_id, data)

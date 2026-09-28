@@ -7,62 +7,6 @@ from __future__ import annotations
 
 from typing import Any  # noqa: I001
 
-# Approval ID → list of document requirement keys
-APPROVAL_TO_DOCS: dict[str, list[str]] = {
-    "A01": ["D01", "D02", "D04", "D05"],       # GIDC Plan
-    "A02": ["D01", "D02", "D03", "D05"],       # GIDC Water
-    "A03": ["D01", "D02", "D03", "D05", "D06"],# GIDC Drainage
-    "A04": ["D05", "D07", "D08", "D09"],       # GPCB CTE
-    "A05": ["D15"],                             # EIA/EC
-    "A06": ["D12"],                             # Fire Safety
-    "A07": ["D14"],                             # Factory Registration
-    "A08": ["D14"],                             # BOCW
-    "A09": ["D13"],                             # HT Electricity
-    "A10": ["D13"],                             # CEICED
-    "A11": ["D10"],                             # HOWM
-    "A12": ["D11"],                             # MSIHC
-    "A13": ["D11"],                             # Chemical Accidents
-    "A14": [],                                  # BU Permission (no specific doc)
-    "A15": ["D13"],                             # Lift
-    "A16": [],                                  # Boiler (no specific doc in register)
-    "A17": ["D16"],                             # PESO
-    "A18": ["D17"],                             # CGWA
-}
-
-
-def parse_used_for(used_for: str) -> list[str]:
-    """Parse workbook 'used_for' text into approval ID list."""
-    mapping: dict[str, str] = {
-        "Plan": "A01",
-        "Water": "A02",
-        "Drainage": "A03",
-        "CTE": "A04",
-        "EIA": "A05",
-        "PARIVESH": "A05",
-        "Fire Safety": "A06",
-        "Factory": "A07",
-        "Labour": "A07",
-        "DISH": "A07",
-        "BOCW": "A08",
-        "HT Electricity": "A09",
-        "CEICED": "A10",
-        "IFP": "A10",
-        "HOWM": "A11",
-        "MSIHC": "A12",
-        "Chemical Accidents": "A13",
-        "BU Permission": "A14",
-        "Lift": "A15",
-        "Boiler": "A16",
-        "PESO": "A17",
-        "CGWA": "A18",
-    }
-    result: set[str] = set()
-    for keyword, aid in mapping.items():
-        if keyword in used_for:
-            result.add(aid)
-    return sorted(result)
-
-
 DOCUMENT_REQUIREMENTS: list[dict[str, Any]] = [
     {
         "requirement_key": "D01",

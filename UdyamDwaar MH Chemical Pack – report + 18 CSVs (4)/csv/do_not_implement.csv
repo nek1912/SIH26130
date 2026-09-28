@@ -1,0 +1,25 @@
+id,applies_to,rule_or_record,source_ids,source_tiers,locator,final_status,reason
+APR-011,APR-011,Integrated consent + HW authorisation (2026 amendment model),SRC-006;SRC-079,,,DO_NOT_IMPLEMENT_YET,MPCB web notice 22-04-2026 only circulates the Gazette; no MPCB operational order found. Do not show as available service until MPCB/UCAMS workflow is verified.
+APR-013,APR-013,Maharashtra Factories (Control of Industrial Major Accident Hazards) Rules 2003,SRC-028,,,DO_NOT_IMPLEMENT_YET,Existence confirmed only by DISH page
+APR-017,APR-017,Registration of establishment under OSH Code s.3,SRC-027;SRC-024,,,DO_NOT_IMPLEMENT_YET,Maharashtra OSH rules are DRAFT (06-05-2026)
+APR-027,APR-027,Gas cylinder storage licence (Form F),SRC-018;SRC-019,,,DO_NOT_IMPLEMENT_YET,Validity up to 10 yrs to 30 Sept
+INC:SGST-linked Industrial Promotion Subsidy,incentive_status,SGST-linked Industrial Promotion Subsidy,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+INC:Electricity duty exemption,incentive_status,Electricity duty exemption,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+INC:Power tariff subsidy,incentive_status,Power tariff subsidy,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+INC:Capital subsidy,incentive_status,Capital subsidy,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+INC:Interest subsidy,incentive_status,Interest subsidy,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+INC:Employment/EPF-linked subsidy,incentive_status,Employment/EPF-linked subsidy,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+INC:Stamp duty exemption,incentive_status,Stamp duty exemption,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+INC:Large/Mega/Special-large packages,incentive_status,Large/Mega/Special-large packages,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+INC:Eligibility certificate,incentive_status,Eligibility certificate,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+INC:Claim certificate,incentive_status,Claim certificate,SRC-061;SRC-074,,,DO_NOT_IMPLEMENT_YET,No operative implementation instrument verified; do not compute amounts from policy
+CMP-014,CMP-014,Environment audit by Registered Environment Auditor,SRC-066;SRC-005,,,DO_NOT_IMPLEMENT_YET,
+CMP-017,CMP-017,Notice of accident causing death or >=48 h disability,SRC-081,,,DO_NOT_IMPLEMENT_YET,
+GSR-04,APR-008,One-time fee for CTO covering 5-25 years,SRC-151,T2;T1,Gazette para 5(1)-(2),DO_NOT_IMPLEMENT_YET,Fee amount BLOCKED; UNKNOWN
+GW-03,CND-024,MH Groundwater Rules 2018 procedure,SRC-131,T1,-,DO_NOT_IMPLEMENT_YET,Draft rules
+INC-Sector-packages-t,INC-*,"Sector packages (thrust sector 'Pharmaceutical, Chemicals, Polymers')",SRC-061;SRC-074,T1;T3,-,DO_NOT_IMPLEMENT_YET,Thrust-sector recognition only (INC-001); no package instrument found
+INC-PSI-2025-Package,INC-*,PSI 2025 / Package Scheme under IISP 2025 (instrument),SRC-061;SRC-074,T1;T3,-,DO_NOT_IMPLEMENT_YET,"Not located on MAITRI GR page, Industries GR page or web search on 26-09-2026; absence not asserted"
+R-016,APR-008,Consent to Establish (Water & Air Acts),SRC-006,T1 (Gazette copy hosted by MPCB - see notes),"GSR 62(E) para 6(7), para 10(7); GSR 63(E) same",DO_NOT_IMPLEMENT_YET,DO_NOT_IMPLEMENT_YET - MH operative detail and Red-category applicability UNKNOWN
+R-029,APR-026,Petroleum storage licence (Form XII/XIII District Authority; Form XV/XVI PESO) +,SRC-017,T3,SOP exemptions,DO_NOT_IMPLEMENT_YET,Class A small-quantity exemption (<=30 L) sourced only from PESO SOP (T3); Petroleum Rules 2002 text not retrieved. Class A import always needs a licence (Act s
+R-058,INC-*,INCENTIVE_BASKET ,SRC-061,T1,Annexure 1,DO_NOT_IMPLEMENT_YET,PSI under IISP 2025 not found after exhaustive search (incentive_search_log.csv). PSI 2019 period clause: till 31-03-2024 or till new PSI (SRC-125); 2025 corrig
+EPR-OTHER,EPR,Other producer duties - non-plastic packaging (non-ferrous now EPR-NFM),SRC-122,T3,-,UNKNOWN,UNKNOWN (never FALSE)

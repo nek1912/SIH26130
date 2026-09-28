@@ -1,0 +1,8 @@
+item,rule_ids,primary_text_captured,source_ids,gate,reason
+"Petroleum - definitions / forms / authorities (XII, XIII DA; XV, XVI Controller)",R-032,"YES (Petroleum Rules 2002, PESO T1)",SRC-117,VERIFIED_CONDITIONAL,Primary text; post-2019 amendments not checked
+"Petroleum - Class B <=2,500 L / Class C <=45,000 L exemptions",R-030;R-031,YES (Petroleum Act 1934 s.7),SRC-092,VERIFIED_CONDITIONAL,Act text
+Petroleum - Class A <=30 L exemption,R-029,NO (SOP only),SRC-017;SRC-117,DO_NOT_IMPLEMENT_YET,CON-014
+Petroleum - DA NOC r.144,R-092,YES,SRC-117,VERIFIED_CONDITIONAL,
+Gas Cylinders Rules 2016 r.44 exemptions,R-033,YES (Gazette G.S.R.1081(E) via India Code; amendments 386(E)/839(E)/315(E) read),SRC-169;SRC-170;SRC-171;SRC-173,VERIFIED_CONDITIONAL,"Primary text; some amendments (2018, 2019, 2022, 225(E), 501(E)) not read; LPG clause UNKNOWN"
+SMPV(U) Rules 2016 definitions / processing-plant exclusion / r.47 NOC,R-034,YES (PESO bilingual Gazette G.S.R.1109(E); 2026 amendment G.S.R.448(E) read),SRC-174;SRC-177,REQUIRES_OFFICIAL_CONFIRMATION,Definitions primary but unread amendments -> R-034 ROC; r.47 NOC omitted w.e.f. 05-06-2026 (R-103 VERIFIED temporal rule)
+Explosives Rules 2008 - manufacture licence / no-licence cases,R-069,YES (PESO T1),SRC-119,REQUIRES_OFFICIAL_CONFIRMATION,Substance classification as 'explosive' is a fact outside the rules

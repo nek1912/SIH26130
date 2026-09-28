@@ -30,3 +30,10 @@ Thumbs.db
 
 # Supabase
 supabase/.temp/
+
+# Local document uploads (development filesystem storage)
+backend/data/
+
+# Scratch diffs and review logs
+.superpowers/sdd/*.diff
+.superpowers/sdd/*.txt

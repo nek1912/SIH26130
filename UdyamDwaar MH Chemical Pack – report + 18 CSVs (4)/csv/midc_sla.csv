@@ -1,0 +1,15 @@
+service,current_sla_portal,rts_legal_sla,other_official_values,source_ids,last_updated,conflict_id,selected_value,reason,final_status
+Combined building plan approval + provisional fire NOC,35 days,"35 days (RTS s.no.7, notification 06-05-2025)",15 days (planning page),SRC-043;SRC-044,portal accessed 26-09-2026; planning page 2021-09-30,CON-001B,LEGAL(RTS) 35 days; PORTAL 35 days - both retained with source_type,Official sources conflict; legal SLA not read,VERIFIED
+e-Intimation of plinth completion,7 days,NOT IN RTS LIST (notification 06-05-2025) - portal SLA only,-,SRC-043,26-09-2026,-,7 days (portal SLA),Single official value; not legal SLA,VERIFIED_CONDITIONAL
+Occupancy certificate,10 days,"10 days (RTS s.no.6, notification 06-05-2025)",8 days (AllServicesAnon; planning page); 15 days (EoDB pre-operation),SRC-043;SRC-110;SRC-044;SRC-046,various,CON-001,LEGAL(RTS) 10 days; PORTAL 10 days - both retained with source_type,8 d / 15 d values from secondary official pages superseded for legal purposes by RTS 10 d,VERIFIED
+Final fire NOC,15 days,"15 days (RTS s.no.3, notification 06-05-2025)",-,SRC-043,26-09-2026,-,LEGAL(RTS) 15 days; PORTAL 15 days - both retained with source_type,,VERIFIED
+Renewal of fire NOC,15 days,NOT IN RTS LIST (notification 06-05-2025) - portal SLA only,-,SRC-043,26-09-2026,-,15 days (portal SLA),,VERIFIED_CONDITIONAL
+Final fire NOC - Form B submission,90 days,NOT IN RTS LIST (notification 06-05-2025) - portal SLA only,-,SRC-043,26-09-2026,-,90 days (portal SLA),,VERIFIED_CONDITIONAL
+New water connection,15 days,"15 days (RTS s.no.1, notification 06-05-2025)",-,SRC-043,26-09-2026,-,LEGAL(RTS) 15 days; PORTAL 15 days - both retained with source_type,,VERIFIED
+Drainage connection,15 days,"15 days (RTS s.no.2, notification 06-05-2025)",-,SRC-043,26-09-2026,-,LEGAL(RTS) 15 days; PORTAL 15 days - both retained with source_type,,VERIFIED
+Change in manufacturing activity,21 days,"21 days (RTS s.no.15, notification 06-05-2025)",-,SRC-043,26-09-2026,-,LEGAL(RTS) 21 days; PORTAL 21 days - both retained with source_type,,VERIFIED
+Change in land use and activity,30 days,NOT IN RTS LIST (notification 06-05-2025) - portal SLA only,-,SRC-043,26-09-2026,-,30 days (portal SLA),,VERIFIED_CONDITIONAL
+Plot transfer,30 days,NOT IN RTS LIST (notification 06-05-2025) - portal SLA only,-,SRC-043,26-09-2026,-,30 days (portal SLA),,VERIFIED_CONDITIONAL
+Plot sub-letting / sub-leasing,8 / 22 days,NOT IN RTS LIST (notification 06-05-2025) - portal SLA only,-,SRC-043,26-09-2026,-,8 / 22 days (portal SLA),,VERIFIED_CONDITIONAL
+Extension of time limit for obtaining OC,30 days,NOT IN RTS LIST (notification 06-05-2025) - portal SLA only,-,SRC-043,26-09-2026,-,30 days (portal SLA),,VERIFIED_CONDITIONAL
+Tree felling,45 days,"45 days (RTS s.no.17, notification 06-05-2025)",60 days (EoDB),SRC-043;SRC-045,various,CON-001C,LEGAL(RTS) 45 days; PORTAL 45 days - both retained with source_type,EoDB 60 d value superseded for legal purposes by RTS 45 d,VERIFIED

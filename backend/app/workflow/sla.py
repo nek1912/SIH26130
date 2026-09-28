@@ -34,6 +34,38 @@ class SlaInfo:
     state: str  # "on_track" | "due_soon" | "due_today" | "breached"
 
 
+@dataclass(frozen=True)
+class SlaMetadata:
+    """Display-only SLA declaration transcribed from a research register.
+
+    TARGET and OUTER LIMIT are distinct fields and must never be
+    merged: an administrative target (e.g. X working days) is not a
+    statutory outer limit (e.g. Y calendar days) and vice versa.
+    All value/unit/clock fields are verbatim register text — including
+    UNKNOWN/"-"/NOT_STATED, which are preserved, never substituted.
+    No deadlines are computed here; computation stays in SlaInfo.
+    """
+
+    sla_id: str
+    approval_id: str
+    service: str
+    target_value: str
+    target_unit: str
+    outer_value: str | None = None
+    outer_unit: str | None = None
+    clock_start: str = ""
+    sla_source_type: str = ""
+    timeline_type: str = ""
+    consent_types: str = ""
+    source_ids: tuple[str, ...] = ()
+    conflict_id: str = ""
+    notes: str = ""
+    effective_date: str = ""
+    exact_locator: str = ""
+    final_status: str = ""
+    record_state: str = ""
+
+
 def _to_date(value: Any) -> date | None:
     """Convert a date, datetime, or ISO string to a date."""
     if value is None:

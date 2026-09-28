@@ -19,6 +19,11 @@ Three-valued logic (TRUE / FALSE / INSUFFICIENT_DATA):
 - OR:  any TRUE → TRUE; any INSUFFICIENT (no TRUE) → INSUFFICIENT; all FALSE → FALSE
 - NOT: TRUE→FALSE, FALSE→TRUE, INSUFFICIENT→INSUFFICIENT
 
+Plus an explicit NOT_APPLICABLE sentinel from LiteralNode("not_applicable"):
+- AND: FALSE dominates; then INSUFFICIENT; then NOT_APPLICABLE; else TRUE
+- OR:  TRUE dominates; then INSUFFICIENT; then NOT_APPLICABLE; else FALSE
+- NOT: NOT_APPLICABLE stays NOT_APPLICABLE (never negated to TRUE)
+
 Output for each rule:
 - APPLIES: tree evaluated to TRUE
 - DOES_NOT_APPLY: tree evaluated to FALSE
@@ -27,15 +32,19 @@ Output for each rule:
 """
 from __future__ import annotations
 
+from datetime import date
 from typing import Any
 
 from app.rules.models import (
+    NOT_APPLICABLE,
     AndNode,
     ApplicabilityCondition,
     ApplicabilityEvaluation,
     ApprovalResult,
     ApprovalRule,
     ConditionNode,
+    LiteralNode,
+    NotApplicable,
     NotNode,
     OrNode,
 )
@@ -62,12 +71,17 @@ def _evaluate_leaf(
         (result, reason)
         - (True, ...) if condition is satisfied
         - (False, ...) if condition fails (fact present but doesn't match)
-        - (None, ...) if the fact field is missing (can't evaluate)
+        - (None, ...) if the fact field is missing or explicitly unknown.
+          The "UNKNOWN" token (per the jurisdiction fact registry) and an
+          explicit None are never coerced to FALSE — unknown fails closed.
     """
     value, found = _get_fact_value(facts, condition.field)
 
     if not found:
         return None, f"fact field '{condition.field}' not provided"
+
+    if value is None or value == "UNKNOWN":
+        return None, f"fact field '{condition.field}' is unknown"
 
     match condition.op:
         case "eq":
@@ -126,12 +140,21 @@ def _evaluate_leaf(
 def _evaluate_node(
     node: ConditionNode,
     facts: dict[str, Any],
-) -> tuple[bool | None, str]:
+) -> tuple[bool | None | NotApplicable, str]:
     """Evaluate a condition tree node against project facts.
 
-    Returns (result, reason) where result is True/False/None.
-    None means INSUFFICIENT_DATA (could not evaluate).
+    Returns (result, reason) where result is True/False/None or the
+    NOT_APPLICABLE sentinel. None means INSUFFICIENT_DATA (could not
+    evaluate); NOT_APPLICABLE means explicitly not applicable.
     """
+    if isinstance(node, LiteralNode):
+        if node.value == "unknown":
+            return None, "literal UNKNOWN — cannot be established"
+        return (
+            NOT_APPLICABLE,
+            "literal not applicable — explicitly does not apply",
+        )
+
     if isinstance(node, ApplicabilityCondition):
         return _evaluate_leaf(node, facts)
 
@@ -139,6 +162,7 @@ def _evaluate_node(
         child_results = [_evaluate_node(c, facts) for c in node.conditions]
         has_false = any(r is False for r, _ in child_results)
         has_none = any(r is None for r, _ in child_results)
+        has_na = any(r == NOT_APPLICABLE for r, _ in child_results)
 
         if has_false:
             fail_reasons = [reason for r, reason in child_results if r is False]
@@ -146,6 +170,16 @@ def _evaluate_node(
         if has_none:
             uneval_reasons = [reason for r, reason in child_results if r is None]
             return None, "AND: missing " + ", ".join(uneval_reasons)
+        if has_na:
+            na_reasons = [
+                reason
+                for r, reason in child_results
+                if r == NOT_APPLICABLE
+            ]
+            return (
+                NOT_APPLICABLE,
+                "AND: explicitly not applicable (" + "; ".join(na_reasons) + ")",
+            )
         all_reasons = [reason for _, reason in child_results]
         return True, "AND: all satisfied (" + "; ".join(all_reasons) + ")"
 
@@ -153,6 +187,7 @@ def _evaluate_node(
         child_results = [_evaluate_node(c, facts) for c in node.conditions]
         has_true = any(r is True for r, _ in child_results)
         has_none = any(r is None for r, _ in child_results)
+        has_na = any(r == NOT_APPLICABLE for r, _ in child_results)
 
         if has_true:
             pass_reasons = [reason for r, reason in child_results if r is True]
@@ -160,6 +195,16 @@ def _evaluate_node(
         if has_none:
             uneval_reasons = [reason for r, reason in child_results if r is None]
             return None, "OR: missing " + ", ".join(uneval_reasons)
+        if has_na:
+            na_reasons = [
+                reason
+                for r, reason in child_results
+                if r == NOT_APPLICABLE
+            ]
+            return (
+                NOT_APPLICABLE,
+                "OR: explicitly not applicable (" + "; ".join(na_reasons) + ")",
+            )
         fail_reasons = [reason for r, reason in child_results if r is False]
         return False, "OR: all failed (" + "; ".join(fail_reasons) + ")"
 
@@ -169,6 +214,11 @@ def _evaluate_node(
             return False, f"NOT: ({child_reason}) negated to false"
         if child_result is False:
             return True, f"NOT: ({child_reason}) negated to true"
+        if child_result == NOT_APPLICABLE:
+            return (
+                NOT_APPLICABLE,
+                f"NOT: ({child_reason}) — explicit not-applicable is not negated",
+            )
         return None, f"NOT: ({child_reason}) — cannot negate insufficient data"
 
     # Should not reach here with valid discriminated union
@@ -182,6 +232,8 @@ def _evaluate_node(
 
 def _collect_fields_from_node(node: ConditionNode) -> set[str]:
     """Recursively collect all field names referenced in a condition tree."""
+    if isinstance(node, LiteralNode):
+        return set()
     if isinstance(node, ApplicabilityCondition):
         return {node.field}
     if isinstance(node, AndNode):
@@ -210,9 +262,17 @@ def _collect_required_inputs(rule: ApprovalRule) -> list[str]:
 def _collect_missing_inputs(
     rule: ApprovalRule, facts: dict[str, Any]
 ) -> list[str]:
-    """Collect fact fields required by the rule but missing from project facts."""
+    """Collect fact fields required by the rule but missing from project facts.
+
+    Keys holding None or the "UNKNOWN" token count as missing: unknown
+    is never a supplied value for traceability purposes.
+    """
     required = _collect_required_inputs(rule)
-    return sorted(f for f in required if f not in facts)
+    return sorted(
+        f
+        for f in required
+        if f not in facts or facts.get(f) is None or facts.get(f) == "UNKNOWN"
+    )
 
 
 # ─────────────────────────────────────────────────────────────
@@ -224,6 +284,7 @@ def evaluate_rule(
     rule: ApprovalRule,
     project_facts: dict[str, Any],
     authority: str = "",
+    evaluation_date: date | None = None,
 ) -> ApplicabilityEvaluation:
     """Evaluate a single approval rule against project facts.
 
@@ -235,14 +296,59 @@ def evaluate_rule(
     the rule APPLIES. This preserves the "multiple rules, any match"
     semantic from the flat-list design.
 
+    Effective window (only when evaluation_date is supplied): a rule
+    outside [effective_from, effective_to] is DOES_NOT_APPLY (not in
+    force) without evaluating conditions. Open ends are open-ended.
+    evaluation_date=None preserves existing behavior (always
+    evaluated).
+
     Logic:
-    1. If any required fact field is missing → INSUFFICIENT_DATA
-    2. If any condition tree evaluates to TRUE → APPLIES
-    3. If all trees evaluate to FALSE → DOES_NOT_APPLY
-    4. If at least one tree is INSUFFICIENT_DATA and none TRUE → CONDITIONAL
+    1. If the rule is outside its effective window → DOES_NOT_APPLY
+    2. If any required fact field is missing → INSUFFICIENT_DATA
+    3. If any condition tree evaluates to TRUE → APPLIES
+    4. If all trees evaluate to FALSE → DOES_NOT_APPLY
+    5. If at least one tree is INSUFFICIENT_DATA and none TRUE → CONDITIONAL
     """
     required_inputs = _collect_required_inputs(rule)
     missing_inputs = _collect_missing_inputs(rule, project_facts)
+
+    if evaluation_date is not None:
+        if (
+            rule.effective_from is not None
+            and evaluation_date < rule.effective_from
+        ):
+            return ApplicabilityEvaluation(
+                rule_id=rule.id,
+                approval_id=rule.approval_id,
+                result=ApprovalResult.DOES_NOT_APPLY.value,
+                reason=(
+                    f"Rule not in force for evaluation date "
+                    f"{evaluation_date.isoformat()} "
+                    f"(effective from {rule.effective_from.isoformat()})"
+                ),
+                required_inputs=required_inputs,
+                missing_inputs=missing_inputs,
+                authority=authority,
+                source_references=rule.source_refs,
+            )
+        if (
+            rule.effective_to is not None
+            and evaluation_date > rule.effective_to
+        ):
+            return ApplicabilityEvaluation(
+                rule_id=rule.id,
+                approval_id=rule.approval_id,
+                result=ApprovalResult.DOES_NOT_APPLY.value,
+                reason=(
+                    f"Rule no longer in force for evaluation date "
+                    f"{evaluation_date.isoformat()} "
+                    f"(effective to {rule.effective_to.isoformat()})"
+                ),
+                required_inputs=required_inputs,
+                missing_inputs=missing_inputs,
+                authority=authority,
+                source_references=rule.source_refs,
+            )
 
     # No conditions → rule always applies
     if not rule.applicability_conditions:
@@ -258,7 +364,7 @@ def evaluate_rule(
         )
 
     # Evaluate each top-level condition tree
-    tree_results: list[tuple[bool | None, str]] = []
+    tree_results: list[tuple[bool | None | NotApplicable, str]] = []
     for node in rule.applicability_conditions:
         result, reason = _evaluate_node(node, project_facts)
         tree_results.append((result, reason))
@@ -266,6 +372,7 @@ def evaluate_rule(
     any_true = any(r is True for r, _ in tree_results)
     any_false = any(r is False for r, _ in tree_results)
     any_none = any(r is None for r, _ in tree_results)
+    any_na = any(r == NOT_APPLICABLE for r, _ in tree_results)
 
     # APPLIES: at least one tree evaluated to TRUE
     if any_true:
@@ -281,9 +388,31 @@ def evaluate_rule(
             source_references=rule.source_refs,
         )
 
-    # DOES_NOT_APPLY: all trees evaluated to FALSE (no INSUFFICIENT_DATA)
-    if any_false and not any_none:
+    # DOES_NOT_APPLY: all trees evaluated to FALSE (no INSUFFICIENT_DATA).
+    # Explicit NOT_APPLICABLE trees join this result (a branch that
+    # explicitly does not apply means the rule does not apply) while
+    # keeping their explicit reason. UNKNOWN (None) still never lands
+    # here: any INSUFFICIENT_DATA without TRUE goes below.
+    if (any_false or any_na) and not any_none:
+        na_reasons = [
+            reason for r, reason in tree_results if r == NOT_APPLICABLE
+        ]
+        if any_na and not any_false:
+            return ApplicabilityEvaluation(
+                rule_id=rule.id,
+                approval_id=rule.approval_id,
+                result=ApprovalResult.DOES_NOT_APPLY.value,
+                reason="Explicitly not applicable: " + "; ".join(na_reasons),
+                required_inputs=required_inputs,
+                missing_inputs=[],
+                authority=authority,
+                source_references=rule.source_refs,
+            )
         fail_reasons = [reason for r, reason in tree_results if r is False]
+        if na_reasons:
+            fail_reasons = fail_reasons + [
+                "Explicitly not applicable: " + "; ".join(na_reasons)
+            ]
         return ApplicabilityEvaluation(
             rule_id=rule.id,
             approval_id=rule.approval_id,
@@ -299,16 +428,24 @@ def evaluate_rule(
     if any_none and any_false:
         uneval_reasons = [reason for r, reason in tree_results if r is None]
         fail_reasons = [reason for r, reason in tree_results if r is False]
+        na_reasons = [
+            reason for r, reason in tree_results if r == NOT_APPLICABLE
+        ]
+        detail = (
+            "Partial evaluation — some facts unavailable: "
+            + "; ".join(uneval_reasons)
+            + "; other conditions failed: "
+            + "; ".join(fail_reasons)
+        )
+        if na_reasons:
+            detail += (
+                "; explicitly not applicable: " + "; ".join(na_reasons)
+            )
         return ApplicabilityEvaluation(
             rule_id=rule.id,
             approval_id=rule.approval_id,
             result=ApprovalResult.CONDITIONAL.value,
-            reason=(
-                "Partial evaluation — some facts unavailable: "
-                + "; ".join(uneval_reasons)
-                + "; other conditions failed: "
-                + "; ".join(fail_reasons)
-            ),
+            reason=detail,
             required_inputs=required_inputs,
             missing_inputs=[],
             authority=authority,
@@ -325,6 +462,23 @@ def evaluate_rule(
             reason="Required fact fields missing: " + "; ".join(uneval_reasons),
             required_inputs=required_inputs,
             missing_inputs=missing_inputs,
+            authority=authority,
+            source_references=rule.source_refs,
+        )
+
+    # Explicit NOT_APPLICABLE with no TRUE/FALSE/INSUFFICIENT_DATA:
+    # the rule explicitly does not apply (never INSUFFICIENT_DATA).
+    if any_na:
+        na_reasons = [
+            reason for r, reason in tree_results if r == NOT_APPLICABLE
+        ]
+        return ApplicabilityEvaluation(
+            rule_id=rule.id,
+            approval_id=rule.approval_id,
+            result=ApprovalResult.DOES_NOT_APPLY.value,
+            reason="Explicitly not applicable: " + "; ".join(na_reasons),
+            required_inputs=required_inputs,
+            missing_inputs=[],
             authority=authority,
             source_references=rule.source_refs,
         )
@@ -347,6 +501,7 @@ def evaluate_approval_applicability(
     project_facts: dict[str, Any],
     approval_authorities: dict[str, str] | None = None,
     approval_ids: list[str] | None = None,
+    evaluation_date: date | None = None,
 ) -> list[ApplicabilityEvaluation]:
     """Evaluate multiple approval rules against project facts.
 
@@ -355,6 +510,8 @@ def evaluate_approval_applicability(
         project_facts: Arbitrary project fact fields.
         approval_authorities: Optional mapping of approval_id → authority name.
         approval_ids: Optional filter — only evaluate rules for these approvals.
+        evaluation_date: Optional date for rule effective-window
+            pre-checks. None preserves existing behavior.
 
     Returns:
         List of detailed evaluation results, one per rule evaluated.
@@ -371,7 +528,9 @@ def evaluate_approval_applicability(
     evaluations: list[ApplicabilityEvaluation] = []
     for rule in filtered_rules:
         authority = approval_authorities.get(rule.approval_id, "")
-        evaluation = evaluate_rule(rule, project_facts, authority)
+        evaluation = evaluate_rule(
+            rule, project_facts, authority, evaluation_date=evaluation_date
+        )
         evaluations.append(evaluation)
 
     return evaluations

@@ -1,0 +1,84 @@
+id,applies_to,rule_or_record,source_ids,source_tiers,locator,final_status,source_basis,implementation_note
+R-001,APR-001,Prior Environmental Clearance - Schedule item 5(f) Synthetic organic chemicals,SRC-001,T1,Schedule item 5(f),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,F-PRD-01 UNKNOWN -> result UNKNOWN. FORMULATION_ONLY -> do not auto-FALSE; mark UNKNOWN pending appraisal view
+R-002,APR-001,Prior Environmental Clearance - Schedule item 5(f) Synthetic organic chemicals,SRC-001,T1,"Item 5(f) column 5 (inserted by S.O.1223(E) 27-03-2020; footnote 76): 'water consumption <25 m3/day, fuel consumption <25 TPD and not covered in the category of MAH units as per MSIHC Rules 1989'",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,All three required (AND). 25 exactly = NOT small
+R-003,APR-001,Prior Environmental Clearance - Schedule item 5(f) Synthetic organic chemicals,SRC-001,T1,Item 5(f),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,If F-LOC-02 UNKNOWN and SMALL_UNIT not TRUE -> UNKNOWN
+R-004,APR-001,Prior Environmental Clearance - Schedule item 5(f) Synthetic organic chemicals,SRC-001,T1,EIA Schedule General Condition: 'located in whole or in part within 5 km from the boundary of' PA / CPA / ESA / inter-State & international boundaries; 10 km for 7(c) estates,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Any GC sub-fact UNKNOWN while CAT_BASE=B -> CAT UNKNOWN (A or B)
+R-007,APR-003,Prior EC - item 8(a) Building & construction,SRC-001;SRC-179,T1,Item 8(a),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Built-up = built-up or covered area on all floors incl. basement and other service areas. Industrial sheds count (Note 1 of 29-01-2025 quashed 05-08-2025). Foot
+R-008,APR-003,Prior EC - item 8(a) Building & construction,SRC-001,T1,Item 8(a) col 5,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-009,APR-004,Prior EC - item 8(b) Township & area development,SRC-001,T1,Item 8(b),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,If either TRUE -> TRUE even if other UNKNOWN
+R-011,APR-006,Prior EC - item 5(b) Pesticides industry & technical,SRC-001,T1,Item 5(b),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-012,APR-007,Prior EC - item 5(h) Integrated paint industry,SRC-001,T1,Item 5(h),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-013,APR-008,Consent to Establish (Water & Air Acts),SRC-011;SRC-010,T2;T4,Directions para on White category,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,White: no consent; Blue: essential environmental services
+R-014,APR-008,Consent to Establish (Water & Air Acts),SRC-011;SRC-010,T2;T4,Sector list,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Only listed codes encoded; others -> UNKNOWN
+R-015,APR-008,Consent to Establish (Water & Air Acts),SRC-011,T4,-,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,No multi-code aggregation rule found in CPCB directions 12-02-2025 or MPCB adoption circular 23-06-2025. Engine must return UNKNOWN for units with >1 sector cod
+R-017,APR-009,Consent to Operate (Water & Air Acts),SRC-004,T1,-,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-018,APR-010,Hazardous waste authorisation (Form 1 -> Form 2),SRC-013,T1,Rule 6(1),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,"Waste entry numbers come from F-HW-02 (supplied), never inferred"
+R-019,APR-012,MSIHC - notification of site / safety report / on-site emergency plan,SRC-016,T1,Rule 7; Schedules,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Chemical not in mapping -> UNKNOWN (not FALSE). Per-chemical thresholds are held in msihc_chemical_mapping.csv. v2 example 'hydrogen 2 t' conflicts with the SPC
+R-020,APR-012,MSIHC - notification of site / safety report / on-site emergency plan,SRC-016,T1,Rule 10,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Col 4 per msihc_t1_thresholds (v5: 1994 col-4 values VERIFIED_T1_CONSOLIDATED); S2-18 col 4 and NOT_PRINTED col 4 -> UNKNOWN (never FALSE)
+R-021,APR-012,MSIHC - notification of site / safety report / on-site emergency plan,SRC-016,T1,"r.2(ja), r.2(n), Sch 2 & 3 notes",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,MAH is DERIVED by the msihc_mapping_steps pipeline (never user-asserted). Output TRUE/FALSE/UNKNOWN with evidence chain (chemical -> schedule entry -> column 3 
+R-024,APR-017,Registration of establishment under OSH Code s.3,SRC-081;SRC-027,T1;T5 (T2 circular copy on private site),OSH s.3(1): apply electronically within 60 days of applicability; 'establishment' threshold of 10 workers in s.2(1) definition,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,DO_NOT_IMPLEMENT_YET as operative
+R-026,APR-019,Contract labour - principal employer registration,SRC-081;SRC-026,T1;T3,OSH Code 2020 s.45(2) (as cited in rule condition),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Legacy CLRA threshold differs - transitional
+R-027,APR-020,Contractor licence,SRC-081;SRC-026,T1;T3,OSH Code 2020 s.45(1)(ii) (as cited in rule condition),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,"Obligation of contractor, not principal employer"
+R-028,APR-023,Boiler registration,SRC-034,T1,Boilers Act 2025 s.2(c),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,s.2(c) definition verified in v2 (UNK-021 closed). Evaluate UNKNOWN when an operand is UNKNOWN.
+R-030,APR-026,Petroleum storage licence (Form XII/XIII District Authority; Form XV/XVI PESO) +,SRC-092;SRC-017,T1;T3,Petroleum Act 1934 s.7(i); PESO SOP exemptions table,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-031,APR-026,Petroleum storage licence (Form XII/XIII District Authority; Form XV/XVI PESO) +,SRC-092;SRC-017,T1;T3,Petroleum Act 1934 s.7(ii),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Other conditions (non-bulk etc.) per SOP
+R-032,APR-026,Petroleum storage licence (Form XII/XIII District Authority; Form XV/XVI PESO) +,SRC-117;SRC-017,T1;T3,"Petroleum Rules 2002 First Schedule: Form XII Class A <=300 L (DA); Form XIII Class B non-bulk <=25,000 L (DA); Form XV installation (CCE/Controller); Form XVI non-bulk A >300 L / B >25,000 L / C >45,000 L (Controller)",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Multiple classes: combination rules per SOP not encoded -> UNKNOWN
+R-033,APR-027,Gas cylinder storage licence (Form F),SRC-169;SRC-173,T1,"GCR 2016 r.44(a),(b)(i)-(iv) (Gazette G.S.R.1081(E)); r.44(c) LPG clause",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,"v5: official Gazette text read. Amendments 386(E) 2025, 839(E) 2025, 315(E) 2026 read - none amend r.44. 2018/2019/2022/225(E)/501(E) amendments not read -> VER"
+R-035,APR-029,MIDC plot allotment,SRC-043,T3,-,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,UNKNOWN -> neither MIDC nor non-MIDC branch may be finalised
+R-041,APR-038;APR-041,Building/development permission (non-MIDC planning authority),SRC-123;SRC-124;SRC-067,T1;T2,Circular para 2,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-043,APR-043,CGWA NOC - groundwater abstraction,SRC-052,T1,Exemptions list,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Medium enterprises NOT covered by this exemption
+R-044,APR-043,CGWA NOC - groundwater abstraction,SRC-052,T1,Exemptions list,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-045,APR-043,CGWA NOC - groundwater abstraction,SRC-052,T1,OE restrictions,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Drinking/domestic & green-belt NOC permitted even in OE
+R-046,APR-044,CGWA NOC - dewatering during construction,SRC-052,T1,-,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-047,APR-045,New electricity connection,SRC-055,T3,-,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Never default MSEDCL
+R-050,APR-048,Legal Metrology packer registration,SRC-095;SRC-062,T2;T3,LM(PC) Rules 2011 r.3 (GSR 629(E) 23-06-2017 w.e.f. 01-01-2018); r.2(bb),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-054,APR-052,EC for expansion / no-increase-in-pollution-load exemption,SRC-001,T1,Para 7(ii)(b),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Applies to Sch items 2-5 per consolidated text
+R-055,APR-053,MPCB consent amendment vs fresh consent,SRC-068,T2,Circular,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-056,APR-054,HW utilisation authorisation (rule 9),SRC-013,T1,Rule 9,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-059,INC-*,INCENTIVE_VALUE ,SRC-073;SRC-074,T3,-,VERIFIED,PRIMARY/OFFICIAL,Hard stop
+R-060,APR-012,MSIHC - notification of site / safety report / on-site emergency plan,SRC-016,T1,r.4(1),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,No threshold for industrial activity limb
+R-061,APR-012,MSIHC - notification of site / safety report / on-site emergency plan,SRC-016,T1,Sch 2/3 notes,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,No sum-of-ratios rule exists in the text - do not implement one
+R-062,APR-008,Consent to Establish (Water & Air Acts),SRC-006,T1 (Gazette copy hosted by MPCB - see notes),para 4(3),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,MPCB circular 21-04-2026 directs officers to adhere to GSR 62/63 (general direction; mpcb_gsr62_63_implementation GSR-03/05/06). CTO granted on/after 27-01-2026
+R-064,APR-001,Prior Environmental Clearance - Schedule item 5(f) Synthetic organic chemicals,SRC-001,T1,Item 5(f),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,UNK-033
+R-065,APR-058,CWC declarations (initial/annual) to NACWC,SRC-098,T2,thresholds,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Strictly greater-than
+R-066,APR-057,NCB registration - controlled substances (Schedule A),SRC-099,T2,Schedule A,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-067,APR-055,Insecticide manufacturing licence,SRC-100,T1,s.13,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-070,CMP-018,SAFETY_OFFICER ,SRC-081,T1,s.22(2),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,F-LAB-07 = hazardous process (First Schedule) - input fact
+R-071,CND-024,MH_GW_ACT_IN_FORCE ,SRC-131;SRC-132,T1,s.1(3); s.8,VERIFIED,PRIMARY/OFFICIAL,Do not return FALSE
+R-072,CMP-014,ENV_AUDIT ,SRC-066,T1,scope,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-073,APR-023,Boiler registration,SRC-085,T1,BOE rule,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-075,APR-001,Prior Environmental Clearance - Schedule item 5(f) Synthetic organic chemicals,SRC-001,T1,para 9,VERIFIED,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-076,CMP-006,EC_COMPLIANCE_DUE ,SRC-001,T1,para 10(ii),VERIFIED,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-077,APR-043,CGWA NOC - groundwater abstraction,SRC-052,T1,para 4.1,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-078,APR-039;APR-040,Provisional fire NOC (non-MIDC),SRC-121,T1,s.3(1),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Never default to one fire authority for Maharashtra
+R-079,APR-039;APR-040,Provisional fire NOC (non-MIDC),SRC-121,T1,Schedule-I Industrial (G) rows (i)-(iv),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Hazard class of a building is an input fact (not derived)
+R-080,APR-038,Building/development permission (non-MIDC planning authority),SRC-123,T1,s.18(1); s.44(1),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,The answer depends on the particular planning authority
+R-081,APR-038,Building/development permission (non-MIDC planning authority),SRC-123,T1,s.45(5) and provisos,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-082,APR-038,Building/development permission (non-MIDC planning authority),SRC-124,T2,Reg. 1.1,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Compilation updated to 30-01-2024; later amendments not checked
+R-083,LOC-CRZ,CRZ ,SRC-112,T1,"paras 4(i), 4(ii), 4(xi)",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-084,LOC-FOREST,FOREST ,SRC-113,T1,"r.9, r.10",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-085,LOC-NBWL,NBWL ,SRC-114,T2,order text,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Individual ESZ notifications may set other limits - ESZ notification governs where issued
+R-086,APR-023,Boiler registration,SRC-034,T1,s.12(1)-(6),VERIFIED,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-087,APR-023,Boiler registration,SRC-034,T1,s.45(2),VERIFIED,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-088,CMP-009,BOILER_CERT_CEASES ,SRC-034,T1,s.13(1)(a)-(f); s.15,VERIFIED,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-089,APR-022,Inter-State Migrant Workmen registration/licence,SRC-081,T1,s.59,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,MH procedure under State rules DRAFT; portal service cites ISMW Act 1979 (PORTAL_LEGACY)
+R-091,APR-012,MSIHC - notification of site / safety report / on-site emergency plan,SRC-016;SRC-134,T1;T2,r.2; Schedules 1-3,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Per-chemical thresholds from msihc_t1_thresholds / msihc_value_chronology; only cells with status VERIFIED / VERIFIED_PRIMARY_GAZETTE / VERIFIED_T1_CONSOLIDATED
+R-092,APR-026,Petroleum storage licence (Form XII/XIII District Authority; Form XV/XVI PESO) +,SRC-117,T1,r.144,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-093,CMP-024,CMVR_CONSIGNOR ,SRC-102,T1,r.131,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-094,CMP-025,EWASTE_BULK ,SRC-135,T1,r.3; r.8,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,IMPLEMENTATION_SAFE
+R-095,CND-022,ODS_REG ,SRC-127,T1,r.8,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Amendments after India Code copy not checked
+R-096,APR-010,Hazardous waste authorisation (Form 1 -> Form 2),SRC-120,T2,Schedule II Class A/B/C,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Never infer a waste code; post-2016 Schedule II amendments UNK-034
+R-099,APR-040,Final fire NOC (non-MIDC),SRC-145,T2,"Circular 31-01-2025 paras 3, 4, 6; Circular 30-10-2014 paras 2-5",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,"Unresolved item is the sector-specific exception (FR-03), not the general principle"
+R-100,APR-026,Petroleum storage licence (Form XII/XIII District Authority; Form XV/XVI PESO) +,SRC-117,T1,r.142(2); r.148(1)-(2),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,SECTOR_SPECIFIC_CERTIFICATE; not a fire-approval renewal
+R-101,APR-027,Gas cylinder storage licence (Form F),SRC-169,T1,r.51(2); r.55(2),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,SECTOR_SPECIFIC_CERTIFICATE
+R-102,APR-028,SMPV(U) licence (LS-1A) and prior approval,SRC-174,T1,r.51(1); r.55(2),VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,SECTOR_SPECIFIC_CERTIFICATE
+R-103,APR-028,SMPV(U) licence (LS-1A) and prior approval,SRC-174;SRC-177,T1,r.47(1); G.S.R. 448(E) rule 4,VERIFIED,PRIMARY/OFFICIAL,Temporal rule; treatment of applications pending on 05-06-2026 not stated -> INSUFFICIENT_DATA for those
+R-104,APR-027,Gas cylinder storage licence (Form F),SRC-169;SRC-173,T1,"r.48(1),(2),(3); G.S.R. 315(E) r.48(3)(b)",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,r.48(3)(b) wording extended by 2026 amendment ('or other flammable gases')
+R-105,PS-02,PLANNING_ZONE_PERMISSIBILITY ,SRC-123;SRC-124,T1;T2,"MRTP s.2(19), s.44; UDCPR Reg.1.4(iii)",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,Never returns APPLIES/DOES_NOT_APPLY for zone permissibility
+MSIHC-T1-VERIFIED,APR-012,msihc_t1_thresholds rows VERIFIED (218); verified cells of VERIFIED_CONDITIONAL rows,SRC-154;SRC-156;SRC-167,T1,Sch 1-3,VERIFIED,PRIMARY/OFFICIAL,Cell-level gating; blocked cells -> UNKNOWN
+EPR-PWM,EPR,Plastic packaging EPR,SRC-159,T1,G.S.R. 237(E) rules 2-8,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,CONDITIONAL on F-EPR-PLASTIC role
+EPR-BAT,EPR,Battery EPR,SRC-161;SRC-181,T1;T2,"sections I, II, V, VI, XIV",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,DOES_NOT_APPLY unless battery producer/importer role TRUE; role UNKNOWN -> UNKNOWN
+EPR-TYRE,EPR,Waste tyre EPR,SRC-182;SRC-163,T1;T2,"Sch IX paras 1(e), 2, 3, 9",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,DOES_NOT_APPLY unless a Sch IX role is held; role UNKNOWN -> INSUFFICIENT_DATA
+EPR-EWASTE,EPR,E-waste - bulk consumer duty,SRC-135,T1,r.3; r.8,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,CONDITIONAL on F-EEE-01 (R-094)
+EBWGR-SWM,EPR,Extended Bulk Waste Generator Responsibility,SRC-160,T1,r.1(2); r.3 'bulk waste generator'; r.6,VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,CONDITIONAL on floor area/water/waste facts
+EPR-NFM,EPR,"Non-ferrous metal scrap EPR (Al, Cu, Zn and alloys)",SRC-183,T1,"commencement; r.2(k),(o),(q); r.45; r.50; r.52; r.55",VERIFIED_CONDITIONAL,PRIMARY/OFFICIAL,DOES_NOT_APPLY unless role held; role UNKNOWN -> INSUFFICIENT_DATA

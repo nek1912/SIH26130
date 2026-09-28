@@ -14,13 +14,10 @@ class ProjectRepository(BaseRepository):
 
     def get_by_applicant(self, applicant_id: UUID) -> list[dict[str, Any]]:
         """Get all projects for an applicant."""
-        result = (
-            self.client.table(self.table_name)
-            .select("*")
-            .eq("applicant_id", str(applicant_id))
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM projects WHERE applicant_id = %s",
+            (str(applicant_id),),
         )
-        return result.data
 
     def get_with_facts(self, project_id: UUID) -> dict[str, Any] | None:
         """Get project with its facts."""
@@ -28,11 +25,9 @@ class ProjectRepository(BaseRepository):
         if not project:
             return None
 
-        facts_result = (
-            self.client.table("project_facts")
-            .select("*")
-            .eq("project_id", str(project_id))
-            .execute()
+        facts = self.client.fetch_one(
+            "SELECT * FROM project_facts WHERE project_id = %s",
+            (str(project_id),),
         )
-        project["facts"] = facts_result.data[0] if facts_result.data else None
+        project["facts"] = facts
         return project

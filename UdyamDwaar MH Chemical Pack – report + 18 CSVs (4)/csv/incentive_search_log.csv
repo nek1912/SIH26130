@@ -1,0 +1,11 @@
+search_id,item_searched,where_searched,date_or_version_seen,result,source_ids
+ISL-01,PSI 2025 / Package Scheme under IISP 2025 (GR),Industries Dept GR page; gr.maharashtra.gov.in search; web,Industries GR page last updated 21-08-2026,NOT FOUND,SRC-074
+ISL-02,PSI 2025 on MIDC policies page,MIDC industrial policies & incentives page,updated 31-07-2026,NOT FOUND; PSI 2019 listed,SRC-073
+ISL-03,IISP 2025 GR - PSI statements,IISP 2025 GR 31-12-2025,31-12-2025,'existing PSI 2019 to be amended as necessary'; 'new PSI to be announced'; State Level Committee decides earlier-scheme issues,SRC-061
+ISL-04,Implementation guidelines / eligibility certificate / claim certificate procedure (2025),"Industries Dept, MAITRI, web",26-09-2026,NOT FOUND in official sources (secondary claim of invest.maharashtra.gov.in EC application is T5 - not used),SRC-074;SRC-058
+ISL-05,PSI 2019 transition,PSI 2019 GR operative-period clause; 14-05-2025 corrigendum,2019; 2025,Period till 31-03-2024 or till new PSI; still being amended in 2025 -> CON-018,SRC-125;SRC-126
+ISL-06,Taluka classification,IISP 2025 Annexure I; PSI 2019 taluka groups,2025; 2019,Annexure I exists; mapping for claims depends on PSI (not found),SRC-061;SRC-125
+ISL-07,Sector classification (thrust/chemicals),IISP 2025,2025,Policy-level only,SRC-061
+ISL-08,"SGST-linked IPS, ED exemption, power subsidy, capital, interest, EPF/employment-linked",IISP 2025 GR,2025,Listed at policy level; ED exemption via separate Energy Dept notification (not found); quantification requires PSI,SRC-061
+ISL-09,MSME / Large / Mega / Special-large eligibility,IISP 2025; PSI 2019,2025; 2019,PSI 2019 tables exist; IISP-era eligibility instrument not found,SRC-061;SRC-125
+ISL-v4-01,PSI 2025 / IISP 2025 GR / guidelines,"Web search 26-09-2026 (MAITRI GR page, MIDC policies page, InvestIndia GR copy, consultant notes)",26-09-2026,NOT FOUND (only policy GR 31-12-2025 copies and secondary summaries),SRC-061;SRC-074

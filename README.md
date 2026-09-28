@@ -1,180 +1,259 @@
-# Gujarat Industrial Approval Intelligence (GAIA)
+# UdyamDwaar / GAIA — Industrial Approval Intelligence Platform
 
 **Smart India Hackathon 2026 — Problem Statement 26130**
 
-A narrow Gujarat-focused industrial approvals assistant that helps applicants understand which approvals may apply, why they apply, what is needed, and what action is next.
+An authoritative, deterministic regulatory intelligence and single-window workflow assistant for industrial projects (focused on synthetic organic chemical manufacturing) in **Maharashtra (Primary: IN-MH)** and **Gujarat (Legacy/Baseline: IN-GJ)**.
 
-## Stack
+---
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 19 + TypeScript + Vite + Tailwind CSS v4 |
-| Backend | FastAPI + Python |
-| Database | Supabase PostgreSQL |
-| Auth | Supabase Auth (JWT, RBAC) |
-| API | REST (OpenAPI from FastAPI) |
+## 1. Overview & Mission
 
-## Project Structure
+Navigating statutory clearances for industrial establishments across state and central departments in India is historically fraught with regulatory opacity, non-linear dependencies, ambiguous thresholds, and bureaucratic delays. 
+
+**UdyamDwaar (GAIA)** solves this by converting statutory laws, rules, gazette notifications, and single-window procedures into a **deterministic regulatory intelligence engine**. Rather than relying on non-deterministic LLM hallucinations for statutory mandates, the platform couples pure-logic rule evaluators with an official-source grounded retrieval system:
+
+$$\text{Project Facts} \longrightarrow \text{Deterministic Rules} \longrightarrow \text{Approval Graph} \longrightarrow \text{Readiness \& SLA} \longrightarrow \text{Next Action}$$
+
+---
+
+## 2. Architecture & Capabilities
+
+### Core Subsystems
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                   React 19 + TypeScript + Vite Frontend                      │
+│      (Applicant Portal, Staff Review Queue, What-If Simulator, Assistant)    │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │ REST / OpenAPI
+┌──────────────────────────────────────▼───────────────────────────────────────┐
+│                          FastAPI Backend (Python 3.11)                       │
+├──────────────────────────────┬───────────────────────────────┬───────────────┤
+│    Rules & Applicability     │   Dependency & Orchestration  │ Documents &   │
+│  - Fact Registry (128 facts) │  - DAG Topological Sort       │ Consistency   │
+│  - IN-MH Pack (26 active)    │  - Critical Path Calculation  │ - Extraction  │
+│  - IN-MH Pack (50 deferred)  │  - Blocker Diagnostics        │ - Validation  │
+│  - IN-GJ Pack (19 active)    │  - What-If Simulation Engine  │ - Cross-Doc   │
+│  - Fact Derivations Engine   │  - Portal Handoff Service     │   Consistency │
+├──────────────────────────────┴───────────────────────────────┴───────────────┤
+│            Regulatory RAG Assistant & Incentives Intelligence                │
+│  - PostgreSQL tsvector full-text search with official source tiering         │
+│  - Deterministic Support Scheme & Subsidy Assessment Engine                  │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │
+┌──────────────────────────────────────▼───────────────────────────────────────┐
+│             PostgreSQL (Local / Supabase) + Storage Layer                    │
+│      (12 Schema Migrations, Connection Pooling, Append-Only Audit Trail)     │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Deterministic Regulatory Engine**:
+   - Evaluates boolean, numeric, enum, and enum-set predicates with strict fail-closed handling for missing or unverified parameters (`INSUFFICIENT_DATA`).
+   - Pure-logic tree structure (`ConditionNode`, `AndNode`, `OrNode`, `NotNode`).
+   - Derived facts layer for composite determinations (e.g. MSME classification under R-057, Major Accident Hazard status under MSIHC / R-091).
+
+2. **Jurisdiction-Scoped Regulatory Packs**:
+   - **Maharashtra (`IN-MH`, Primary SIH Jurisdiction)**:
+     - **26 Active Rules**: Prior EC (EIA 5(f)/8(a)), CTE/CTO under Water & Air Acts, HW Authorization, Forest NOC, CRZ NOC, CGWA Groundwater NOC, Petroleum Class B Exemption, Factory Safety Officer, Boiler Registration & Examination, MIDC Plot Allotment.
+     - **50 Gated & Deferred Rules**: Strictly held in `MH_DEFERRED_RULES` with verified rationale against premature activation (spatial GIS dependencies, unextracted state forms, lookup cardinality, ODS compliance duties, planning gates).
+     - **128 Fact Registry**: Code-defined, strictly typed IN-MH facts in `app/rules/facts.py`.
+     - **22 Verified Sources**: Grounded in official Primary (T1), Secondary (T2), and Portal (T3) sources.
+   - **Gujarat (`IN-GJ`, Legacy/Regression Baseline)**:
+     - 19 active rules, 32 verified regulatory sources, 6 verified GIP 2020 incentive schemes.
+     - `DEFAULT_JURISDICTION = "IN-GJ"` preserved as the immutable global baseline cutover constant.
+
+3. **Approval Dependency Graph & Orchestration**:
+   - Computes prerequisite readiness (`READY`, `BLOCKED`, `PENDING_PREREQUISITES`, `INSUFFICIENT_DATA`).
+   - Cycle detection and topological ordering across pre-establishment, pre-construction, and pre-operation stages.
+   - Surfaces unverified evidence gaps and documentation blockers in real time.
+
+4. **Document Extraction, Validation & Consistency**:
+   - Deterministic extraction for PDF, CSV, and Excel uploads.
+   - Automated rule validation across document domains.
+   - Cross-document consistency engine detecting discrepancies across project filings (e.g. capacity or site coordinates differing between DPR, EIA, and CTE applications).
+
+5. **What-If Scenario Simulation**:
+   - Interactive policy sandbox allowing industrial planners to simulate modifications (e.g. increasing plant capital investment, changing chemical inventory, relocating from MIDC to non-MIDC zone) and immediately view the delta on approvals, dependencies, and SLAs.
+
+6. **Grounded Regulatory RAG Assistant**:
+   - Source-grounded regulatory queries backed by PostgreSQL `tsvector` full-text search and GIN indexing over official legislation and notifications. Zero LLM hallucinations of statutory facts.
+
+---
+
+## 3. Technology Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| **Frontend** | React 19, TypeScript, Vite, Tailwind CSS v4 | Ultra-responsive SPA for applicants and department officers |
+| **Backend** | FastAPI, Python 3.11, Pydantic v2 | High-performance asynchronous REST API |
+| **Database** | PostgreSQL (Local / Supabase) | Relational persistence, connection pooling (`psycopg_pool`), tsvector search |
+| **Auth** | Supabase Auth / PyJWT (HS256) | Role-Based Access Control (`Applicant`, `Reviewer`, `Manager`, `Admin`) |
+| **Storage** | Local Filesystem / Supabase Storage | Document upload, extraction, and validation store |
+| **Code Quality** | Pytest, Ruff, Oxlint, TypeScript Compiler | **1449 passing backend tests**, 100% ruff clean, 0 TypeScript errors |
+
+---
+
+## 4. Repository Structure
 
 ```
 SIH26130/
 ├── backend/
-│   └── app/
-│       ├── api/          # FastAPI routes (health, projects, approvals, applications, workflow)
-│       ├── auth/         # JWT verification, RBAC, ownership checks
-│       ├── core/         # Settings (Pydantic BaseSettings)
-│       ├── db/           # Supabase client factory
-│       ├── repositories/ # Database access layer (CRUD + filtered queries)
-│       ├── rules/        # Applicability engine, deadline rules, validation
-│       ├── forms/        # Dynamic form model, conditional logic
-│       ├── workflow/     # Status machine, transitions, SLA, assignments
-│       ├── audit/        # Audit trail (append-only)
-│       └── main.py       # FastAPI app with CORS
+│   ├── app/
+│   │   ├── api/             # REST endpoints (projects, approvals, applications, workflow,
+│   │   │                    # documents, extraction, consistency, orchestration,
+│   │   │                    # regulatory, incentives, handoffs, whatif)
+│   │   ├── auth/            # JWT verification, RBAC, ownership guards
+│   │   ├── consistency/     # Cross-document consistency engine
+│   │   ├── core/            # Configuration and BaseSettings
+│   │   ├── db/              # Postgres connection pool and client factories
+│   │   ├── extraction/      # Document extraction & deterministic validation
+│   │   ├── handoff/         # Single-window portal handoff generators
+│   │   ├── incentives/      # Government support & subsidy assessment engine
+│   │   ├── orchestration/   # Approval readiness, blocker diagnosis & What-If engine
+│   │   ├── regulatory/      # Regulatory RAG retrieval and template explanations
+│   │   ├── repositories/    # Database persistence and repository layer
+│   │   ├── rules/           # Applicability engine, fact registry (IN-MH 128 facts),
+│   │   │                    # derivations, dependency DAG
+│   │   ├── seed/            # Regulatory packs (IN-MH, IN-GJ), sources, portals, SLAs
+│   │   └── workflow/        # 14-status state machine, transitions, SLA calculator
+│   └── tests/               # 1449 comprehensive unit, property, and integration tests
 ├── frontend/
 │   └── src/
-│       ├── lib/          # Supabase client, API client
-│       ├── types/        # TypeScript types matching backend
-│       ├── contexts/     # Auth context (session, role)
-│       ├── components/   # UI (Button, Card, Badge), layout (Sidebar, Topbar), shared (StatusBadge)
-│       └── pages/
-│           ├── auth/     # Login
-│           ├── applicant/# Projects, applications, status timeline
-│           └── staff/    # Application queue, workflow actions
+│       ├── components/      # UI primitives, layout (Sidebar, Topbar), shared widgets
+│       ├── contexts/        # Auth and application session context
+│       ├── lib/             # API client and authentication interceptors
+│       ├── pages/           # Applicant portal, staff queue, detail views, what-if, assistant
+│       └── types/           # Type definitions matching backend schemas
 ├── supabase/
-│   └── migrations/       # SQL schema (12 tables)
-└── docs/
+│   └── migrations/          # 12 ordered SQL migrations (schema, tables, indexes)
+└── docs/                    # Architecture records, audit reports, and design specs
 ```
 
-## Quick Start
+---
+
+## 5. Quick Start Guide
 
 ### Prerequisites
+- **Python 3.11+**
+- **Node.js 18+** & **npm**
+- **PostgreSQL 14+** (Local or Supabase)
 
-- Python 3.11+
-- Node.js 18+
-- A Supabase project ([supabase.com](https://supabase.com))
+---
 
-### 1. Backend
+### Step 1: Backend Setup
 
 ```bash
 cd backend
+
+# Create and activate virtual environment
 python -m venv .venv
-.venv\Scripts\activate        # Windows
-# source .venv/bin/activate   # macOS/Linux
+.venv\Scripts\activate          # Windows PowerShell / CMD
+# source .venv/bin/activate     # macOS / Linux
+
+# Install dependencies in editable mode
 pip install -e ".[dev]"
-cp .env.example .env          # Fill in Supabase keys
-uvicorn app.main:app --reload
+
+# Configure environment variables
+cp .env.example .env
+# Edit backend/.env with your DATABASE_URL or Supabase credentials
+
+# Start backend server
+uvicorn app.main:app --reload --port 8000
 ```
 
-API docs at [http://localhost:8000/docs](http://localhost:8000/docs)
+FastAPI OpenAPI interactive docs available at:  
+👉 **http://localhost:8000/docs**
 
-### 2. Frontend
+---
+
+### Step 2: Frontend Setup
 
 ```bash
 cd frontend
+
+# Install dependencies
 npm install
-cp .env.example .env          # Fill in Supabase URL + anon key
+
+# Configure environment variables
+cp .env.example .env
+# Set VITE_API_URL=http://localhost:8000
+
+# Start development server
 npm run dev
 ```
 
-App at [http://localhost:5173](http://localhost:5173)
+Frontend application available at:  
+👉 **http://localhost:5173**
 
-### 3. Environment Variables
+---
 
-**Backend** (`backend/.env`):
-| Variable | Description |
-|----------|-------------|
-| `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_KEY` | Supabase anon/public key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (optional) |
-| `AUTH_JWT_SECRET` | JWT secret from Supabase dashboard → Settings → API |
-| `AUTH_JWT_AUDIENCE` | `authenticated` (default) |
-
-**Frontend** (`frontend/.env`):
-| Variable | Description |
-|----------|-------------|
-| `VITE_SUPABASE_URL` | Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Supabase anon/public key |
-| `VITE_API_URL` | Backend URL (`http://localhost:8000`) |
-
-## Features Implemented
-
-### Applicant Flow
-- Login with email/password (Supabase Auth)
-- Create and manage industrial projects
-- Edit project facts (entity type, sector, jurisdictions, headcount, turnover)
-- Submit applications for specific approvals
-- View application status with visual workflow timeline
-- Take actions: submit, respond to queries, withdraw
-
-### Staff Flow
-- Application queue with status filters and pagination
-- Application detail with workflow actions
-- Role-based action visibility (Reviewer, Manager, Admin)
-- Request information, advance review, approve, refuse
-- Reason input for decisions
-- Structured error handling (401/403/409/422)
-
-### Backend
-- 14-status workflow state machine with 22 transition rules
-- RBAC: 4 roles (Applicant, Reviewer, Manager, Admin), 18 permissions
-- Deterministic applicability engine (Applicable / Not Applicable / Conditional / Unknown)
-- SLA computation with Indian fiscal year awareness
-- Audit trail for all material state changes
-- JWT verification (Supabase-compatible HS256)
-
-## Running Tests
+### Step 3: Run Verification Checks
 
 ```bash
-# Backend (263 tests)
+# Run backend test suite (1449 tests passing)
 cd backend
-python -m pytest tests/ -v
+python -m pytest
 
-# Backend lint
+# Run Python code quality & linting
 python -m ruff check app/ tests/
 
-# Frontend type check
-cd frontend
+# Run frontend TypeScript type checking
+cd ../frontend
 npx tsc --noEmit
-
-# Frontend lint
-npx oxlint
-
-# Frontend build
-npx vite build
 ```
 
-## API Endpoints
+---
 
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/health` | No | Health check |
-| POST | `/projects` | `application:create` | Create project |
-| GET | `/projects/{id}` | `view_own/view_team/view_all` | Get project |
-| POST | `/projects/{id}/facts` | `application:create` | Upsert project facts |
-| GET | `/projects/{id}/applications` | `view_own/view_team/view_all` | List project applications |
-| GET | `/applications` | `view_team/view_all` | List all applications (staff, with filters) |
-| GET | `/applications/{id}` | `view_own/view_team/view_all` | Get application |
-| POST | `/applications` | `application:create` | Create application |
-| POST | `/applications/{id}/submit` | `application:create` | Submit draft |
-| POST | `/applications/{id}/advance` | `application:review` | Advance review |
-| POST | `/applications/{id}/request-info` | `application:review` | Request information |
-| POST | `/applications/{id}/respond` | `application:create` | Respond to query |
-| POST | `/applications/{id}/assign` | `application:assign` | Assign officer |
-| POST | `/applications/{id}/approve` | `application:decide` | Approve |
-| POST | `/applications/{id}/refuse` | `application:decide` | Refuse |
-| POST | `/applications/{id}/withdraw` | `application:create` | Withdraw |
+## 6. Primary API Endpoints
 
-## Current Status
+| Category | Method | Path | Description |
+|---|---|---|---|
+| **Health** | `GET` | `/health` | Service liveness and database connectivity |
+| **Projects** | `POST` | `/projects` | Create industrial project profile |
+| | `GET` | `/projects/{id}` | Retrieve project details and jurisdiction |
+| | `POST` | `/projects/{id}/facts` | Upsert project facts (strictly typed per jurisdiction) |
+| **Approvals** | `GET` | `/approvals` | List regulatory catalog approvals |
+| | `POST` | `/approvals/seed` | Seed canonical approval catalog |
+| **Applications** | `POST` | `/applications` | Instantiate approval application workflow |
+| | `GET` | `/applications/{id}` | Get application status, timeline, and officer notes |
+| | `POST` | `/applications/{id}/submit` | Transition draft to submitted |
+| | `POST` | `/applications/{id}/advance` | Officer advancement through scrutiny |
+| **Orchestration** | `GET` | `/applications/{id}/orchestration` | Comprehensive readiness assessment and blockers |
+| **What-If** | `POST` | `/whatif/simulate` | Simulate policy and fact changes without persisting |
+| **Consistency** | `POST` | `/consistency/check` | Cross-document field consistency audit |
+| **Extraction** | `POST` | `/documents/extract` | Deterministic document parsing and validation |
+| **Regulatory RAG**| `GET` | `/regulatory/search` | Search official legislative sources via tsvector |
+| | `POST` | `/regulatory/explain` | Generate cited explanation for approval requirements |
+| **Incentives** | `POST` | `/incentives/assess` | Deterministic eligibility check for support schemes |
+| **Handoffs** | `GET` | `/handoffs/{id}` | Generate single-window portal handoff package |
 
-- **Phase 1 complete**: Backend foundation, 12-table schema, pure logic engines, 119 tests
-- **Phase 2A complete**: FastAPI routes + Supabase data layer, 137 tests
-- **Phase 2B complete**: Auth integration — JWT, RBAC, ownership, 185 tests
-- **Phase 2C complete**: Workflow engine — transitions, stages, audit, 253 tests
-- **Phase 3A complete**: Frontend foundation — Vite SPA, auth, routing, 263 tests
-- **Phase 3B complete**: Staff workflow UI, applicant timeline, facts editing, 263 tests
+---
 
-**Next**: Phase 3C — Document management, SLA display, workflow event history
+## 7. Regulatory Clusters Audited (Maharashtra Pack)
 
-## License
+| Cluster | Key Audited Rules | Status & Determinations |
+|---|---|---|
+| **Environmental & Consent** | R-002, R-003, R-004, R-007, R-008, R-013, R-014 | `R-002`, `R-007` active; `R-003`, `R-004`, `R-008`, `R-013`, `R-014` deferred (category escalation, multi-activity lookup guards). |
+| **Location & Land Triggers** | R-077, R-083, R-084, R-096, R-091, R-060, R-061, R-085 | `R-077` (CGWA), `R-083` (CRZ), `R-084` (Forest), `R-096` (HW Sch II) active; `R-091` derived via `derive_mah_status()`; others deferred. |
+| **Labour, Factory & Safety** | R-019, R-020, R-022, R-023, R-027, R-070, R-090 | `R-070` (Safety Officer) active; others deferred (DISH category selector, OSH Code draft status, BOCW factory exception). |
+| **Utilities, Water & Power**| R-038, R-048, R-052, R-053, R-097 | All 5 deferred fail-closed (utility workflow requests, voltage thresholds, CETP capacity, groundwater prohibition). |
+| **Safety, Hazardous & Transport** | R-030, R-032, R-033, R-034, R-035, R-062, R-092 | `R-030` (Petroleum Class B exemption) and `R-035` (MIDC plot allotment) active; others deferred (form routing, SMPV, GCR). |
+| **Sector-Specific Clearances** | R-051, R-068, R-069, R-095, R-105 | All 5 deferred fail-closed (AAI height GIS, FDA drug licensing, PESO explosive rules, ODS compliance duties, planning gates). |
 
-MIT
+---
+
+## 8. Verification & Test Metrics
+
+- **Total Backend Tests**: **1449 passed** (0 failures, 0 regressions)
+- **Code Linter**: **Ruff clean** (app & tests)
+- **Type Checker**: **TypeScript clean** (`tsc --noEmit` exited with code 0)
+- **Active Rules**: 26 (IN-MH), 19 (IN-GJ)
+- **Deferred Rules**: 50 (IN-MH, fail-closed in `MH_DEFERRED_RULES`)
+- **Jurisdiction Isolation**: Strictly verified; zero bleed between state packs.
+
+---
+
+## 9. License
+
+This repository is developed for **Smart India Hackathon 2026** (Problem Statement 26130).  
+Licensed under the [MIT License](LICENSE).

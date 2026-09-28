@@ -15,19 +15,13 @@ class TestListAllWithFilters:
     """Tests for ApplicationsRepository.list_all_with_filters."""
 
     def _make_repo(self, mock_data, mock_count):
-        """Create a repo with a mock client returning the given data."""
-        mock_client = MagicMock()
-        mock_query = MagicMock()
-        mock_result = MagicMock()
-        mock_result.data = mock_data
-        mock_result.count = mock_count
-        mock_query.execute.return_value = mock_result
-        mock_query.order.return_value = mock_query
-        mock_query.range.return_value = mock_query
-        mock_query.in_.return_value = mock_query
-        mock_query.eq.return_value = mock_query
-        mock_client.table.return_value.select.return_value = mock_query
-        return ApplicationsRepository(mock_client), mock_query
+        """Create a repo with a mocked PostgresDB handle."""
+        from app.db.postgres import PostgresDB
+
+        mock_client = MagicMock(spec=PostgresDB)
+        mock_client.fetch_all.return_value = mock_data
+        mock_client.fetch_one.return_value = {"n": mock_count}
+        return ApplicationsRepository(mock_client), mock_client
 
     def test_no_filters(self):
         """Returns all applications when no filters applied."""
@@ -41,47 +35,51 @@ class TestListAllWithFilters:
 
     def test_status_filter(self):
         """Filters by status."""
-        repo, mock_query = self._make_repo(
+        repo, mock_client = self._make_repo(
             [{"id": "1", "status": "submitted"}],
             1,
         )
         items, total = repo.list_all_with_filters(status=["submitted"])
         assert len(items) == 1
         assert items[0]["status"] == "submitted"
-        mock_query.in_.assert_called_with("status", ["submitted"])
+        where_sql = mock_client.fetch_all.call_args[0][0]
+        assert "status IN (%s)" in where_sql
 
     def test_assigned_to_filter(self):
         """Filters by assigned officer."""
         officer_id = str(uuid4())
-        repo, mock_query = self._make_repo(
+        repo, mock_client = self._make_repo(
             [{"id": "1", "assigned_officer_id": officer_id}],
             1,
         )
         items, total = repo.list_all_with_filters(assigned_to=officer_id)
         assert len(items) == 1
-        mock_query.eq.assert_any_call("assigned_officer_id", officer_id)
+        where_sql = mock_client.fetch_all.call_args[0][0]
+        assert "assigned_officer_id = %s" in where_sql
 
     def test_applicant_id_filter(self):
         """Filters by applicant."""
         applicant_id = str(uuid4())
-        repo, mock_query = self._make_repo(
+        repo, mock_client = self._make_repo(
             [{"id": "1", "applicant_id": applicant_id}],
             1,
         )
         items, total = repo.list_all_with_filters(applicant_id=applicant_id)
         assert len(items) == 1
-        mock_query.eq.assert_any_call("applicant_id", applicant_id)
+        where_sql = mock_client.fetch_all.call_args[0][0]
+        assert "applicant_id = %s" in where_sql
 
     def test_pagination(self):
         """Applies correct pagination."""
-        repo, mock_query = self._make_repo(
+        repo, mock_client = self._make_repo(
             [{"id": "3"}, {"id": "4"}],
             10,
         )
         items, total = repo.list_all_with_filters(page=2, page_size=2)
         assert len(items) == 2
         assert total == 10
-        mock_query.range.assert_called_with(2, 3)
+        _, params = mock_client.fetch_all.call_args[0]
+        assert params[-2:] == (2, 2)
 
     def test_empty_result(self):
         """Returns empty list when no matches."""
@@ -94,7 +92,7 @@ class TestListAllWithFilters:
         """Applies multiple filters together."""
         officer_id = str(uuid4())
         applicant_id = str(uuid4())
-        repo, mock_query = self._make_repo(
+        repo, mock_client = self._make_repo(
             [{"id": "1"}],
             1,
         )
@@ -106,8 +104,10 @@ class TestListAllWithFilters:
             page_size=10,
         )
         assert len(items) == 1
-        mock_query.in_.assert_called_with("status", ["under_review"])
-        assert mock_query.eq.call_count == 2
+        where_sql = mock_client.fetch_all.call_args[0][0]
+        assert "status IN (%s)" in where_sql
+        assert "assigned_officer_id = %s" in where_sql
+        assert "applicant_id = %s" in where_sql
 
 
 # --- API endpoint tests (auth required) ---

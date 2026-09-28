@@ -205,10 +205,35 @@ class NotNode(BaseModel):
     condition: ConditionNode
 
 
+class LiteralNode(BaseModel):
+    """Explicit UNKNOWN / NOT_APPLICABLE condition literal.
+
+    - ``"unknown"`` evaluates to INSUFFICIENT_DATA (None): the condition
+      cannot currently be established. It never becomes FALSE.
+    - ``"not_applicable"`` evaluates to a distinct NOT_APPLICABLE
+      sentinel: the rule/branch explicitly does not apply. It is not
+      Python False and propagates explicitly through AND/OR/NOT.
+
+    These literals are different from the CONDITIONAL applicability
+    result (which describes partial evaluation across trees).
+    """
+
+    kind: Literal["literal"] = "literal"
+    value: Literal["unknown", "not_applicable"]
+
+
+# Sentinel produced when a LiteralNode("not_applicable") is evaluated.
+# Distinct from True/False/None so identity checks (``is True``,
+# ``is False``, ``is None``) across existing consumers keep working and
+# fail closed (unknown-like) wherever the sentinel is unhandled.
+NotApplicable = Literal["not_applicable"]
+NOT_APPLICABLE: NotApplicable = "not_applicable"
+
+
 # Forward reference resolution — Pydantic v2 handles this via
 # the model_rebuild() call at the end of this file.
 ConditionNode = Annotated[
-    ApplicabilityCondition | AndNode | OrNode | NotNode,
+    ApplicabilityCondition | AndNode | OrNode | NotNode | LiteralNode,
     Field(discriminator="kind"),
 ]
 
@@ -392,6 +417,11 @@ class ApprovalRule(BaseModel):
     source_refs: list[SourceRef] = Field(default_factory=list)
     version: str = Field(min_length=1)
     active: bool = True
+    # Effective window (both optional, open-ended when absent).
+    # Evaluated only when an evaluation_date is supplied; None
+    # evaluation_date preserves existing behavior (always evaluated).
+    effective_from: date | None = None
+    effective_to: date | None = None
 
 
 # ─────────────────────────────────────────────────────────────

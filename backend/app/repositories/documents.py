@@ -3,7 +3,30 @@ from __future__ import annotations
 
 from typing import Any
 
+from psycopg.types.json import Jsonb
+
 from app.repositories.base import BaseRepository
+
+
+def _jsonb_lists(data: dict[str, Any]) -> dict[str, Any]:
+    """Wrap known jsonb-list fields (accepted_mime_types) explicitly."""
+    out = dict(data)
+    if isinstance(out.get("accepted_mime_types"), list):
+        out["accepted_mime_types"] = Jsonb(out["accepted_mime_types"])
+    return out
+
+
+def _jsonb_any_lists(data: dict[str, Any]) -> dict[str, Any]:
+    """Wrap every list value as jsonb.
+
+    Used only for extraction/validation tables, whose list-receiving
+    columns (errors, source_refs, field_value, findings payloads) are
+    all jsonb — there are no text[] columns in these tables.
+    """
+    return {
+        key: (Jsonb(value) if isinstance(value, list) else value)
+        for key, value in data.items()
+    }
 
 
 class DocumentsRepository(BaseRepository):
@@ -18,34 +41,25 @@ class DocumentsRepository(BaseRepository):
         self, application_id: str
     ) -> list[dict[str, Any]]:
         """List all document requirements for an application."""
-        result = (
-            self.client.table("document_requirements")
-            .select("*")
-            .eq("application_id", application_id)
-            .order("requirement_key")
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM document_requirements WHERE application_id = %s "
+            "ORDER BY requirement_key",
+            (application_id,),
         )
-        return result.data or []
 
     def get_requirement(
         self, application_id: str, requirement_key: str
     ) -> dict[str, Any] | None:
         """Get a specific document requirement by application + key."""
-        result = (
-            self.client.table("document_requirements")
-            .select("*")
-            .eq("application_id", application_id)
-            .eq("requirement_key", requirement_key)
-            .execute()
+        return self.client.fetch_one(
+            "SELECT * FROM document_requirements WHERE application_id = %s "
+            "AND requirement_key = %s",
+            (application_id, requirement_key),
         )
-        return result.data[0] if result.data else None
 
     def create_requirement(self, data: dict[str, Any]) -> dict[str, Any]:
         """Create a document requirement record."""
-        result = (
-            self.client.table("document_requirements").insert(data).execute()
-        )
-        return result.data[0]
+        return self.client.insert_one("document_requirements", _jsonb_lists(data))
 
     def create_requirements_bulk(
         self, requirements: list[dict[str, Any]]
@@ -53,12 +67,9 @@ class DocumentsRepository(BaseRepository):
         """Create multiple document requirements in one call."""
         if not requirements:
             return []
-        result = (
-            self.client.table("document_requirements")
-            .insert(requirements)
-            .execute()
+        return self.client.insert_many(
+            "document_requirements", [_jsonb_lists(r) for r in requirements]
         )
-        return result.data or []
 
     def update_requirement_readiness(
         self,
@@ -75,69 +86,68 @@ class DocumentsRepository(BaseRepository):
         if rejection_reason is not None:
             update_data["rejection_reason"] = rejection_reason
 
-        result = (
-            self.client.table("document_requirements")
-            .update(update_data)
-            .eq("application_id", application_id)
-            .eq("requirement_key", requirement_key)
-            .execute()
+        rows = self.client.update_where(
+            "document_requirements",
+            update_data,
+            "application_id = %s AND requirement_key = %s",
+            (application_id, requirement_key),
         )
-        return result.data[0] if result.data else None
-
-    # -- Uploaded Documents --
+        return rows[0] if rows else None
 
     def list_documents_for_application(
         self, application_id: str
     ) -> list[dict[str, Any]]:
         """List all uploaded documents for an application."""
-        result = (
-            self.client.table("documents")
-            .select("*")
-            .eq("application_id", application_id)
-            .order("created_at", desc=True)
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM documents WHERE application_id = %s "
+            "ORDER BY created_at DESC",
+            (application_id,),
         )
-        return result.data or []
+
+    # -- Uploaded Documents --
 
     def get_document(self, document_id: str) -> dict[str, Any] | None:
         """Get a document by ID."""
-        result = (
-            self.client.table("documents")
-            .select("*")
-            .eq("id", document_id)
-            .execute()
+        return self.client.fetch_one(
+            "SELECT * FROM documents WHERE id = %s", (document_id,)
         )
-        return result.data[0] if result.data else None
 
     def create_document(self, data: dict[str, Any]) -> dict[str, Any]:
         """Create a document record."""
-        result = self.client.table("documents").insert(data).execute()
-        return result.data[0]
+        return self.client.insert_one("documents", data)
 
     def delete_document(self, document_id: str) -> bool:
         """Delete a document record."""
-        self.client.table("documents").delete().eq("id", document_id).execute()
+        self.client.delete_where("documents", "id = %s", (document_id,))
         return True
 
     def get_document_by_requirement(
         self, application_id: str, requirement_key: str
     ) -> dict[str, Any] | None:
         """Get the uploaded document for a specific requirement."""
-        result = (
-            self.client.table("documents")
-            .select("*")
-            .eq("application_id", application_id)
-            .eq("requirement_key", requirement_key)
-            .execute()
+        return self.client.fetch_one(
+            "SELECT * FROM documents WHERE application_id = %s "
+            "AND requirement_key = %s",
+            (application_id, requirement_key),
         )
-        return result.data[0] if result.data else None
+
+    def set_document_extraction_status(
+        self, document_id: str, extraction_status: str
+    ) -> dict[str, Any] | None:
+        """Set extraction_status on a document record."""
+        rows = self.client.update_where(
+            "documents",
+            {"extraction_status": extraction_status},
+            "id = %s",
+            (document_id,),
+        )
+        return rows[0] if rows else None
 
     # -- Extracted Fields --
 
     def create_extracted_field(self, data: dict[str, Any]) -> dict[str, Any]:
         """Create an extracted field record."""
-        result = self.client.table("extracted_fields").insert(data).execute()
-        return result.data[0]
+        return self.client.insert_one("extracted_fields", _jsonb_any_lists(data))
 
     def create_extracted_fields_bulk(
         self, fields: list[dict[str, Any]]
@@ -145,79 +155,67 @@ class DocumentsRepository(BaseRepository):
         """Create multiple extracted field records in one call."""
         if not fields:
             return []
-        result = self.client.table("extracted_fields").insert(fields).execute()
-        return result.data or []
+        return self.client.insert_many("extracted_fields", [_jsonb_any_lists(r) for r in fields])
 
     def list_extracted_fields_for_document(
         self, document_id: str
     ) -> list[dict[str, Any]]:
         """List all extracted fields for a document."""
-        result = (
-            self.client.table("extracted_fields")
-            .select("*")
-            .eq("document_id", document_id)
-            .order("field_name")
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM extracted_fields WHERE document_id = %s "
+            "ORDER BY field_name",
+            (document_id,),
         )
-        return result.data or []
 
     def list_extracted_fields_for_application(
         self, application_id: str
     ) -> list[dict[str, Any]]:
         """List all extracted fields for an application."""
-        result = (
-            self.client.table("extracted_fields")
-            .select("*")
-            .eq("application_id", application_id)
-            .order("created_at", desc=True)
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM extracted_fields WHERE application_id = %s "
+            "ORDER BY created_at DESC",
+            (application_id,),
         )
-        return result.data or []
 
     def delete_extracted_fields_for_document(self, document_id: str) -> bool:
         """Delete all extracted fields for a document."""
-        self.client.table("extracted_fields").delete().eq(
-            "document_id", document_id
-        ).execute()
+        self.client.delete_where(
+            "extracted_fields", "document_id = %s", (document_id,)
+        )
         return True
 
     # -- Extraction Results --
 
     def create_extraction_result(self, data: dict[str, Any]) -> dict[str, Any]:
         """Create an extraction result record."""
-        result = self.client.table("extraction_results").insert(data).execute()
-        return result.data[0]
+        return self.client.insert_one("extraction_results", _jsonb_any_lists(data))
 
     def get_extraction_result_for_document(
         self, document_id: str
     ) -> dict[str, Any] | None:
         """Get the extraction result for a document."""
-        result = (
-            self.client.table("extraction_results")
-            .select("*")
-            .eq("document_id", document_id)
-            .execute()
+        return self.client.fetch_one(
+            "SELECT * FROM extraction_results WHERE document_id = %s",
+            (document_id,),
         )
-        return result.data[0] if result.data else None
 
     def update_extraction_result(
         self, document_id: str, data: dict[str, Any]
     ) -> dict[str, Any] | None:
         """Update an extraction result."""
-        result = (
-            self.client.table("extraction_results")
-            .update(data)
-            .eq("document_id", document_id)
-            .execute()
+        rows = self.client.update_where(
+            "extraction_results",
+            _jsonb_any_lists(data),
+            "document_id = %s",
+            (document_id,),
         )
-        return result.data[0] if result.data else None
+        return rows[0] if rows else None
 
     # -- Validation Findings --
 
     def create_validation_finding(self, data: dict[str, Any]) -> dict[str, Any]:
         """Create a validation finding record."""
-        result = self.client.table("validation_findings").insert(data).execute()
-        return result.data[0]
+        return self.client.insert_one("validation_findings", _jsonb_any_lists(data))
 
     def create_validation_findings_bulk(
         self, findings: list[dict[str, Any]]
@@ -225,78 +223,69 @@ class DocumentsRepository(BaseRepository):
         """Create multiple validation finding records in one call."""
         if not findings:
             return []
-        result = self.client.table("validation_findings").insert(findings).execute()
-        return result.data or []
+        return self.client.insert_many(
+            "validation_findings", [_jsonb_any_lists(r) for r in findings]
+        )
 
     def list_validation_findings_for_document(
         self, document_id: str
     ) -> list[dict[str, Any]]:
         """List all validation findings for a document."""
-        result = (
-            self.client.table("validation_findings")
-            .select("*")
-            .eq("document_id", document_id)
-            .order("rule_id")
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM validation_findings WHERE document_id = %s "
+            "ORDER BY rule_id",
+            (document_id,),
         )
-        return result.data or []
 
     def list_validation_findings_for_application(
         self, application_id: str
     ) -> list[dict[str, Any]]:
         """List all validation findings for an application."""
-        result = (
-            self.client.table("validation_findings")
-            .select("*")
-            .eq("application_id", application_id)
-            .order("created_at", desc=True)
-            .execute()
+        return self.client.fetch_all(
+            "SELECT * FROM validation_findings WHERE application_id = %s "
+            "ORDER BY created_at DESC",
+            (application_id,),
         )
-        return result.data or []
 
     def delete_validation_findings_for_document(self, document_id: str) -> bool:
         """Delete all validation findings for a document."""
-        self.client.table("validation_findings").delete().eq(
-            "document_id", document_id
-        ).execute()
+        self.client.delete_where(
+            "validation_findings", "document_id = %s", (document_id,)
+        )
         return True
 
     # -- Validation Results --
 
     def create_validation_result(self, data: dict[str, Any]) -> dict[str, Any]:
         """Create a validation result record."""
-        result = self.client.table("validation_results").insert(data).execute()
-        return result.data[0]
+        return self.client.insert_one("validation_results", _jsonb_any_lists(data))
 
     def get_validation_result_for_document(
         self, document_id: str
     ) -> dict[str, Any] | None:
         """Get the validation result for a document."""
-        result = (
-            self.client.table("validation_results")
-            .select("*")
-            .eq("document_id", document_id)
-            .execute()
+        return self.client.fetch_one(
+            "SELECT * FROM validation_results WHERE document_id = %s",
+            (document_id,),
         )
-        return result.data[0] if result.data else None
 
     def update_validation_result(
         self, document_id: str, data: dict[str, Any]
     ) -> dict[str, Any] | None:
         """Update a validation result."""
-        result = (
-            self.client.table("validation_results")
-            .update(data)
-            .eq("document_id", document_id)
-            .execute()
+        rows = self.client.update_where(
+            "validation_results",
+            _jsonb_any_lists(data),
+            "document_id = %s",
+            (document_id,),
         )
-        return result.data[0] if result.data else None
+        return rows[0] if rows else None
 
     def delete_validation_results_for_document(self, document_id: str) -> bool:
         """Delete all validation results for a document."""
-        self.client.table("validation_results").delete().eq(
-            "document_id", document_id
-        ).execute()
+        self.client.delete_where(
+            "validation_results", "document_id = %s", (document_id,)
+        )
         return True
 
     # -- Requirement Status Updates --
@@ -308,27 +297,24 @@ class DocumentsRepository(BaseRepository):
         extraction_status: str,
     ) -> dict[str, Any] | None:
         """Update extraction status for a document requirement."""
-        result = (
-            self.client.table("document_requirements")
-            .update({"extraction_status": extraction_status})
-            .eq("application_id", application_id)
-            .eq("requirement_key", requirement_key)
-            .execute()
+        rows = self.client.update_where(
+            "document_requirements",
+            {"extraction_status": extraction_status},
+            "application_id = %s AND requirement_key = %s",
+            (application_id, requirement_key),
         )
-        return result.data[0] if result.data else None
+        return rows[0] if rows else None
 
     def update_requirement_validation_outcome(
-        self,
-        application_id: str,
+        self, application_id: str,
         requirement_key: str,
         validation_outcome: str,
     ) -> dict[str, Any] | None:
         """Update validation outcome for a document requirement."""
-        result = (
-            self.client.table("document_requirements")
-            .update({"validation_outcome": validation_outcome})
-            .eq("application_id", application_id)
-            .eq("requirement_key", requirement_key)
-            .execute()
+        rows = self.client.update_where(
+            "document_requirements",
+            {"validation_outcome": validation_outcome},
+            "application_id = %s AND requirement_key = %s",
+            (application_id, requirement_key),
         )
-        return result.data[0] if result.data else None
+        return rows[0] if rows else None

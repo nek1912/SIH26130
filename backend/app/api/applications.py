@@ -7,10 +7,12 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from app.api.deps import (
     get_applications_repository,
     get_documents_repository,
+    get_project_repository,
     get_workflow_events_repository,
 )
 from app.auth.dependencies import (
     check_application_ownership,
+    check_project_ownership,
     require_any_permission,
     require_permission,
 )
@@ -18,7 +20,9 @@ from app.auth.models import UserContext
 from app.auth.permissions import Permission
 from app.repositories.applications import ApplicationsRepository
 from app.repositories.documents import DocumentsRepository
+from app.repositories.projects import ProjectRepository
 from app.repositories.workflow_events import WorkflowEventsRepository
+from app.seed.pack import DEFAULT_PACK_VERSIONS
 from app.workflow.sla import compute_application_sla
 
 router = APIRouter()
@@ -87,21 +91,53 @@ async def create_application(
     approval_code: str = Query(..., description="Approval code like A01, A02"),
     repo: ApplicationsRepository = Depends(get_applications_repository),
     doc_repo: DocumentsRepository = Depends(get_documents_repository),
+    project_repo: ProjectRepository = Depends(get_project_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
 ):
-    """Create a new application."""
+    """Create a new application.
+
+    Regulatory identity (jurisdiction + pack_version) is inherited
+    from the parent project — never from the approval code, the
+    request, or the global default. The approval code must exist in
+    the inherited pack, else 422. No A↔APR translation is performed.
+    """
+    from app.seed.pack import UnknownPackError, resolve_persisted_pack
+
+    project = project_repo.get_by_id(project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    check_project_ownership(user, project)
+
+    try:
+        pack = resolve_persisted_pack(
+            project.get("jurisdiction"), project.get("pack_version")
+        )
+    except UnknownPackError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    known_codes = {rule.approval_id for rule in pack.approval_rules}
+    if approval_code not in known_codes:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                f"Unknown approval_code '{approval_code}' for jurisdiction "
+                f"'{pack.jurisdiction}'"
+            ),
+        )
+
     data = {
         "project_id": str(project_id),
         "approval_id": str(approval_id),
+        "approval_code": approval_code,
         "status": "draft",
         "applicant_id": str(user.user_id),
+        "jurisdiction": pack.jurisdiction,
+        "pack_version": DEFAULT_PACK_VERSIONS[pack.jurisdiction],
     }
     application = repo.create_with_reference(data)
 
-    # Seed document requirements from workbook
-    from app.seed.documents import get_requirements_for_approval
-
-    doc_reqs = get_requirements_for_approval(approval_code)
+    # Seed document requirements from the inherited regulatory pack
+    doc_reqs = pack.get_requirements_for_approval(approval_code)
     if doc_reqs:
         requirement_records = []
         for req in doc_reqs:

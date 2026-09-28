@@ -2,36 +2,37 @@
 
 Runs via FastAPI BackgroundTasks after document upload.
 Sets extraction_status on the document record and stores results.
+Uses DocumentsRepository + the storage adapter boundary (local
+filesystem for development); no Supabase dependency.
 """
 from __future__ import annotations
 
 import logging
 
-from app.core.config import get_settings
-from app.db.client import get_supabase
+from app.db.client import get_db
 from app.extraction.service import extract_document
+from app.repositories.documents import DocumentsRepository
+from app.storage import DocumentStorage, get_storage
 
 logger = logging.getLogger(__name__)
 
 
-def run_extraction_background(document_id: str, application_id: str) -> None:
+def run_extraction_background(
+    document_id: str,
+    application_id: str,
+    repo: DocumentsRepository | None = None,
+    storage: DocumentStorage | None = None,
+) -> None:
     """Background job: extract metadata from an uploaded document.
 
     This function is designed to be called via FastAPI BackgroundTasks.
     It fetches all needed data internally and handles all errors safely.
     """
-    client = get_supabase()
-    settings = get_settings()
+    repo = repo or DocumentsRepository(get_db())
+    storage = storage or get_storage()
 
     try:
-        # Load document record
-        doc_result = (
-            client.table("documents")
-            .select("*")
-            .eq("id", document_id)
-            .execute()
-        )
-        document = doc_result.data[0] if doc_result.data else None
+        document = repo.get_document(document_id)
 
         if not document:
             logger.warning("Document %s not found, skipping extraction", document_id)
@@ -43,19 +44,15 @@ def run_extraction_background(document_id: str, application_id: str) -> None:
             return
 
         # Set status to running
-        client.table("documents").update(
-            {"extraction_status": "running"}
-        ).eq("id", document_id).execute()
+        repo.set_document_extraction_status(document_id, "running")
 
         # Download file from storage
         storage_path = document.get("storage_path", "")
         try:
-            file_data = client.storage.from_(
-                settings.supabase_storage_bucket
-            ).download(storage_path)
+            file_data = storage.read(storage_path)
         except Exception as e:
             logger.warning("Failed to download document %s: %s", document_id, e)
-            _set_failed(client, document_id, f"Storage download failed: {type(e).__name__}")
+            _set_failed(repo, document_id, f"Storage download failed: {type(e).__name__}")
             return
 
         # Perform extraction
@@ -68,9 +65,7 @@ def run_extraction_background(document_id: str, application_id: str) -> None:
         )
 
         # Delete existing extraction data (idempotent)
-        client.table("extracted_fields").delete().eq(
-            "document_id", document_id
-        ).execute()
+        repo.delete_extracted_fields_for_document(document_id)
 
         # Store extraction result
         extraction_data = {
@@ -81,18 +76,11 @@ def run_extraction_background(document_id: str, application_id: str) -> None:
             "metadata": extraction_result.metadata,
         }
 
-        existing = (
-            client.table("extraction_results")
-            .select("id")
-            .eq("document_id", document_id)
-            .execute()
-        )
-        if existing.data:
-            client.table("extraction_results").update(extraction_data).eq(
-                "document_id", document_id
-            ).execute()
+        existing = repo.get_extraction_result_for_document(document_id)
+        if existing:
+            repo.update_extraction_result(document_id, extraction_data)
         else:
-            client.table("extraction_results").insert(extraction_data).execute()
+            repo.create_extraction_result(extraction_data)
 
         # Store extracted fields
         if extraction_result.fields:
@@ -108,25 +96,23 @@ def run_extraction_background(document_id: str, application_id: str) -> None:
                     "confidence": field.confidence,
                     "metadata": field.metadata,
                 })
-            client.table("extracted_fields").insert(fields_data).execute()
+            repo.create_extracted_fields_bulk(fields_data)
 
         # Update requirement extraction status
         requirement_key = document.get("requirement_key")
         if requirement_key:
-            client.table("document_requirements").update(
-                {"extraction_status": extraction_result.status.value}
-            ).eq("application_id", application_id).eq(
-                "requirement_key", requirement_key
-            ).execute()
+            repo.update_requirement_extraction_status(
+                application_id,
+                requirement_key,
+                extraction_result.status.value,
+            )
 
         # Set final status
         final_status = "completed"
         if extraction_result.status.value in ("failed", "unsupported"):
             final_status = extraction_result.status.value
 
-        client.table("documents").update(
-            {"extraction_status": final_status}
-        ).eq("id", document_id).execute()
+        repo.set_document_extraction_status(document_id, final_status)
 
         logger.info(
             "Extraction completed for document %s: %s",
@@ -136,14 +122,14 @@ def run_extraction_background(document_id: str, application_id: str) -> None:
 
     except Exception as e:
         logger.error("Background extraction failed for %s: %s", document_id, e)
-        _set_failed(client, document_id, f"Extraction failed: {type(e).__name__}")
+        _set_failed(repo, document_id, f"Extraction failed: {type(e).__name__}")
 
 
-def _set_failed(client, document_id: str, error_msg: str) -> None:
+def _set_failed(
+    repo: DocumentsRepository, document_id: str, error_msg: str
+) -> None:
     """Safely set extraction_status to failed."""
     try:
-        client.table("documents").update(
-            {"extraction_status": "failed"}
-        ).eq("id", document_id).execute()
+        repo.set_document_extraction_status(document_id, "failed")
     except Exception:
         logger.error("Could not update extraction_status for %s", document_id)
