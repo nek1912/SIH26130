@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
+import { PageHeader } from '@/components/shared/PageHeader'
 
 export function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -87,23 +88,25 @@ export function ProjectDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{project.name}</h1>
-          {project.description && (
+      <PageHeader
+        title={project.name}
+        description={
+          project.description ? (
             <p className="text-muted-foreground">{project.description}</p>
-          )}
-        </div>
-        <Link to="/projects">
-          <Button variant="outline">Back to Projects</Button>
-        </Link>
-      </div>
+          ) : undefined
+        }
+        actions={
+          <Link to="/projects">
+            <Button variant="outline">Back to Projects</Button>
+          </Link>
+        }
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
         {/* Project Facts */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Project Facts</CardTitle>
+            <CardTitle>Project Facts</CardTitle>
             {!editingFacts && (
               <Button variant="outline" size="sm" onClick={() => setEditingFacts(true)}>
                 Edit
@@ -209,7 +212,7 @@ export function ProjectDetailPage() {
         {/* Applications */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">Applications</CardTitle>
+            <CardTitle>Applications</CardTitle>
             <Link to={`/projects/${id}/applications`}>
               <Button variant="outline" size="sm">View All</Button>
             </Link>
@@ -220,7 +223,7 @@ export function ProjectDetailPage() {
             ) : (
               <div className="space-y-2">
                 {applications.slice(0, 5).map((app) => (
-                  <Link key={app.id} to={`/applications/${app.id}`} className="flex items-center justify-between rounded-md border p-2 text-sm hover:bg-accent">
+                  <Link key={app.id} to={`/applications/${app.id}`} className="flex items-center justify-between gap-2 rounded-md border p-2 text-sm hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
                     <div>
                       <span className="font-mono text-xs">{app.reference_number}</span>
                       {app.current_stage && (

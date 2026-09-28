@@ -44,7 +44,7 @@ export function ApplicationSubmitPage() {
       <h1 className="text-2xl font-bold">Submit Application</h1>
       <Card>
         <CardHeader>
-          <CardTitle>Select Approval</CardTitle>
+          <CardTitle className="text-lg">Select Approval</CardTitle>
           <CardDescription>Choose the approval type for this application.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

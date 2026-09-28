@@ -6,6 +6,9 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
+import { PageHeader } from '@/components/shared/PageHeader'
+import { EmptyState } from '@/components/shared/EmptyState'
+import { formatDate } from '@/lib/format'
 
 export function ApplicationListPage() {
   const { id: projectId } = useParams<{ id: string }>()
@@ -26,36 +29,34 @@ export function ApplicationListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Applications</h1>
-        <div className="flex gap-3">
-          <Link to={`/projects/${projectId}/submit`}>
-            <Button>New Application</Button>
-          </Link>
-          <Link to={`/projects/${projectId}`}>
-            <Button variant="outline">Back to Project</Button>
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title="Applications"
+        actions={
+          <>
+            <Link to={`/projects/${projectId}/submit`}>
+              <Button>New Application</Button>
+            </Link>
+            <Link to={`/projects/${projectId}`}>
+              <Button variant="outline">Back to Project</Button>
+            </Link>
+          </>
+        }
+      />
       {error && (
         <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
       )}
       {applications.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            No applications yet. Submit your first application for this project.
-          </CardContent>
-        </Card>
+        <EmptyState message="No applications yet. Submit your first application for this project." />
       ) : (
         <div className="space-y-3">
           {applications.map((app) => (
             <Link key={app.id} to={`/applications/${app.id}`}>
-              <Card className="transition-colors hover:border-primary/50">
-                <CardContent className="flex items-center justify-between py-4">
-                  <div className="space-y-1">
-                    <p className="font-mono text-sm font-medium">{app.reference_number}</p>
+              <Card className="transition-colors hover:border-primary/50 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                <CardContent className="flex flex-wrap items-center justify-between gap-3 py-4">
+                  <div className="min-w-0 space-y-1">
+                    <p className="break-all font-mono text-sm font-medium">{app.reference_number}</p>
                     <p className="text-xs text-muted-foreground">
-                      Created {new Date(app.created_at).toLocaleDateString()}
+                      Created {formatDate(app.created_at)}
                     </p>
                     {app.current_stage && (
                       <p className="text-xs text-muted-foreground">

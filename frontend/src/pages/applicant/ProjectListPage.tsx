@@ -6,6 +6,9 @@ import type { Project } from '@/types/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
+import { PageHeader } from '@/components/shared/PageHeader'
+import { EmptyState } from '@/components/shared/EmptyState'
+import { formatDate } from '@/lib/format'
 
 export function ProjectListPage() {
   const { session } = useAuth()
@@ -26,35 +29,33 @@ export function ProjectListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Projects</h1>
-        <Link to="/projects/new">
-          <Button>New Project</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title="Projects"
+        actions={
+          <Link to="/projects/new">
+            <Button>New Project</Button>
+          </Link>
+        }
+      />
       {error && (
         <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
       )}
       {projects.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            No projects yet. Create your first project to get started.
-          </CardContent>
-        </Card>
+        <EmptyState message="No projects yet. Create your first project to get started." />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <Link key={project.id} to={`/projects/${project.id}`}>
-              <Card className="transition-colors hover:border-primary/50">
+              <Card className="transition-colors hover:border-primary/50 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
                 <CardHeader>
-                  <CardTitle className="text-base">{project.name}</CardTitle>
+                  <CardTitle>{project.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground line-clamp-2">
                     {project.description ?? 'No description'}
                   </p>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    Created {new Date(project.created_at).toLocaleDateString()}
+                    Created {formatDate(project.created_at)}
                   </p>
                 </CardContent>
               </Card>

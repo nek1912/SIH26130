@@ -1,5 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
+import { MobileNav } from './MobileNav'
 
 export function Topbar() {
   const { session, role, signOut } = useAuth()
@@ -7,7 +8,8 @@ export function Topbar() {
 
   return (
     <header className="flex h-14 items-center justify-between border-b bg-background px-4 lg:px-6">
-      <div className="lg:hidden">
+      <div className="flex items-center gap-1 lg:hidden">
+        <MobileNav />
         <span className="text-sm font-semibold">GAIA</span>
       </div>
       <div className="flex flex-1 items-center justify-end gap-4">

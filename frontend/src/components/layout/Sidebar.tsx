@@ -1,13 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-
-const applicantLinks = [
-  { to: '/projects', label: 'Projects' },
-]
-
-const staffLinks = [
-  { to: '/queue', label: 'Application Queue' },
-]
+import { applicantLinks, staffLinks } from './navigation'
 
 export function Sidebar() {
   const { role } = useAuth()

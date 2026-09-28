@@ -18,7 +18,9 @@ export function CardHeader({ children, className = '' }: CardProps) {
 }
 
 export function CardTitle({ children, className = '' }: CardProps) {
-  return <h3 className={`text-lg font-semibold leading-none tracking-tight ${className}`}>{children}</h3>
+  // Default matches the product's established effective size (text-base);
+  // the two callers that need text-lg pin it explicitly.
+  return <h3 className={`text-base font-semibold leading-none tracking-tight ${className}`}>{children}</h3>
 }
 
 export function CardDescription({ children, className = '' }: CardProps) {

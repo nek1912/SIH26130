@@ -33,7 +33,7 @@ export function ProjectCreatePage() {
     <div className="mx-auto max-w-lg">
       <Card>
         <CardHeader>
-          <CardTitle>Create Project</CardTitle>
+          <CardTitle className="text-lg">Create Project</CardTitle>
           <CardDescription>Set up a new industrial project for approval tracking.</CardDescription>
         </CardHeader>
         <CardContent>

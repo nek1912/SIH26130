@@ -6,7 +6,11 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { StatusBadge } from '@/components/shared/StatusBadge'
+import { ErrorState } from '@/components/shared/ErrorState'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
+import { PageHeader } from '@/components/shared/PageHeader'
+import { EmptyState } from '@/components/shared/EmptyState'
+import { formatDate } from '@/lib/format'
 
 const STATUS_OPTIONS: { value: ApplicationStatus | ''; label: string }[] = [
   { value: '', label: 'All Statuses' },
@@ -60,12 +64,12 @@ export function QueuePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Application Queue</h1>
+      <PageHeader
+        title="Application Queue"
+        description={
           <p className="text-sm text-muted-foreground">{total} application{total !== 1 ? 's' : ''}</p>
-        </div>
-      </div>
+        }
+      />
 
       <div className="flex flex-wrap items-end gap-4">
         <div className="space-y-1">
@@ -86,26 +90,20 @@ export function QueuePage() {
         </Button>
       </div>
 
-      {error && (
-        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
-      )}
+      {error && <ErrorState message={error} />}
 
       {loading ? (
         <LoadingSpinner className="mt-12" />
       ) : applications.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
-            No applications match the current filters.
-          </CardContent>
-        </Card>
+        <EmptyState message="No applications match the current filters." />
       ) : (
         <div className="space-y-3">
           {applications.map((app) => (
             <Link key={app.id} to={`/applications/${app.id}`}>
-              <Card className="transition-colors hover:border-primary/50">
-                <CardContent className="flex items-center justify-between py-4">
-                  <div className="space-y-1">
-                    <p className="font-mono text-sm font-medium">{app.reference_number}</p>
+              <Card className="transition-colors hover:border-primary/50 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                <CardContent className="flex flex-wrap items-center justify-between gap-3 py-4">
+                  <div className="min-w-0 space-y-1">
+                    <p className="break-all font-mono text-sm font-medium">{app.reference_number}</p>
                     <p className="text-xs text-muted-foreground">
                       Project: {app.project_id.slice(0, 8)}...
                     </p>
@@ -123,7 +121,7 @@ export function QueuePage() {
                   <div className="flex items-center gap-4">
                     <StatusBadge status={app.status} />
                     <span className="text-xs text-muted-foreground">
-                      {new Date(app.created_at).toLocaleDateString()}
+                      {formatDate(app.created_at)}
                     </span>
                   </div>
                 </CardContent>
