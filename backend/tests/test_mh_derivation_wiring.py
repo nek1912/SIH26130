@@ -97,6 +97,7 @@ def _mh_orchestrate_kwargs(inputs):
         "project_facts": inputs["facts"],
         "approval_rules": inputs["rules"],
         "approval_authorities": inputs["authorities"],
+        "approval_compositions": inputs["pack"].approval_compositions,
         "dependencies": inputs["dependencies"],
         "all_approval_ids": inputs["all_approval_ids"],
         "document_requirements": inputs["doc_requirements"],
@@ -225,7 +226,13 @@ class TestDecisionEffect:
         r002 = next(e for e in evals if e.rule_id == "R-002")
         assert r002.result == "applies"
         orch = orchestrate_application_full(**_mh_orchestrate_kwargs(inputs))
-        assert orch.approvals["APR-001"].applicability_result == "applies"
+        # P0 exception-role migration (deliberate re-pin): R-002 is now
+        # CLASSIFICATION, so the derived small-unit facet alone composes to
+        # INSUFFICIENT_DATA at approval level (never APPLIES); the R-001
+        # trigger stays deferred. Derivation provenance is unchanged.
+        assert orch.approvals["APR-001"].applicability_result == (
+            "insufficient_data"
+        )
         assert orch.fact_provenance["F-PRC-03"].value is False
 
     def test_r043_evaluable_via_derived_msme(self):
@@ -236,10 +243,12 @@ class TestDecisionEffect:
             _mh_app("APR-043"),
             _facts_record(
                 {
+                    "F-GW-01": "OVER_EXPLOITED",
+                    "F-EXP-01": True,
                     "F-INC-02": 2.5,
                     "F-INC-09": 10,
                     "F-WAT-05": 5,
-                    "F-WAT-06": "DOMESTIC_ONLY",
+                    "F-WAT-06": "INDUSTRIAL",
                 }
             ),
         )
@@ -249,7 +258,13 @@ class TestDecisionEffect:
         r043 = next(e for e in evals if e.rule_id == "R-043")
         assert r043.result == "applies"
         orch = orchestrate_application_full(**_mh_orchestrate_kwargs(inputs))
-        assert orch.approvals["APR-043"].applicability_result == "applies"
+        # P0 MIGRATION (§16 design): R-043 is EXEMPTION; derived MICRO
+        # defeats the R-077 trigger, so the approval reports reasoned
+        # DOES_NOT_APPLY instead of APPLIES.
+        assert orch.approvals["APR-043"].applicability_result == (
+            "does_not_apply"
+        )
+        assert "Exempt under R-043" in orch.approvals["APR-043"].explanation
         assert orch.fact_provenance["F-INC-01"].value == "MICRO"
 
 
@@ -326,6 +341,7 @@ def _whatif_kwargs(inputs, overrides, provenance):
         "evidence_gaps_by_approval": inputs["evidence_gaps_by_approval"],
         "fact_provenance": provenance,
         "jurisdiction": IN_MH,
+        "approval_compositions": inputs["pack"].approval_compositions,
     }
 
 
@@ -353,12 +369,17 @@ class TestWhatIfRederives:
         assert resp.what_if.fact_provenance["F-INC-01"].value == "MEDIUM"
 
     def test_override_derived_key_takes_precedence(self):
-        # R-044 needs DOMESTIC_ONLY purpose, so use INDUSTRIAL to
-        # isolate the R-043 (F-INC-01) decision.
+        # Trigger R-077 applies (OE unit). F-WAT-06 is INDUSTRIAL so
+        # R-044 domestic exemption does not apply. In baseline, F-INC-01 is
+        # derived as MICRO so R-043 MSE exemption defeats the trigger -> does_not_apply.
+        # In what-if, F-INC-01 is overridden to LARGE, so neither exemption applies
+        # and trigger R-077 applies -> applies.
         inputs = _load(
             _mh_app("APR-043"),
             _facts_record(
                 {
+                    "F-GW-01": "OVER_EXPLOITED",
+                    "F-EXP-01": True,
                     "F-INC-02": 2.5,
                     "F-INC-09": 10,
                     "F-WAT-05": 5,
@@ -373,7 +394,7 @@ class TestWhatIfRederives:
         )
         assert "F-INC-01" not in resp.what_if.fact_provenance
         assert resp.what_if.approvals["APR-043"].applicability_result == (
-            "does_not_apply"
+            "applies"
         )
 
     def test_override_haz_recomputes_mah(self):
@@ -447,15 +468,20 @@ class TestSharedPaths:
             _mh_app("APR-043"),
             _facts_record(
                 {
+                    "F-GW-01": "OVER_EXPLOITED",
+                    "F-EXP-01": True,
                     "F-INC-02": 2.5,
                     "F-INC-09": 10,
                     "F-WAT-05": 5,
-                    "F-WAT-06": "DOMESTIC_ONLY",
+                    "F-WAT-06": "INDUSTRIAL",
                 }
             ),
         )
         orch = _run_orchestration(inputs)
-        assert orch.approvals["APR-043"].applicability_result == "applies"
+        # R-077 trigger defeated by R-043 MSE exemption -> does_not_apply.
+        assert orch.approvals["APR-043"].applicability_result == (
+            "does_not_apply"
+        )
         assert orch.fact_provenance["F-INC-01"].value == "MICRO"
 
     def test_rehearse_uses_derived_facts(self):
@@ -470,10 +496,12 @@ class TestSharedPaths:
             _mh_app("APR-043"),
             _facts_record(
                 {
+                    "F-GW-01": "OVER_EXPLOITED",
+                    "F-EXP-01": True,
                     "F-INC-02": 2.5,
                     "F-INC-09": 10,
                     "F-WAT-05": 5,
-                    "F-WAT-06": "DOMESTIC_ONLY",
+                    "F-WAT-06": "INDUSTRIAL",
                 }
             ),
         )
@@ -501,12 +529,14 @@ class TestSharedPaths:
                 evidence_gaps_by_approval=inputs[
                     "evidence_gaps_by_approval"
                 ],
+                approval_compositions=dict(pack.approval_compositions),
                 known_source_ids={s.id for s in pack.sources},
                 evidence_registry=list(pack.evidence_gaps),
                 evidence_hints=dict(pack.evidence_hints),
             ),
         )
         assert "APR-043" in impact.affected_approvals
+        # R-077 trigger defeated by R-043 MSE exemption -> does_not_apply.
         assert impact.baseline_results["APR-043"]["applicability"] == (
-            "applies"
+            "does_not_apply"
         )

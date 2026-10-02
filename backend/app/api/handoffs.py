@@ -81,6 +81,7 @@ def _write_event(
 
 
 def _run_orchestration(inputs: dict):
+    pack = inputs.get("pack")
     return orchestrate_application_full(
         application_id=inputs["application_id"],
         project_facts=inputs["facts"],
@@ -97,6 +98,10 @@ def _run_orchestration(inputs: dict):
         obtained_approvals=inputs["obtained"],
         evidence_gaps_by_approval=inputs["evidence_gaps_by_approval"],
         fact_provenance=inputs.get("fact_provenance"),
+        approval_compositions=inputs.get(
+            "approval_compositions",
+            pack.approval_compositions if pack is not None else None,
+        ),
     )
 
 

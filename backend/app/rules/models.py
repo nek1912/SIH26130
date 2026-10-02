@@ -396,6 +396,36 @@ class ApprovalResult(StrEnum):
     INSUFFICIENT_DATA = "insufficient_data"
 
 
+class RuleRole(StrEnum):
+    """Semantic role of an approval rule (P0 exception-role design).
+
+    - TRIGGER: ordinary approval-trigger rule. TRUE means the duty or
+      approval attaches. This is the compatibility default: every rule
+      built without an explicit role behaves exactly as before.
+    - EXEMPTION: duty-defeat rule. TRUE means the duty is negated or
+      relieved for the matched scope (with an explicit reason); FALSE
+      carries no information (it must never read as "duty attaches");
+      UNKNOWN blocks an otherwise applicable trigger from reporting
+      APPLIES. An EXEMPTION output can never produce APPLIES, alone or
+      combined — only the approval composition layer may turn
+      TRIGGER TRUE + EXEMPTION TRUE into a reasoned DOES_NOT_APPLY.
+    - CLASSIFICATION: informational category input (e.g. small-unit or
+      branch determination feeding a category composer). Never directly
+      approval-decisive; consumed only through explicitly named
+      composition. Unconsumed classification output is informational.
+
+    Roles are explicit and auditable: they are assigned per rule in the
+    seed layer, never inferred from names, approvals, predicates, or
+    descriptions. GUARD / ROUTING / LIFECYCLE / WORKFLOW are
+    deliberately NOT roles — those semantics stay outside the
+    applicability engine.
+    """
+
+    TRIGGER = "trigger"
+    EXEMPTION = "exemption"
+    CLASSIFICATION = "classification"
+
+
 # ─────────────────────────────────────────────────────────────
 # Approval Rule — links an approval to applicability conditions
 # and source references. Maps to the approval_rules table.
@@ -408,6 +438,11 @@ class ApprovalRule(BaseModel):
     Each rule links an approval to a set of applicability conditions.
     Multiple rules can exist for the same approval (any matching rule
     makes the approval applicable).
+
+    The ``role`` carries the P0 exception-role semantics: TRIGGER rules
+    behave exactly as before (compatibility default); EXEMPTION and
+    CLASSIFICATION rules are interpreted only through explicit approval
+    composition and can never produce APPLIES on their own.
     """
 
     id: str = Field(min_length=1)
@@ -417,11 +452,46 @@ class ApprovalRule(BaseModel):
     source_refs: list[SourceRef] = Field(default_factory=list)
     version: str = Field(min_length=1)
     active: bool = True
+    role: RuleRole = RuleRole.TRIGGER
     # Effective window (both optional, open-ended when absent).
     # Evaluated only when an evaluation_date is supplied; None
     # evaluation_date preserves existing behavior (always evaluated).
     effective_from: date | None = None
     effective_to: date | None = None
+
+
+class ApprovalComposition(BaseModel):
+    """Explicit per-approval composition of role-typed rule outputs.
+
+    Names the trigger, exemption, and classification rule IDs whose
+    evaluations combine into one approval verdict via the §8 truth
+    table (see ``compose_approval_evaluations``). Lists must be
+    pairwise disjoint; every named ID must be a built rule of the same
+    pack. Approvals without an entry use the legacy priority
+    aggregation unchanged.
+    """
+
+    approval_id: str = Field(min_length=1)
+    triggers: list[str] = Field(default_factory=list)
+    exemptions: list[str] = Field(default_factory=list)
+    classifications: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def check_disjoint(self) -> ApprovalComposition:
+        seen: set[str] = set()
+        for group in (
+            self.triggers,
+            self.exemptions,
+            self.classifications,
+        ):
+            for rule_id in group:
+                if rule_id in seen:
+                    raise ValueError(
+                        f"rule {rule_id!r} appears in more than one "
+                        f"composition group for {self.approval_id!r}"
+                    )
+                seen.add(rule_id)
+        return self
 
 
 # ─────────────────────────────────────────────────────────────

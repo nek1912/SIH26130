@@ -35,7 +35,7 @@ from app.incentives.models import SupportScheme
 from app.regulatory.evidence import EvidenceRecord
 from app.regulatory.models import SourceRecord
 from app.rules.dependency_models import ApprovalDependency
-from app.rules.models import ApprovalRule
+from app.rules.models import ApprovalComposition, ApprovalRule
 from app.seed.approvals import load_approval_authorities, load_approval_rules
 from app.seed.consistency import load_consistency_rules
 from app.seed.dependencies import load_approval_dependencies
@@ -45,6 +45,7 @@ from app.seed.handoff import all_portal_entries
 from app.seed.incentives import load_incentive_schemes
 from app.seed.mh.approvals import (
     load_mh_approval_authorities,
+    load_mh_approval_compositions,
     load_mh_approval_rules,
 )
 from app.seed.mh.consistency import load_mh_consistency_rules
@@ -159,6 +160,11 @@ class RegulatoryPack:
     portal_entries: list[dict[str, str]] = field(default_factory=list)
     # Display-only SLA declarations (no deadlines computed from these).
     sla_records: list[SlaMetadata] = field(default_factory=list)
+    # Explicit per-approval role compositions (P0 exception-role design).
+    # Approvals without an entry aggregate with the legacy priority.
+    approval_compositions: dict[str, ApprovalComposition] = field(
+        default_factory=dict
+    )
 
     def get_requirements_for_approval(
         self, approval_id: str
@@ -223,6 +229,7 @@ def _empty_mh_pack() -> RegulatoryPack:
     return RegulatoryPack(
         jurisdiction=IN_MH,
         approval_rules=load_mh_approval_rules(),
+        approval_compositions=load_mh_approval_compositions(),
         approval_authorities=load_mh_approval_authorities(),
         dependencies=load_mh_approval_dependencies(),
         document_requirements=load_mh_document_requirements(),

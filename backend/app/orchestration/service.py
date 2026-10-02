@@ -31,7 +31,11 @@ from app.rules.dependency_models import (
     ApprovalReadiness,
     ReadinessStatus,
 )
-from app.rules.models import ApplicabilityEvaluation, ApprovalRule
+from app.rules.models import (
+    ApplicabilityEvaluation,
+    ApprovalComposition,
+    ApprovalRule,
+)
 
 # Status priority for worst-case aggregation (higher = worse).
 _STATUS_PRIORITY: dict[OrchestrationStatus, int] = {
@@ -395,6 +399,7 @@ def orchestrate_application(
     obtained_approvals: set[str],
     evidence_gaps: list[EvidenceRecord] | None = None,
     applicability_results_map: dict[str, str] | None = None,
+    approval_compositions: dict[str, ApprovalComposition] | None = None,
 ) -> ApprovalOrchestration:
     """Orchestrate readiness assessment for a single approval.
 
@@ -417,7 +422,10 @@ def orchestrate_application(
     applicability_evals = evaluate_approval_applicability(
         approval_rules, project_facts, approval_authorities, [approval_id]
     )
-    by_approval = summarize_by_approval(applicability_evals)
+    by_approval = summarize_by_approval(
+        applicability_evals,
+        compositions=approval_compositions,
+    )
     applicability_eval = by_approval.get(approval_id)
     applicability_result = applicability_eval.result if applicability_eval else "insufficient_data"
 
@@ -571,6 +579,7 @@ def orchestrate_application_full(
     obtained_approvals: set[str],
     evidence_gaps_by_approval: dict[str, list[EvidenceRecord]] | None = None,
     fact_provenance: dict[str, dict[str, Any]] | None = None,
+    approval_compositions: dict[str, ApprovalComposition] | None = None,
 ) -> ApplicationOrchestration:
     """Orchestrate readiness assessment for all approvals in an application.
 
@@ -595,7 +604,10 @@ def orchestrate_application_full(
         approval_rules, project_facts, approval_authorities
     )
     full_applicability_map = {
-        aid: ev.result for aid, ev in summarize_by_approval(full_evals).items()
+        aid: ev.result
+        for aid, ev in summarize_by_approval(
+            full_evals, compositions=approval_compositions
+        ).items()
     }
 
     for aid in all_approval_ids:
@@ -616,6 +628,7 @@ def orchestrate_application_full(
             obtained_approvals=obtained_approvals,
             evidence_gaps=gaps,
             applicability_results_map=full_applicability_map,
+            approval_compositions=approval_compositions,
         )
         approvals[aid] = orch
         total_blockers += len(orch.blockers)

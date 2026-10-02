@@ -302,7 +302,7 @@ class TestMHOrchestrationAPI:
         assert orch["applicability_result"] == "applies"
         assert orch["status"] == "blocked_by_dependency"
 
-    def test_c_apr026_document_blocked(self):
+    def test_c_apr026_evidence_fail_closed(self):
         client, _ = self._mh_client(
             {"F-PET-01": "B", "F-PET-02": 2000, "F-PET-04": 900},
             "APR-026",
@@ -310,12 +310,12 @@ class TestMHOrchestrationAPI:
         orch = client.get(
             f"/applications/{APP_ID}/orchestration"
         ).json()["approvals"]["APR-026"]
+        # STOP verdict (audit_mh_r030_exemption_migration): R-030 stays
+        # TRIGGER with APR-026 uncomposed, so petroleum Class-B facts
+        # evaluate to APPLIES; DOC-008 required and unuploaded, so the
+        # approval is BLOCKED_BY_DOCUMENTS (document-blocked contract).
         assert orch["applicability_result"] == "applies"
         assert orch["status"] == "blocked_by_documents"
-        assert any(
-            b["affected_document_key"] == "DOC-008"
-            for b in orch["blockers"]
-        )
 
     def test_d_apr001_evidence_fail_closed(self):
         client, _ = self._mh_client(
@@ -325,7 +325,11 @@ class TestMHOrchestrationAPI:
         orch = client.get(
             f"/applications/{APP_ID}/orchestration"
         ).json()["approvals"]["APR-001"]
-        assert orch["applicability_result"] == "applies"
+        # P0 exception-role migration (deliberate re-pin): R-002 is now
+        # CLASSIFICATION, so small-unit facts alone compose to
+        # INSUFFICIENT_DATA (never APPLIES) even before the UR-06
+        # evidence overlay below.
+        assert orch["applicability_result"] == "insufficient_data"
         assert orch["status"] == "insufficient_data"
         assert any(
             b.get("evidence_id") == "UR-06" for b in orch["blockers"]

@@ -40,6 +40,7 @@ from app.rules.models import (
     AndNode,
     ApplicabilityCondition,
     ApplicabilityEvaluation,
+    ApprovalComposition,
     ApprovalResult,
     ApprovalRule,
     ConditionNode,
@@ -95,6 +96,11 @@ def _evaluate_leaf(
             if isinstance(value, list):
                 if any(v in condition.value for v in value):
                     return True, f"{condition.field} ({value}) overlaps {condition.value}"
+                if "UNKNOWN" in value:
+                    return None, (
+                        f"{condition.field} ({value}) contains an unknown "
+                        "element with no established match"
+                    )
                 return False, f"{condition.field} ({value}) has no overlap with {condition.value}"
             if value in condition.value:
                 return True, f"{condition.field} ({value!r}) in {condition.value}"
@@ -554,12 +560,20 @@ def summarize_evaluations(
 
 def summarize_by_approval(
     evaluations: list[ApplicabilityEvaluation],
+    compositions: dict[str, ApprovalComposition] | None = None,
 ) -> dict[str, ApplicabilityEvaluation]:
     """Aggregate rule-level evaluations by approval_id.
 
     When multiple rules share an approval_id, returns the first evaluation
     whose result is APPLIES.  If no rule applies, returns the first
     DOES_NOT_APPLY, then CONDITIONAL, then INSUFFICIENT_DATA.
+
+    P0 exception-role extension: when ``compositions`` names an explicit
+    composition for an approval, that approval is aggregated with
+    ``compose_approval_evaluations`` (§8 truth table) instead of the
+    legacy priority. Approvals without a composition entry use the
+    legacy priority unchanged — so unmigrated approvals cannot change
+    behavior.
     """
     from collections import defaultdict
 
@@ -576,9 +590,230 @@ def summarize_by_approval(
 
     aggregated: dict[str, ApplicabilityEvaluation] = {}
     for approval_id, evals in grouped.items():
+        composition = (compositions or {}).get(approval_id)
+        if composition is not None:
+            aggregated[approval_id] = compose_approval_evaluations(
+                composition, evals
+            )
+            continue
         for priority in result_priority:
             match = [e for e in evals if e.result == priority]
             if match:
                 aggregated[approval_id] = match[0]
                 break
     return aggregated
+
+
+def _unknown_outcome(
+    evals: list[ApplicabilityEvaluation],
+) -> str:
+    """Unknown-class outcome preserving CONDITIONAL vs INSUFFICIENT_DATA."""
+    if any(e.result == ApprovalResult.CONDITIONAL.value for e in evals):
+        return ApprovalResult.CONDITIONAL.value
+    return ApprovalResult.INSUFFICIENT_DATA.value
+
+
+def _first_by_result(
+    evals: list[ApplicabilityEvaluation], *results: str
+) -> ApplicabilityEvaluation | None:
+    for wanted in results:
+        for e in evals:
+            if e.result == wanted:
+                return e
+    return None
+
+
+def compose_approval_evaluations(
+    composition: ApprovalComposition,
+    evaluations: list[ApplicabilityEvaluation],
+) -> ApplicabilityEvaluation:
+    """Combine role-typed rule outputs into one approval verdict (§8).
+
+    Named rule IDs partition the evaluations into trigger, exemption,
+    and classification groups (evaluations for unnamed rules of the
+    same approval are ignored — composition is explicit; a lint test
+    enforces that every built rule of a composed approval is named).
+    A named rule with no evaluation contributes unknown pressure with
+    an explicit reason instead of silently vanishing.
+
+    Contract (result vocabulary unchanged):
+    - TRIGGER TRUE + EXEMPTION TRUE → DOES_NOT_APPLY with the
+      exemption reason (the sole sanctioned TRUE→negative path).
+    - TRIGGER TRUE + EXEMPTION FALSE/absent → APPLIES (trigger eval).
+    - TRIGGER TRUE + EXEMPTION UNKNOWN → CONDITIONAL (unknown
+      defeater blocks APPLIES; never ignored).
+    - TRIGGER FALSE-class + EXEMPTION anything → DOES_NOT_APPLY on
+      the trigger reason (no approval duty).
+    - TRIGGER UNKNOWN-class + EXEMPTION TRUE → unknown-class outcome
+      (defeat needs a duty; never APPLIES).
+    - TRIGGER UNKNOWN-class + EXEMPTION FALSE/absent → unknown-class.
+    - No triggers + classifications present → INSUFFICIENT_DATA
+      (classification alone is informational, never decisive).
+    - No triggers + no classifications → INSUFFICIENT_DATA.
+    """
+    approval_id = composition.approval_id
+    by_rule = {e.rule_id: e for e in evaluations}
+
+    def _named(ids: list[str]) -> list[ApplicabilityEvaluation]:
+        out: list[ApplicabilityEvaluation] = []
+        for rule_id in ids:
+            hit = by_rule.get(rule_id)
+            if hit is not None:
+                out.append(hit)
+            else:
+                out.append(
+                    ApplicabilityEvaluation(
+                        rule_id=rule_id,
+                        approval_id=approval_id,
+                        result=ApprovalResult.INSUFFICIENT_DATA.value,
+                        reason=(
+                            f"Rule {rule_id} is named in the approval "
+                            f"composition but was not evaluated"
+                        ),
+                        required_inputs=[],
+                        missing_inputs=[],
+                        authority="",
+                        source_references=[],
+                    )
+                )
+        return out
+
+    trigger_evals = _named(composition.triggers)
+    exemption_evals = _named(composition.exemptions)
+    classification_evals = _named(composition.classifications)
+
+    def _union(field: str) -> list[str]:
+        seen: list[str] = []
+        for e in trigger_evals + exemption_evals + classification_evals:
+            for item in getattr(e, field):
+                if item not in seen:
+                    seen.append(item)
+        return seen
+
+    def _synthetic(
+        rule_id: str, result: str, reason: str
+    ) -> ApplicabilityEvaluation:
+        first = (trigger_evals + exemption_evals + classification_evals)[0]
+        decisive = by_rule.get(rule_id)
+        return ApplicabilityEvaluation(
+            rule_id=rule_id,
+            approval_id=approval_id,
+            result=result,
+            reason=reason,
+            required_inputs=_union("required_inputs"),
+            missing_inputs=_union("missing_inputs"),
+            authority=first.authority,
+            source_references=(
+                decisive.source_references if decisive is not None else []
+            ),
+        )
+
+    trigger_true = _first_by_result(
+        trigger_evals, ApprovalResult.APPLIES.value
+    )
+    trigger_false = _first_by_result(
+        trigger_evals, ApprovalResult.DOES_NOT_APPLY.value
+    )
+    trigger_unknown = _first_by_result(
+        trigger_evals,
+        ApprovalResult.CONDITIONAL.value,
+        ApprovalResult.INSUFFICIENT_DATA.value,
+    )
+    exemption_true = _first_by_result(
+        exemption_evals, ApprovalResult.APPLIES.value
+    )
+    exemption_unknown = _first_by_result(
+        exemption_evals,
+        ApprovalResult.CONDITIONAL.value,
+        ApprovalResult.INSUFFICIENT_DATA.value,
+    )
+
+    # Trigger group outcome mirrors the legacy priority (TRUE, then
+    # FALSE even beside unknowns, then unknown-class) so an
+    # all-trigger composition is byte-identical to legacy.
+    # TRIGGER TRUE + EXEMPTION TRUE → reasoned defeat.
+    if trigger_true is not None and exemption_true is not None:
+        return _synthetic(
+            exemption_true.rule_id,
+            ApprovalResult.DOES_NOT_APPLY.value,
+            "Exempt under "
+            + exemption_true.rule_id
+            + ": "
+            + exemption_true.reason
+            + "; trigger "
+            + trigger_true.rule_id
+            + " would otherwise apply.",
+        )
+    # TRIGGER TRUE + EXEMPTION FALSE/absent → APPLIES (trigger eval).
+    if trigger_true is not None and exemption_unknown is None:
+        return trigger_true
+    # TRIGGER TRUE + EXEMPTION UNKNOWN → CONDITIONAL (never APPLIES).
+    if trigger_true is not None:
+        assert exemption_unknown is not None
+        return _synthetic(
+            exemption_unknown.rule_id,
+            ApprovalResult.CONDITIONAL.value,
+            "Exemption "
+            + exemption_unknown.rule_id
+            + " unresolved ("
+            + exemption_unknown.reason
+            + "); approval cannot be confirmed while a defeater is "
+            "unknown.",
+        )
+    # TRIGGER FALSE (no TRUE, even beside unknowns) → no approval duty.
+    if trigger_false is not None:
+        if exemption_true is not None:
+            return _synthetic(
+                trigger_false.rule_id,
+                ApprovalResult.DOES_NOT_APPLY.value,
+                trigger_false.reason
+                + "; exemption "
+                + exemption_true.rule_id
+                + " also holds.",
+            )
+        return trigger_false
+    # TRIGGER UNKNOWN-class (no TRUE, no FALSE) → unknown outcome.
+    if trigger_unknown is not None:
+        outcome = _unknown_outcome(
+            trigger_evals + exemption_evals + classification_evals
+        )
+        detail = trigger_unknown.reason
+        if exemption_true is not None:
+            detail += (
+                "; exemption "
+                + exemption_true.rule_id
+                + " holds but no trigger is established, so no "
+                "duty is defeated."
+            )
+        elif (
+            outcome == ApprovalResult.CONDITIONAL.value
+            and trigger_unknown.result
+            == ApprovalResult.INSUFFICIENT_DATA.value
+            and exemption_unknown is not None
+        ):
+            detail += (
+                "; exemption "
+                + exemption_unknown.rule_id
+                + " is also unresolved ("
+                + exemption_unknown.reason
+                + ")."
+            )
+        return _synthetic(trigger_unknown.rule_id, outcome, detail)
+    # No triggers at all: classifications/exemptions alone decide
+    # nothing → INSUFFICIENT_DATA (fail closed, never APPLIES).
+    present = classification_evals + exemption_evals
+    if present:
+        return _synthetic(
+            present[0].rule_id,
+            ApprovalResult.INSUFFICIENT_DATA.value,
+            "No trigger rule evaluated for this approval; "
+            + str(len(classification_evals))
+            + " classification and "
+            + str(len(exemption_evals))
+            + " exemption evaluation(s) are informational only.",
+        )
+    return _synthetic(
+        approval_id,
+        ApprovalResult.INSUFFICIENT_DATA.value,
+        "No evaluations available for this approval.",
+    )

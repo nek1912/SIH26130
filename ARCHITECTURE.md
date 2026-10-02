@@ -1348,6 +1348,400 @@ project available (NOT VERIFIED). DEFAULT_JURISDICTION stays IN-GJ.
 - Checks: 1449 passed (1410 baseline + 39 new tests in `test_mh_sector_specific.py`),
   ruff clean, frontend TypeScript clean. No migration. No default flip.
 
+## 58. MH Environmental Protection & Extended Producer Responsibility (EPR) Pack Audit (2026-09-29)
+
+- Cluster Audited: Plastic Waste Management / EPR (`EPR-PWM`, `EPRS-01`, `EPRS-02`), Battery Waste Management 2022 (`EPR-BAT`, `EPRS-03`, `EPRS-04`), E-Waste Management 2022 (`EPR-EWASTE`, `EPRS-05`, `EPRS-06`, `R-094`), Hazardous Waste Import/Export (HOWM Rules 2016 r.11-15, Schedule III/IV/VI/VII, step `H5`), Environmental Statement / Form V (`CMP-005`), Environment Audit (`R-072` / `CMP-014`), and additional EPR regimes (`EPR-OIL`, `EPR-TYRE`, `EPR-NFM`, `EBWGR-SWM`, `SWM-RDF`).
+- Boundary Decision & Product Layer Separation:
+  - ZERO new active approval rules added.
+  - Regulated entity roles vs industrial consumers: chemical manufacturing units are ordinary industrial users/consumers of packaging, batteries, and electrical equipment; they do NOT automatically hold statutory "Producer", "Importer", or "Brand Owner" (PIBO) roles under PWM, BWM, or E-Waste Rules.
+  - Per edge test `ET-v5-18`, chemical manufacturing alone with no role facts evaluates to `INSUFFICIENT_DATA (never APPLIES)`. Per `ET-v4-17`, unknown battery role evaluates to `UNKNOWN`.
+  - EPR regimes (`EPR-PWM`, `EPR-BAT`, `EPR-OIL`, `EPR-TYRE`, `EPR-NFM`, `EBWGR-SWM`) are classified in the repository registers as `OPERATING_DUTY / REGISTRATION (not a project-stage approval)`. None exists in `approvals.csv` as an `APR-xxx`. Modeling them as pre-establishment approval rules would create fake approvals and violate architectural boundaries.
+  - E-Waste bulk consumer duty (Rule 8, handover to registered entities if `F-EEE-01 >= 1000`) is already actively encoded as `R-094` targeting `CMP-025`. EEE Producer EPR registration (`EPRS-06`) is inapplicable to the chemical manufacturing domain.
+  - Hazardous Waste Import / Export: Governed by MoEFCC under HOWM Rules 2016 Chapter III / Form 5 (transboundary movement procedure) and Customs verification (Schedule VII), not an MPCB industrial approval. Step `H5` in `howm_decision_path.csv` requires trade facts and evaluates to `UNKNOWN`. No import/export trade facts exist in `facts.py`; fails closed to `INSUFFICIENT_DATA` / `UNKNOWN`.
+  - Environmental Statement / Form V (`CMP-005`): Classified in `compliance.csv` as an annual statutory compliance return (`record_type: RETURN`, `lifecycle_stage: OPERATION`), due on or before 30 September each year to MPCB (`AUT-003`) under EP Rules 1986 r.14. It belongs to the compliance obligations, deadline engine, and operational return layer, NOT the approval applicability engine.
+  - Environment Audit (`R-072` / `CMP-014`): Governed by Environment Audit Rules 2025 S.O. 3973(E); in `compliance.csv`, `CMP-014` is explicitly marked `DO_NOT_IMPLEMENT_YET` because audit is not a blanket obligation (applies only when assigned by authority or engaged by proponent); unmodeled in fact registry.
+- Isolation & Counts:
+  - Active MH rule count stays strictly unchanged at 26 rules (R-094 already active).
+## 59. MH Consent to Operate (CTO) & Renewal Audit (2026-09-29)
+
+- Cluster Audited: R-017 (CTO under Water & Air Acts, APR-009), R-063 (CTO expansion/amendment outer limit, APR-009 / SLA-036), R-055 (MPCB consent amendment vs fresh consent, APR-053), CMP-007 (CTO validity / renewal / MPCB auto-renewal), and R-062 (CTO validity under GSR 62/63).
+- Boundary Decisions & Architectural Subsystem Segregation:
+  - ZERO new active approval rules added (active MH approval rules strictly 26).
+  - R-017: CTO applicability under Water Act s.25 and Air Act s.21 conceptually belongs to the approval applicability layer (`APR-009`), but its condition `CTO_REQUIRED := CONSENT_REQUIRED == TRUE` requires rule composition with deferred rule `R-013`. `R-013` itself requires full CPCB/MPCB sector classification lookup `R-014` over `F-MPCB-01` and cardinality guard `R-015` (multi-activity emits `UNKNOWN`, maximum-category convention is unevidenced). White category units are explicitly exempt from consent management (`ET-049`). Because the engine lacks a rule-composition primitive and sector lookup is not digitized, R-017 cannot be evaluated standalone and is deferred fail-closed. In dependency evaluation, CTO is satisfied via `obtained_approvals` for downstream approvals like `APR-010` (`DEP-009`).
+  - R-063: Register cross-check resolves label mismatch: R-063 is NOT an approval applicability rule deciding whether CTO applies. It is an SLA timeline outer limit specification (`CTO_EXPANSION_OUTER_LIMIT := 90 / 60 / 30 days`, `SLA-036`) under GSR 62/63 para 8 table Sl.3. Column headings mapping to Red/Orange/Green are unresolved (`UNK-031`, `GSR-11`), and register status is `REQUIRES_CONFIRMATION` / `REQUIRES_OFFICIAL_CONFIRMATION`. Deferred in `MH_DEFERRED_RULES` and retained in `MH_REQUIRES_CONFIRMATION_RULE_IDS`.
+  - R-055: MPCB consent amendment vs fresh consent (circular 25-08-2025, `SRC-068`) belongs to the modification-stage workflow / change-assessment layer (`APR-053`), NOT boolean approval applicability. Outputs categorical branch `'AMENDMENT'` (clerical, name change, HW disposal path) vs `'FRESH'` (fuel, DG set, HW quantity, process change) over `F-CHG-01`. Unlisted changes (inventory increase `ET-107`, water source change `ET-109`) and pollution load increases require technical officer appraisal (`CONDITIONAL` / `INSUFFICIENT_DATA`). Deferred in `MH_DEFERRED_RULES`.
+  - CMP-007: Classified in `compliance.csv` as a continuing compliance renewal obligation (`record_type: RENEWAL`, `lifecycle_stage: RENEWAL`), NOT an approval rule. Explicitly marked `implement_status: DO_NOT_IMPLEMENT_YET`. Subject to statutory regime conflict `CON-006` between central MoEFCC GSR 62(E)/63(E) (valid-till-cancelled, 2026-01-27) and State MPCB circular 13-08-2025 (5/10/15-year auto-renewal). State fee structure is un-notified (`GSR-04` BLOCKED), treatment of legacy pre-2026 CTOs is unconfirmed (`UNK-032`, `UR-05`), and post-2026 MPCB implementation is unresolved (`UNK-001`). Resolution: do not compute validity; display both with status.
+  - Auto-Renewal: MPCB circular 13-08-2025 (`SRC-069`) is an administrative self-declaration workflow (`SLA-037`, 7 days), NOT a statutory deemed consent. Central law has eliminated periodic renewal for post-2026 CTOs (`GSR-06`).
+- Deferral Enforcement:
+  - `MH_DEFERRED_RULES` updated with R-017, R-055, and R-063 (count increases from 50 to 53).
+  - All deferred rules rejected fail-closed via `_encode()` with explicit error messages.
+  - Active MH rule count stays strictly unchanged at 26 rules.
+  - IN-GJ pack remains isolated with 19 rules; `DEFAULT_JURISDICTION = "IN-GJ"` strictly preserved.
+  - Fact registry untouched: zero new facts added (128 MH facts preserved).
+- Checks: 1520 passed (1479 baseline + 41 new tests in `test_mh_cto_renewal.py`), ruff clean, frontend TypeScript clean. No migration. No default flip.
+
+## 60. MH Establishment & Labour Registration Cluster Audit (2026-09-29)
+
+- Cluster Audited: R-024 (OSH Code s.3 establishment registration, APR-017 / APR-060), R-025 (Shops & Establishments intimation, APR-018), R-098 (Mathadi/manual workers regulation, CND-025).
+- Boundary Decisions & Architectural Subsystem Segregation:
+  - ZERO new active approval rules added (active MH approval rules strictly 26).
+  - R-024: APR-017 and APR-060 (split record) both recorded as `DO_NOT_IMPLEMENT_YET` in authoritative `approvals.csv`. Maharashtra OSH State rules remain **DRAFT as of 06-05-2026** (UR-12 OPEN, UNK-008 active). Administrative procedure, electronic registration portal, and designated registering officer in MH are unnotified. Chemical factories are regulated by DISH (AUT-005) under saved Factories Act rules; s.3(8) provides deemed registration for existing factories. Dual authority routing AUT-006/AUT-005 is unresolvable without additional facts. Second OR-clause (hazardous process) requires an unmodeled fact. Deferred fail-closed.
+  - R-025: Source SRC-027 is a T5 secondary mirror of a T2 circular — LOW confidence. `approvals.csv` explicitly notes "Relevance to a factory establishment not verified" for APR-018. Industrial chemical factories are regulated by DISH / Factories Act / OSH Code and are outside the S&E Act scope. Status `REQUIRES_OFFICIAL_CONFIRMATION`. Deferred fail-closed.
+  - R-098: CND-025 appears in `conditional_regs.csv` as obligation type `RULE_LOGIC`, NOT in `approvals.csv` as an APR-xxx. Encoding it as an `ApprovalRule` would violate the architectural boundary (approval applicability ≠ compliance condition). Chemical manufacturing per se is not a "scheduled employment" under the Mathadi Act 1969. The Thane/Raigad loading/unloading notification (01-08-1983) covers specific activities, not all manufacturing. Both required facts (F-LOC-19, F-LAB-10) exist in the MH fact registry but a generic `F-LAB-10 == TRUE → APPLIES` encoding is unsafe without verified area-specific board scheme data. Deferred fail-closed.
+- Deferral Enforcement:
+  - `MH_DEFERRED_RULES` updated with R-024, R-025, R-098 (count increases from 53 to 56).
+  - All three rejected fail-closed via `_encode()` with explicit traceable rationale.
+  - Active MH rule count stays strictly unchanged at 26 rules.
+  - IN-GJ pack remains isolated with 19 rules; `DEFAULT_JURISDICTION = "IN-GJ"` strictly preserved.
+  - Fact registry untouched: zero new facts added.
+- Checks: 1553 passed (1520 baseline + 33 new tests in `test_mh_establishment_labour.py`), ruff clean, frontend TypeScript clean. No migration. No default flip.
+
+## 61. MH Fire Protection, Building Permissions & Local Authority Approvals Audit (2026-09-29)
+
+- Cluster Audited: R-037 (MIDC OC, APR-032, PRE_OPERATION, AUT-010, T3 SRC-044),
+  R-041 (non-MIDC BP, APR-038 PRE_CONSTRUCTION + APR-041 PRE_OPERATION, AUT-011,
+  T1/T2 SRC-123/124/067), R-078 (fire authority routing CASE, APR-039/APR-040,
+  AUT-012, T1 SRC-121), R-079 (Schedule-I class predicate, APR-039/APR-040,
+  AUT-012, T1 SRC-121), R-080 (BP authority CASE, APR-038, AUT-011, T1 SRC-123),
+  R-082 (UDCPR regime NOT-IN exclusion, APR-038, AUT-011, T2 SRC-124).
+- Boundary Decisions (all verified against rule_register/rules/approvals/
+  authorities/facts/sources/dependencies/requires_confirmation/unknowns/
+  unresolved/sla/edge_tests/planning_fire_tree/planning_steps):
+  - ZERO new active approval rules. `approvals.py` untouched; active pack 26.
+  - R-037: C. EVIDENCE INCOMPLETE — portal-only (UR-19 OPEN, CON-001 SLA
+    conflict); gated by `MH_REQUIRES_CONFIRMATION_RULE_IDS`; deps
+    DEP-005/006/007 are readiness edges, not applicability conditions.
+  - R-041: D. ENGINE LIMITATION (`construction` fact absent; needs R-080 +
+    R-082 composition) + E. MISCLASSIFIED (dual lifecycle APR-038/APR-041).
+  - R-078: E. MISCLASSIFIED — FIRE_AUTHORITY string CASE, mirrors R-047.
+  - R-079: D. ENGINE LIMITATION — needs non-MIDC guard + R-078 + R-042
+    composition; standalone over-applies to MIDC (J-class test).
+  - R-080: E. MISCLASSIFIED — BP_AUTHORITY CASE, mirrors R-047.
+  - R-082: E. MISCLASSIFIED — regime selector; MCGM/NAINA/MIDC exclusion ≠
+    DOES_NOT_APPLY (ET-119). No planning-regime selector in architecture.
+  - Engine has no rule-reference / dynamic-authority / regime primitives
+    (by design); `construction` unmodeled; fire/building sources correctly
+    deferred from 22-source loaded pack; UNKNOWN never FALSE.
+- Tests: `backend/tests/test_mh_fire_building.py` — 139 tests (identity,
+  per-rule audits, composition limits, fact ontology, classification,
+  edge cases incl. MIDC≠auto-BP, UNKNOWN-construction, routing/regime
+  separation, R-082-no-negation, R-079-no-overapply, jurisdiction isolation,
+  evidence gaps, batch-1/batch-2/location + GJ regression). Five draft
+  failures fixed (deferred-source assertions, string `result`, R-037
+  not-safe message) + ruff fixes.
+- Checks: 1692 passed (1553 baseline + 139 new), ruff clean, frontend
+  TypeScript clean. No migration. No default flip. Fact registry 128,
+  unchanged. Artifact: `audit_mh_fire_building.md`.
+
+## 62. MH Workflow/Lifecycle Cluster Audit (2026-09-29)
+
+- Cluster Audited: R-081 (BP_DEEMED_POSSIBLE, APR-038, PRE_CONSTRUCTION,
+  AUT-011, T1 SRC-123 s.45(5), 1966 YEAR_ONLY), R-099
+  (FINAL_FIRE_APPROVAL_RENEWAL, APR-040, PRE_OPERATION, AUT-012, T2 SRC-145,
+  EXACT 2023-05-30), R-036 (MIDC_BP combined, APR-030/031/033 spanning
+  PRE_CONSTRUCTION/CONSTRUCTION/PRE_OPERATION, AUT-010, T3 SRC-043/044,
+  effective UNKNOWN).
+- Boundary Decisions (verified against current rule_register/rules/approvals/
+  authorities/facts/sources/dependencies/requires_confirmation/unknowns/
+  unresolved/sla/edge_tests/fire_renewal_model/compliance):
+  - ZERO new active ApprovalRules. `approvals.py` change is 2 deferred
+    entries only; active pack 26; no builder, engine, fact, or pack change.
+  - R-081: E (workflow consequence, not applicability) — DATE arithmetic
+    over absent application/requisition dates, DCR-conformance proviso,
+    register forbids asserting grant; SLA-042 display-only.
+  - R-099: E (renewal/lifecycle, never APPLIES) — FR-01/CON-013 general
+    DOES_NOT_APPLY, FR-02 conditional pointer via modeled F-FIR-20,
+    FR-03/CON-024/UR-04 sector exception unresolved, FR-04/CMP-008 Form B
+    separate; FR-07 portal listing never a trigger.
+  - R-036: C (confirmation-gated, unchanged) — T3 portal-only (UR-19),
+    absent `construction` fact, triple-stage/record-class bundle;
+    DEP-003/004/019 correctly triaged out; ET-v5-28 holds.
+  - R-042 composition hub (R-079 + R-078 + R-099) stays confirmation-gated;
+    no rule-reference/dynamic-authority/regime/DATE/grant primitives added.
+- Tests: `backend/tests/test_mh_workflow_lifecycle.py` — 58 tests (identity,
+  deemed analysis, renewal analysis with F-FIR-20 engine checks, portal
+  analysis, cross-rule, fact/evidence discipline, isolation,
+  classification). Two draft assertions fixed to actual code behavior.
+- Checks: 1750 passed (1692 baseline + 58 new), ruff clean, frontend
+  TypeScript clean. No migration. No default flip. Fact registry 128,
+  unchanged. Artifact: `audit_mh_workflow_lifecycle.md`.
+
+## 63. MH MIDC Lifecycle Tail Audit (2026-09-29)
+
+- Cluster Audited: R-039 (MIDC tree felling, APR-036 + APR-042 dual-target
+  routing fork, AUT-010/AUT-022, T3 SRC-043/070, effective UNKNOWN), R-040
+  (MIDC change in manufacturing activity, APR-037 OPERATION/MODIFICATION,
+  AUT-010, T3 SRC-043, effective UNKNOWN), APR-031 (plinth/commencement
+  e-intimation: REGISTRATION/REPORT, CONSTRUCTION lifecycle, rule R-036
+  gated), DEP-019 (APR-029 plot holder -> APR-030 BP: YES_INFERRED,
+  MEDIUM, T3 service list, OFFICIAL_WORKFLOW).
+- Boundary Decisions (verified against current rule_register/rules/
+  approvals/authorities/facts/sources/dependencies/requires_confirmation/
+  unknowns/unresolved/sla/edge_tests):
+  - ZERO new active ApprovalRules. Only code change: DEP-019 rationale
+    strengthened to record inferred status (loaded edges still DEP-009 x2).
+  - R-039: C (confirmation-gated, unchanged) — routing fork unexpressible
+    in ConditionNode; MIDC branch portal-only (UR-19); urban branch cites
+    unfetched Trees Act 1975 (LOW, UR-17 routing OPEN); no edge tests.
+  - R-040: C (confirmation-gated, unchanged) — portal-only; change fact
+    unmodeled and F-EXP-01 is wrong semantics + BOOL-without-UNKNOWN;
+    modification events belong to workflow state, not regulatory facts.
+  - APR-031: REPORT, correctly unmodeled (zero code refs; no pack
+    authority/edge/SLA/source); no rule equates it with approvals.
+  - DEP-019: inferred ordering, never statutory; zero impact on active
+    rules (APR-030 rule-less; R-035 needs no BP input).
+- Tests: `backend/tests/test_mh_midc_lifecycle_tail.py` — 59 tests
+  (identity, REPORT boundary, inferred-dependency discipline,
+  UNKNOWN/missing/invalid, no portal-to-statutory inference, cross-rule
+  separation, isolation, classification).
+- Checks: 1809 passed (1750 baseline + 59 new), ruff clean, frontend
+  TypeScript clean. No migration. No default flip. Fact registry 128,
+  unchanged. Artifact: `audit_mh_midc_lifecycle_tail.md`.
+
+## 64. MH Consent Category Chain Audit (2026-09-29)
+
+- Cluster Audited: R-013 (CONSENT_REQUIRED over MPCB_CATEGORY, APR-008,
+  T2 SRC-011 + T4 SRC-010, EXACT 2025-06-23), R-014 (SECTOR_CATEGORY
+  lookup(F-MPCB-01), operator LOOKUP, partial chemical codes, note
+  "others → UNKNOWN"), R-015 (UNIT_CATEGORY multi-code := UNKNOWN,
+  GUARD_OR_ROUTING, T4 SRC-011, MAX-convention forbidden, UNK-002 OPEN),
+  R-017 (CTO_REQUIRED := CONSENT_REQUIRED, required_inputs literally
+  R-013, APR-009 PRE_OPERATION, T1 SRC-004). Context: R-016 deemed CTE
+  stays DNI (ET-072/073 never-granted).
+- Boundary Decisions (verified against current rule_register/rules/
+  approvals/authorities/facts/sources/dependencies/requires_confirmation/
+  unknowns/unresolved/sla/edge_tests, incl. CSV-read identity tests):
+  - ZERO new active ApprovalRules. Only pack-logic change: R-015 explicit
+    deferral entry (loaded pack identical; `_encode` message upgrade).
+  - R-013: D (needs R-014 output + unmodeled MPCB_CATEGORY; White exempt
+    ET-049, UNKNOWN ET-110 preserved).
+  - R-014: E (no LOOKUP operator — op set is eq/in/gte/lte/gt/lt; table
+    undigitized and T4-mirror-sourced with OCR adoption circular).
+  - R-015: D (mandated UNKNOWN; MAX explicitly forbidden; LIST input
+    makes multi-code structurally possible, hence the guard).
+  - R-017: D (register-level rule reference; CTE→CTO is lifecycle staging
+    with precondition CTE, not a corollary; no renewal import; dependency
+    engine proves unknown consent blocks downstream APR-010).
+  - F-MPCB-01 LIST per-activity verified (None valid, scalars/mappings
+    rejected, no element check — further R-014 evidence); no scalar
+    industry-type fact exists; 128 facts unchanged.
+- Tests: `backend/tests/test_mh_consent_category_chain.py` — 60 tests
+  (CSV identity matrix, lookup-table audit, aggregation guard, CTO gate
+  with engine BLOCKED proof, fact ontology, approval semantics incl.
+  GSR-02/CMP-007 separation, isolation, classification). One draft
+  assertion fixed to actual LIST validator behavior; two prior baseline
+  pins updated 58→59.
+- Checks: 1869 passed (1809 baseline + 60 new), ruff clean, frontend
+  TypeScript clean. No migration. No default flip. Fact registry 128,
+  unchanged. Artifact: `audit_mh_consent_category_chain.md`.
+
+## 65. MH HW Authorization Content-Chain Audit (2026-09-29)
+
+- Cluster Audited (first ACTIVE-rule audit, falsification mandate): R-018
+  (HW_AUTH := F-HW-01==TRUE, APR-010, T1 SRC-013 r.6(1), EXACT 2016-04-04)
+  and R-096 (HW_SCH2_TEST over F-HW-04, register operator ANY, T2 SRC-120
+  Sch II, EXACT 2016-04-04). Both stay ACTIVE: R-018 class A
+  (safe-as-implemented), R-096 class B (bounded: UNK-034 currency outside
+  decision path, [] supply discipline, lab-conclusion token discipline).
+- Chain Reconstruction: disjoint inputs, no composition; APPLIES-first
+  priority verified fail-safe both contradiction ways; F-HW-02
+  stream/entry content correctly absent from predicates (supplied, never
+  inferred); DOC-001/002/003 + Forms in document layer; DEP-009 blocks
+  APR-010 until CTE/CTO obtained (obtained cures only applies-state
+  prereqs); per-stream Schedule-I mapping correctly unattempted (UNK-014
+  content layer, 54-row hw_streams reference only).
+- Surgical Fix: `_evaluate_leaf` `in` branch — list-embedded "UNKNOWN"
+  with no established match now yields INSUFFICIENT_DATA instead of FALSE
+  (register: never coerced to FALSE; docstring already promised it);
+  established positives still APPLY. R-096 is the sole active list-`in`
+  rule; full suite green with no other changes.
+- Tests: `backend/tests/test_mh_hazardous_waste_authorization_chain.py` —
+  63 tests (CSV identity, reconstruction, R-018/R-096 safety incl.
+  windows, ANY semantics, approval matrix, propagation, content split,
+  fact discipline, isolation, classification). One prior consent-test
+  input corrected to lowercase engine contract (same conclusion).
+- Checks: 1980 passed, ruff clean, frontend TypeScript clean. No
+  migration. No default flip. Counts unchanged (26/59/26/19/128).
+  Artifact: `audit_mh_hazardous_waste_authorization_chain.md`.
+
+## 66. MH R-021 Closure Audit (2026-09-29)
+
+- Candidate Closed: R-021 (MAH derivation: EXISTS over F-HAZ-01 with
+  Sch2/Sch3 col-3 lookup, Part II class TOTALs, 500m aggregation;
+  required_inputs literally R-019; APR-012 COMPLIANCE_APPROVAL/REPORT,
+  PRE_OPERATION;OPERATION; 4-way Sch-5 routing; T1 SRC-016 as amended to
+  2000; 2000 YEAR_ONLY; DOC-009/CMP-010/CMP-020/CMP-011 sibling duties).
+- Disposition: **DEFERRED, class D** (composition with deferred R-019;
+  EXISTS/lookup/aggregation/routing unrepresentable — op set asserted
+  exact; partial pipeline derive_mah_status covers exact-string col-3
+  join only; ET-081 UNKNOWN discipline; source ceilings: no post-2000
+  amendments, no Sch 1 Part I, no sum-of-ratios; per-entry blocks
+  S1-TOX/S2-18/S3P1-111 kept; UR-01/02/03 open).
+- Falsification run: 8 attempted defeaters, all supporting deferral; no
+  finding supports activation. APR-012 fully unmodeled in pack (no
+  authority/docs/SLA/hints/edges/rules). DEP-010/011/026 correctly
+  triaged (activity endpoints). F-HAZ-01/02 strict LISTs (UNKNOWN token
+  rejected; None valid); F-PRC-03 derived-only.
+- Change: one deferral entry (untriaged 6→5: R-054/059/071/072/076
+  remain). Zero activations, facts, primitives, donor modifications.
+- Tests: `backend/tests/test_mh_r021.py` — 49 tests (CSV identity,
+  semantics, sources, facts + derivation matrix, engine, falsification,
+  dependencies, isolation, decision). Cascades: three deferred pins +
+  HW-chain pins 59→60; parallel inventory UNTRIAGED set minus R-021
+  (already anticipated).
+- Checks: 2077 passed, ruff clean, frontend TypeScript clean. No
+  migration. No default flip. Counts 26/60/26/19/128. Artifact:
+  `audit_mh_r021.md`.
+
+## 67. MH R-054 Closure Audit (2026-09-29)
+
+- Candidate Closed: R-054 (EC_EXPANSION_EXEMPT 6-conjunct AND, APR-052
+  EXPANSION lifecycle, AUT-001/AUT-002, CENTRAL, T1 SRC-001 para 7(ii)(b),
+  effective UNKNOWN, approval itself ROC with UNKNOWN preconditions).
+- Falsification: facts-only probe (F-EXP-01 + F-EXP-02==FALSE) reports
+  APPLIES while blind to item 2-5 scope, Appendix-XIII certificate,
+  OCMS >=95%, B2->A/B1 exclusion, holder status (all verified absent;
+  F-EXP-01 strict BOOL, no UNKNOWN); approval-level APPLIES inverts
+  "exempt" into "approval applies" and erases Form-I else-branch (ET-068);
+  ET-067/069 house covered. R-002/APR-001 separation verified (different
+  approval, item scope, question). No APR-052 rows in deps/compliance/
+  SLA/conditional/confirmation/unknowns/unresolved; containment proven
+  (no live APR-052 rule).
+- Disposition: **DEFERRED, class D** (missing conjunct facts; source T1
+  suffices so not C; obligation real so not DNI/G; identity complete so
+  not UNKNOWN). Untriaged 6→4 (R-059/071/072/076 remain).
+- Change: one deferral entry; parallel draft adopted (header, baseline,
+  triage test, `_encode` import, closure class with R-002/authority/
+  strictness/temporal/arithmetic/R-021-preserved tests). Cascades 60→61
+  across consent/workflow/tail/HW/r021 pins (+ parallel inventory/EC-core
+  already converged).
+- Checks: 2140 passed, ruff clean, frontend TypeScript clean. No
+  migration. No default flip. Counts 26/61/26/19/128. Artifact:
+  `audit_mh_r054.md`.
+
+## 71. MH Remaining-Hygiene Closure (2026-09-29, documentary)
+
+- Closed R-059 (incentive NOT_COMPUTED hard stop; criteria not located;
+  relevance engine structurally value-free), R-071 (GW Act TRUE-from
+  2014-06-01 date gate; FALSE forbidden by register note; orphan
+  F-WAT-05 linkage harmless), R-072 (assignment-only audit duty; twin
+  of CMP-014 DNI; no trigger fact), R-076 (1 Jun/1 Dec facet owned by
+  CMP-006 text; para-10 attribution tension resolved 3-way corroborated;
+  EC-granted state unmodeled).
+- Dispositions are documentary (DNI-as-ApprovalRule ×2, documented-
+  hygiene ×2): forcing code status entries would imply future ApprovalRule
+  activation that must never happen (RULE_LOGIC rows, non-approval
+  targets). Zero pack/engine/fact changes; semantic owners already hold
+  each item.
+- Checks: 2239 passed (11 new closure tests), ruff clean, no frontend
+  change. Counts unchanged. Artifact:
+  `docs/audits/audit_mh_remaining_hygiene_closure.md`.
+
+## 68. P0 APR-001 Exception-Role Semantic Design (2026-09-29, design-only)
+
+- Finding: `ApprovalRule` has one polarity — any TRUE aggregates
+  (`summarize_by_approval` APPLIES-first) to "approval applies" and flows
+  via `_determine_status` to READY and the handoff gate. Exemption TRUE
+  (R-002/R-030/R-043/R-044/R-087, all live + test-pinned) reads as
+  approval APPLIES; exemption FALSE reads as DOES_NOT_APPLY (fail-OPEN);
+  trigger+exemption-UNKNOWN reads as APPLIES (defeater invisible).
+- Contract: roles TRIGGER (default) / EXEMPTION / CLASSIFICATION with an
+  explicit approval function — non-trigger outputs never APPLIES;
+  TRIGGER+EXEMPTION-TRUE → reasoned DOES_NOT_APPLY (sole TRUE→negative);
+  TRIGGER+EXEMPTION-UNKNOWN → CONDITIONAL; CLASSIFICATION consumed only
+  by named composition (R-003 pattern); GUARD/ROUTING/LIFECYCLE/WORKFLOW
+  stay out; defeat ≠ grant downstream; UNKNOWN never FALSE.
+- Options (unranked): A — role field + approval composition (one model +
+  one aggregator; needs explicit-role lint); B — facet layer + outcome
+  mapping (safe by construction; second registry + mapping DSL + drift
+  risk). Minimum decision: home of role information + frozen truth table.
+- Backward compat: all pure triggers unchanged; deliberate re-pins only
+  for R-002 (→CLASSIFICATION), R-030/R-043/R-044/R-087 (→EXEMPTION),
+  R-077 (split or grandfathered); GJ byte-identical by default.
+- Migration order: R-043 first → APR-001 → readiness verify → rest; TDD
+  truth table before code; R-001/R-054 stay deferred throughout.
+- Zero production changes in this task. Design:
+  `docs/audits/audit_mh_apr001_exception_role_design.md` (18 sections).
+
+## 69. P0 Exception-Semantics Implementation (2026-09-29)
+
+- Implemented: `RuleRole` + `role` (TRIGGER default) on `ApprovalRule`,
+  `ApprovalComposition` records, `compose_approval_evaluations` truth
+  table wired through role-aware `summarize_by_approval` (opt-in per
+  approval; legacy priority otherwise byte-identical), served via
+  `RegulatoryPack.approval_compositions` through orchestration/whatif/
+  handoff/regulatory paths.
+- Migrated: R-043 → EXEMPTION (APR-043 with triggers R-044/R-077;
+  TRUE-alone never APPLIES, defeat reasoned, UNKNOWN blocks);
+  R-002 → CLASSIFICATION (APR-001 triggerless → honest
+  INSUFFICIENT_DATA, never APPLIES/DNA). R-001/R-054 stay deferred.
+- Deliberate re-pins (defect fixes): api_e2e APR-001, EC-core
+  small/large approval verdicts, derivation-wiring orchestration/handoff/
+  whatif/impact APR-001/APR-043 verdicts, consistency/SLA and
+  sources/portals APR-001 verdicts (rule-level APPLIES + provenance
+  intact everywhere). R-030/R-044/R-087/R-035/R-077 explicitly
+  unmigrated.
+- Checks: 2225 passed (56 new contract/migration/readiness tests),
+  ruff clean, no facts/sources added, GJ byte-identical, counts
+  26/61/26/19/128. Record:
+  `docs/audits/implementation_mh_exception_semantics.md`.
+
+## 70. R-043 EXEMPTION Migration Audit (2026-09-29, controlled audit)
+
+- Verdict: **SAFE_WITH_LIMITATION** — all 8 truth-table positions live-
+  verified (TRUE-alone never APPLIES; FALSE-alone never DNA; T+T→reasoned
+  DNA; T+F→APPLIES; T+U→CONDITIONAL; U+T/U+U→INSUFFICIENT); fail-open
+  defects dead in every path (2 production summarize sites composed;
+  obligations client uncalled in UI; whatif/impact/handoff forward
+  compositions); readiness/handoff proven (never READY via exemption;
+  obtained = workflow `approved` only; gate raises pre-lookup).
+- Limitation (precise): sibling R-044 domestic limb still trigger-
+  composed → domestic-only cases overstate duty (fail-safe direction);
+  scoped future migration, not this audit.
+- Integrity: interpretation-only change (rule-level pins green
+  unmodified); 128 facts, T1 evidence, DOC-012 deferred-loaded split
+  preserved. APR-001 gate: OPEN (separate task; R-002 CLASSIFICATION
+  production-safe as audited).
+- Checks: 2228 passed (3 dependency-footprint tests added), ruff clean,
+  counts unchanged. Record:
+  `docs/audits/audit_mh_r043_exception_migration.md`.
+
+## 71. R-044 Controlled EXEMPTION Migration Audit (2026-09-29)
+
+- Verdict: **SAFE_TO_RETAIN** — R-044 (CGWA domestic groundwater exemption)
+  migrated from TRIGGER to EXEMPTION in `APR-043` composition (triggers `["R-077"]`,
+  exemptions `["R-043", "R-044"]`).
+- Semantic integrity: raw predicate unchanged; R-044 TRUE alone yields
+  `insufficient_data` (never APPLIES); TRUE+TRUE defeats trigger R-077 with
+  statutory reason; TRUE+UNKNOWN yields CONDITIONAL (non-READY); readiness and
+  handoff gates proven closed; DEP-009 dependency isolation preserved.
+- Staged state: R-002 is CLASSIFICATION, R-043 and R-044 are EXEMPTION;
+  R-030/R-087/R-035/R-077 remain unmigrated TRIGGER; R-054 deferred.
+- Checks: 2287 passed (39 dedicated tests added in test_mh_r044_exemption.py), ruff clean, counts unchanged (26/61/26/19/128).
+  Record: `docs/audits/audit_mh_r044_exemption_migration.md`.
+
+## 72. Maharashtra End-to-End API Verification & Demo Readiness (2026-09-29, audit-only)
+
+- Audited 11-step PS 26130 sequence end-to-end against live API routes: Project → Facts → Application → Applicability → Summary → Dependencies → Readiness → Documents → Explanation → What-If → Handoff.
+- Results: 9 PASS, 2 PARTIAL (legacy standalone `POST /approvals/evaluate` unmigrated to RegulatoryPack; regulatory explanation endpoints lack seeded MH sources in DB and `orchestration_citations` omits persisted-pack threading). Zero BLOCKED. Zero NOT_IMPLEMENTED.
+- Core pipeline demonstrated end-to-end: What-If and Orchestration share the same composed pack, handoff enforces strict readiness gates (non-ready blocked with 409; ready initiates to handed_off), and zero Gujarat data leaks into IN-MH.
+- Zero code changes, zero rule semantics modified. Artifact: `docs/audits/audit_mh_e2e_demo_readiness.md`.
+
+## 73. R-030 Petroleum Class-B Exemption Migration Audit (2026-09-29, controlled audit)
+
+- **Verdict**: **STOP_UNSAFE_TO_MIGRATE (RETAIN UNMIGRATED / REQUIRE TRIGGER ENCODING)**.
+- **Approval ID Disambiguation**: Prompt candidate `APR-024` does not exist in any dataset. True statutory target of `R-030` is `APR-026` (*Petroleum storage licence Form XII/XIII District Authority + Form XV/XVI PESO + Rule 144 NOC*, authority `AUT-008/AUT-009`).
+- **Sibling Rule Disambiguation**: `R-087` is `BOILER_EXISTING` (`F-BLR-07 == 'REGISTERED_UNDER_1923_ACT'`) for `APR-023` (*Boiler registration*, *Boilers Act 2025* s.45(2)(f)), entirely unrelated to petroleum. Its grouping with `R-030` in the audit prompt derived from a clerical error in §14 of `audit_mh_r044_exemption_migration.md`. `R-087` remains untouched in `APR-023`.
+- **Missing Trigger Finding**: `R-030` is the **sole** active rule targeting `APR-026`; no active statutory trigger rule for the general petroleum storage obligation (*Petroleum Act 1934* s.3(2)) is encoded. Candidate rules `R-029` (DNI), `R-031` (unencoded), `R-032/R-092/R-100` (all deferred) provide no live trigger.
+- **Invariant Preserved**: Migrating `R-030` to `EXEMPTION` with `triggers=[]` would collapse `compose_approval_evaluations` to `INSUFFICIENT_DATA` for all inputs, erasing the licence duty for high-volume petroleum facilities and breaking downstream e2e contracts. Section 5 / Criterion 3 mandate `triggers MUST remain non-empty` — violation confirmed; migration halted.
+- **Safety Tests**: 38 dedicated tests in `backend/tests/test_mh_r030_exemption.py` — predicate boundaries (A–H), fail-open, readiness, dependency, handoff, alternate-path, jurisdiction isolation, hypothetical 8-row truth table (all correct when a trigger exists). All 38 pass.
+- **Staged State**: R-002 CLASSIFICATION; R-043/R-044 EXEMPTION; R-030/R-087/R-035/R-077 remain unmigrated TRIGGER; R-054 deferred.
+- **Prerequisite for Future Activation**: Encode a live petroleum-storage trigger rule (Petroleum Act 1934 s.3(2)), associate with `APR-026`, then migrate `R-030` to `EXEMPTION` with composition `ApprovalComposition(approval_id="APR-026", triggers=[trigger_id], exemptions=["R-030"])`.
+- **Exact Next Migration**: R-087 (*Boilers Act 2025* s.45(2) deemed registration) under `APR-023`, where active sibling triggers `R-028`, `R-073`, `R-086` already exist.
+- **Checks**: 2325 passed (38 new), ruff clean, TypeScript clean; active pack 26, deferred 61, facts 128 unchanged; GJ byte-identical.
+- Record: `docs/audits/audit_mh_r030_exemption_migration.md`.
+
+
 
 
 

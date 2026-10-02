@@ -312,6 +312,7 @@ class TestDecisionsUnchanged:
             evidence_gaps_by_approval={
                 aid: pack.get_gaps_for_approval(aid) for aid in aids
             },
+            approval_compositions=pack.approval_compositions,
         )
 
     def test_ready_case_unchanged_with_sources_loaded(self):
@@ -325,6 +326,8 @@ class TestDecisionsUnchanged:
             {"F-PRC-01": 10, "F-PRC-02": 10, "F-PRC-03": False}
         )
         orch = result.approvals["APR-001"]
-        assert orch.applicability_result == "applies"
+        # P0 MIGRATION (§16 design): R-002 CLASSIFICATION alone →
+        # INSUFFICIENT_DATA (see test_apr001_evidence_fail_closed).
+        assert orch.applicability_result == "insufficient_data"
         assert orch.status.value == "insufficient_data"
         assert any(b.evidence_id == "UR-06" for b in orch.blockers)

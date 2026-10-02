@@ -27,7 +27,7 @@ from app.regulatory.impact_models import (
     ProjectImpact,
 )
 from app.rules.dependency_models import ApprovalDependency
-from app.rules.models import ApprovalRule
+from app.rules.models import ApprovalComposition, ApprovalRule
 from app.seed.evidence_gaps import EVIDENCE_TO_APPROVALS, load_evidence_gaps
 
 
@@ -56,6 +56,9 @@ class RehearsalInputs:
     sla_info: Any | None = None
     obtained_approvals: set[str] = field(default_factory=set)
     evidence_gaps_by_approval: dict[str, list[EvidenceRecord]] | None = None
+    # Explicit per-approval role compositions (P0 exception-role design).
+    # None preserves the legacy priority aggregation.
+    approval_compositions: dict[str, ApprovalComposition] | None = None
     # Pack-derived registries for source/evidence validation. None means
     # the legacy Gujarat seed registries (GJ behavior unchanged).
     known_source_ids: set[str] | None = None
@@ -121,6 +124,7 @@ def _run(inputs: RehearsalInputs, *, rules=None, deps=None, reqs=None, gaps=None
         sla_info=inputs.sla_info,
         obtained_approvals=set(inputs.obtained_approvals),
         evidence_gaps_by_approval=gaps if gaps is not None else inputs.evidence_gaps_by_approval,
+        approval_compositions=inputs.approval_compositions,
     )
 
 

@@ -299,6 +299,7 @@ async def get_application_orchestration(
         obtained_approvals=inputs["obtained"],
         evidence_gaps_by_approval=inputs["evidence_gaps_by_approval"],
         fact_provenance=inputs["fact_provenance"],
+        approval_compositions=inputs["pack"].approval_compositions,
     )
 
     return result.model_dump()
@@ -368,6 +369,7 @@ async def post_application_whatif(
             include_unchanged=request.include_unchanged,
             jurisdiction=inputs["jurisdiction"],
             fact_provenance=inputs["fact_provenance"],
+            approval_compositions=inputs["pack"].approval_compositions,
         )
     except WhatIfValidationError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

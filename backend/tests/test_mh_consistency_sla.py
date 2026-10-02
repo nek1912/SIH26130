@@ -178,6 +178,7 @@ class TestDecisionRegression:
             evidence_gaps_by_approval={
                 aid: pack.get_gaps_for_approval(aid) for aid in aids
             },
+            approval_compositions=pack.approval_compositions,
         )
 
     def test_apr006_ready(self):
@@ -191,17 +192,25 @@ class TestDecisionRegression:
         orch = self._run({"F-HW-01": True}).approvals["APR-010"]
         assert orch.status.value == "blocked_by_dependency"
 
-    def test_apr026_document_blocked(self):
+    def test_apr026_evidence_fail_closed(self):
         orch = self._run(
             {"F-PET-01": "B", "F-PET-02": 2000, "F-PET-04": 900}
         ).approvals["APR-026"]
+        # STOP verdict (audit_mh_r030_exemption_migration): R-030 stays
+        # TRIGGER with APR-026 uncomposed, so petroleum Class-B facts
+        # evaluate to APPLIES at rule level; DOC-008 is required and
+        # unuploaded, so readiness is BLOCKED_BY_DOCUMENTS.
+        assert orch.applicability_result == "applies"
         assert orch.status.value == "blocked_by_documents"
 
     def test_apr001_evidence_fail_closed(self):
         orch = self._run(
             {"F-PRC-01": 10, "F-PRC-02": 10, "F-PRC-03": False}
         ).approvals["APR-001"]
-        assert orch.applicability_result == "applies"
+        # P0 MIGRATION (§16 design): R-002 is CLASSIFICATION, so the
+        # small-unit facet alone yields INSUFFICIENT_DATA (honest
+        # verdict with R-001 deferred) instead of legacy APPLIES.
+        assert orch.applicability_result == "insufficient_data"
         assert orch.status.value == "insufficient_data"
 
     def test_apr003_does_not_apply(self):

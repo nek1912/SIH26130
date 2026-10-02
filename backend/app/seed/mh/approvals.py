@@ -25,9 +25,11 @@ from app.rules.models import (
     AndNode,
     ApplicabilityCondition,
     ApplicabilityOp,
+    ApprovalComposition,
     ApprovalRule,
     NotNode,
     OrNode,
+    RuleRole,
     SourceRef,
 )
 
@@ -142,6 +144,27 @@ MH_DEFERRED_RULES: dict[str, str] = {
     "R-014": "sector classification lookup function (operator LOOKUP), not an "
              "approval applicability predicate; full sector table not digitized; "
              "multi-activity cardinality guard R-015 emits UNKNOWN",
+    "R-015": "multi-activity cardinality guard (UNIT_CATEGORY := UNKNOWN for units "
+             "with more than one sector code) is a guard/routing node, not an approval "
+             "applicability predicate; no aggregation rule exists in CPCB Directions "
+             "12-02-2025 or MPCB circular 23-06-2025 and the maximum-category convention "
+             "is explicitly forbidden; engine has no multi-code aggregation primitive; "
+             "status VERIFIED_CONDITIONAL with UNK-002 OPEN (SRC-011)",
+    "R-021": "MAH derivation (EXISTS over chemical inventory with Sch2/Sch3 col-3 "
+             "lookup, Part II class TOTALs, and 500m multi-installation aggregation) "
+             "requires rule composition with deferred R-019; the derived pipeline is "
+             "only partially implemented (derive_mah_status covers exact-string col-3 "
+             "join for F-PRC-03, not Sch-5 4-way authority routing); unmapped chemicals "
+             "must stay UNKNOWN per ET-081; status VERIFIED_CONDITIONAL (SRC-016)",
+    "R-054": "EC expansion exemption (EC_EXPANSION_EXEMPT, APR-052) under EIA 2006 "
+             "para 7(ii)(b) is a 6-conjunct AND of which only expansion and "
+             "no-load-increase have facts (F-EXP-01, F-EXP-02); schedule-item scope "
+             "(items 2-5), empanelled-auditor certificate (Appendix XIII), OCMS >=95% "
+             "telemetry, B2->A/B1 exclusion, and presupposed prior-EC-holder status are "
+             "unmodeled; partial encoding fails OPEN (proven by probe); approval-level "
+             "APPLIES would invert 'exempt' into 'approval applies' and erase the Form I "
+             "else-branch (ET-068); effective date UNKNOWN; status VERIFIED_CONDITIONAL "
+             "T1 (SRC-001)",
     "R-019": "MSIHC site notification (r.7) requires existential quantifier "
              "(EXISTS c:) over F-HAZ-01, multi-schedule evaluation (Sch 3 col 3 "
              "vs Sch 2 col 3), aggregation across storage units, and dynamic "
@@ -236,6 +259,57 @@ MH_DEFERRED_RULES: dict[str, str] = {
              "never returns APPLIES/DOES_NOT_APPLY (emits CONDITIONAL AUTHORITY_SITE_DEPENDENT "
              "when 4 facts supplied, else INSUFFICIENT_DATA per ET-v5-21/22); site DP/RP "
              "zoning data unmodeled; status VERIFIED_CONDITIONAL (SRC-123/SRC-124)",
+    "R-017": "CTO applicability under Water Act s.25 and Air Act s.21 requires "
+             "rule composition with deferred rule R-013 (CONSENT_REQUIRED := "
+             "MPCB_CATEGORY IN {RED,ORANGE,GREEN}); standalone encoding cannot evaluate "
+             "without R-014 sector lookup over F-MPCB-01 and cardinality guard R-015; "
+             "White category units are exempt; no rule-composition primitive exists",
+    "R-055": "MPCB consent amendment vs fresh consent (circular 25-08-2025, SRC-068) "
+             "is a modification-stage change-assessment rule (APR-053), not a boolean approval "
+             "applicability predicate; outputs categorical branch ('AMENDMENT' vs 'FRESH') "
+             "over F-CHG-01; unlisted changes (inventory increase, water source change) and "
+             "pollution load increases require technical officer appraisal (CONDITIONAL/UNKNOWN "
+             "per ET-107/ET-109)",
+    "R-063": "CTO expansion/amendment decision outer limit (90/60/30 days under GSR 62/63 "
+             "para 8, SLA-036) is an SLA timeline outer limit rather than an approval "
+             "applicability predicate; category column mapping to Red/Orange/Green is "
+             "unresolved (UNK-031, GSR-11); status REQUIRES_OFFICIAL_CONFIRMATION (SRC-006)",
+    "R-024": "Registration of establishment under OSH Code s.3 (APR-017 / APR-060) is "
+             "held as DO_NOT_IMPLEMENT_YET in authoritative registers; Maharashtra OSH "
+             "State rules are DRAFT (06-05-2026, UR-12/UNK-008); administrative procedure, "
+             "electronic registration portal, and designated registering officer in MH are "
+             "unnotified; chemical factories regulated by DISH (AUT-005) under saved "
+             "Factories Act rules with deemed registration under s.3(8); dual authority "
+             "routing AUT-006/AUT-005 unresolvable standalone; second clause requires "
+             "unmodeled hazardous activity fact; "
+             "status VERIFIED_CONDITIONAL / DO_NOT_IMPLEMENT_YET (SRC-081/SRC-027)",
+    "R-025": "Shops & Establishments intimation (<10 workers, APR-018) under MH S&E Act "
+             "2017 s.7 requires official confirmation (confidence LOW, T5 mirror SRC-027); "
+             "relevance to an industrial chemical factory establishment is unverified "
+             "(approvals.csv: 'Relevance to a factory establishment not verified'); "
+             "factories regulated by DISH/Factories Act/OSH Code and excluded from S&E; "
+             "status REQUIRES_OFFICIAL_CONFIRMATION",
+    "R-098": "Mathadi manual workers regulation (CND-025) under Mathadi Act 1969 s.1(4A) "
+             "is a compliance condition / rule logic node (RULE_LOGIC), NOT an approval in "
+             "approvals.csv; requires area notification (F-LOC-19) AND engagement in "
+             "scheduled employment (F-LAB-10); chemical manufacturing per se is not a "
+             "scheduled employment; specific district board schemes/notifications "
+             "(e.g. Thane/Raigad manual handling) unmodeled; regular roll employees "
+             "excluded; status REQUIRES_OFFICIAL_CONFIRMATION (SRC-128)",
+    "R-081": "deemed building-permission possibility (BP_DEEMED_POSSIBLE) under MRTP Act "
+             "s.45(5) is a procedural workflow consequence, not an approval applicability "
+             "predicate; requires DATE arithmetic over application date and requisition-reply "
+             "date (both absent from the fact registry), a DCR-conformance proviso the engine "
+             "cannot verify, and authoritative workflow timestamps the system does not possess; "
+             "the register explicitly forbids asserting deemed permission as granted; "
+             "status VERIFIED_CONDITIONAL (SRC-123)",
+    "R-099": "final fire approval renewal (FINAL_FIRE_APPROVAL_RENEWAL) is a renewal/lifecycle "
+             "rule, not an approval applicability predicate; outputs CONDITIONAL (renewal per "
+             "that Act/Rule) / DOES_NOT_APPLY / UNKNOWN and never APPLIES; the general principle "
+             "is DOES_NOT_APPLY under the Fire Act (FR-01, CON-013 resolved) with renewal only "
+             "if a separate Act/Rule requires it (FR-02 over F-FIR-20); the chemical-sector "
+             "exception is unresolved (FR-03, CON-024, UR-04) and Form B Jan/Jul is a separate "
+             "operating duty (FR-04, CMP-008); status VERIFIED_CONDITIONAL (SRC-145)",
 }
 
 
@@ -269,8 +343,14 @@ def _encode(
     source_refs: list[SourceRef],
     effective_from: date | None = None,
     effective_to: date | None = None,
+    role: RuleRole = RuleRole.TRIGGER,
 ) -> ApprovalRule:
-    """Build one batch-1 rule, enforcing the safe-only boundary."""
+    """Build one batch-1 rule, enforcing the safe-only boundary.
+
+    ``role`` carries the P0 exception-role semantics (TRIGGER default
+    preserves existing behavior; EXEMPTION / CLASSIFICATION are
+    interpreted only through explicit approval composition).
+    """
     if rule_id in MH_DEFERRED_RULES:
         raise ValueError(f"Rule {rule_id} is deferred: {MH_DEFERRED_RULES[rule_id]}")
     if rule_id not in MH_IMPLEMENTATION_SAFE_RULE_IDS:
@@ -289,10 +369,13 @@ def _encode(
         version="v5",
         effective_from=effective_from,
         effective_to=effective_to,
+        role=role,
     )
 
 
-# -- R-002: small-unit exception (all three required; 25 exactly = NOT small)
+# -- R-002: small-unit classification facet (all three required; 25 exactly
+# -- = NOT small). CLASSIFICATION: informational category input consumed only
+# -- by named composition (R-003 pattern); never directly approval-decisive.
 def _r002() -> ApprovalRule:
     return _encode(
         "R-002", "APR-001",
@@ -305,6 +388,7 @@ def _r002() -> ApprovalRule:
                "Item 5(f) column 5 (inserted by S.O.1223(E) 27-03-2020; "
                "footnote 76)")),
         effective_from=date(2014, 6, 25),
+        role=RuleRole.CLASSIFICATION,
     )
 
 
@@ -424,7 +508,9 @@ def _r035() -> ApprovalRule:
     )
 
 
-# -- R-043: CGWA MSE exemption (F-INC-01 derived; missing fails closed)
+# -- R-043: CGWA MSE exemption (F-INC-01 derived; missing fails closed).
+# -- EXEMPTION: duty-defeat candidate interpreted only through explicit
+# -- approval composition (APR-043); never directly APPLIES.
 def _r043() -> ApprovalRule:
     return _encode(
         "R-043", "APR-043",
@@ -434,10 +520,14 @@ def _r043() -> ApprovalRule:
         )],
         _refs(("SRC-052", "Exemptions list")),
         effective_from=date(2020, 9, 24),
+        role=RuleRole.EXEMPTION,
     )
 
 
-# -- R-044: CGWA domestic exemption
+# -- R-044: CGWA domestic exemption (GW_EXEMPT_DOMESTIC, T1 SRC-052
+# -- exemption 6; ET-038 boundary <=5). EXEMPTION: duty-defeat candidate
+# -- interpreted only through explicit approval composition (APR-043);
+# -- TRUE never independently APPLIES, FALSE carries no duty information.
 def _r044() -> ApprovalRule:
     return _encode(
         "R-044", "APR-043",
@@ -447,6 +537,7 @@ def _r044() -> ApprovalRule:
         )],
         _refs(("SRC-052", "Exemptions list")),
         effective_from=date(2020, 9, 24),
+        role=RuleRole.EXEMPTION,
     )
 
 
@@ -657,6 +748,38 @@ def load_mh_approval_rules() -> list[ApprovalRule]:
     if set(ids) != set(MH_INCLUDED_RULE_IDS):
         raise ValueError("MH batch contents drifted from MH_INCLUDED_RULE_IDS")
     return rules
+
+
+# Explicit per-approval role compositions (P0 exception-role design).
+#
+# - APR-043: trigger R-077 (OE-area limb) stays TRIGGER; R-043 (MSE limb)
+#   and R-044 (domestic limb) are EXEMPTION. R-077 is not migrated in
+#   this task. R-030/R-087/R-035 stay TRIGGER per staging.
+# - APR-001: R-002 is CLASSIFICATION with no active trigger (R-001 stays
+#   deferred); the approval therefore composes to INSUFFICIENT_DATA until
+#   the R-003-pattern consumer lands with real trigger evidence.
+#
+# Approvals without an entry aggregate with the legacy priority unchanged.
+# Every built rule of a composed approval must be named here (enforced by
+# test); named IDs must agree with the built rule.role (enforced by test).
+MH_APPROVAL_COMPOSITIONS: dict[str, ApprovalComposition] = {
+    "APR-043": ApprovalComposition(
+        approval_id="APR-043",
+        triggers=["R-077"],
+        exemptions=["R-043", "R-044"],
+    ),
+    "APR-001": ApprovalComposition(
+        approval_id="APR-001",
+        classifications=["R-002"],
+    ),
+}
+
+
+
+
+def load_mh_approval_compositions() -> dict[str, ApprovalComposition]:
+    """Return the explicit per-approval role compositions (validated)."""
+    return dict(MH_APPROVAL_COMPOSITIONS)
 
 
 def load_mh_approval_authorities() -> dict[str, str]:

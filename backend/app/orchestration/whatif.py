@@ -29,7 +29,7 @@ from app.rules.facts import (
     FactValidationError,
     validate_fact_value,
 )
-from app.rules.models import ApprovalRule
+from app.rules.models import ApprovalComposition, ApprovalRule
 from app.rules.validation import ALLOWED_FIELDS
 
 _ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -309,6 +309,7 @@ def run_whatif_assessment(
     include_unchanged: bool = False,
     jurisdiction: str = GJ_JURISDICTION,
     fact_provenance: dict[str, dict[str, Any]] | None = None,
+    approval_compositions: dict[str, ApprovalComposition] | None = None,
 ) -> WhatIfResponse:
     """Run baseline + what-if through the SAME pipeline and compare.
 
@@ -335,6 +336,7 @@ def run_whatif_assessment(
         obtained_approvals=set(obtained_approvals),
         evidence_gaps_by_approval=evidence_gaps_by_approval,
         fact_provenance=fact_provenance,
+        approval_compositions=approval_compositions,
     )
     base_raw = {
         key: value
@@ -363,6 +365,7 @@ def run_whatif_assessment(
         obtained_approvals=set(obtained_approvals),
         evidence_gaps_by_approval=evidence_gaps_by_approval,
         fact_provenance=alt_provenance,
+        approval_compositions=approval_compositions,
     )
     diff = compare_orchestrations(baseline, what_if, include_unchanged=include_unchanged)
     return WhatIfResponse(

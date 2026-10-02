@@ -48,7 +48,9 @@ MH_DEP_DEFERRED: dict[str, str] = {
     "DEP-016": "out of batch-1 scope",
     "DEP-017": "out of batch-1 scope",
     "DEP-018": "out of batch-1 scope",
-    "DEP-019": "dependent (APR-030) out of batch-1 scope",
+    "DEP-019": "YES_INFERRED portal workflow ordering (APR-029 plot holder -> APR-030 "
+                 "building permission), not a stated legal precondition; MEDIUM confidence T3 "
+                 "service-list evidence (SRC-043) only; dependent (APR-030) out of batch-1 scope",
     "DEP-020": "FACILITATION_ONLY (MAITRI CAF) — never a readiness edge",
     "DEP-021": "out of batch-1 scope",
     "DEP-022": "target is an activity (abstraction), not an approval",

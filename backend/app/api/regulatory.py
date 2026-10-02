@@ -236,6 +236,7 @@ async def rehearse_regulatory_change(
                 sla_info=inputs["sla_info"],
                 obtained_approvals=inputs["obtained"],
                 evidence_gaps_by_approval=inputs["evidence_gaps_by_approval"],
+                approval_compositions=pack.approval_compositions,
                 known_source_ids={s.id for s in pack.sources},
                 evidence_registry=list(pack.evidence_gaps),
                 evidence_hints=dict(pack.evidence_hints),
