@@ -511,7 +511,7 @@ class TestCountsAndInventory:
         assert roles["R-002"] == "classification"
         assert roles["R-043"] == "exemption"
         assert roles["R-044"] == "exemption"
-        for rid in ("R-030", "R-087", "R-035", "R-077"):
+        for rid in ("R-030", "R-035", "R-077"):
             assert roles[rid] == "trigger", rid  # R-030 blocked: no APR-026 trigger encoded
 
 

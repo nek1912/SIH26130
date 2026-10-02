@@ -38,37 +38,59 @@ interface OverrideRow {
   field: string
   raw: string
   asUnknown: boolean
+  customName: string
+  customKind: FieldKind
 }
 
-function parseRow(row: OverrideRow): { ok: true; value: unknown } | { ok: false; error: string } {
-  if (row.asUnknown) return { ok: true, value: null }
+const CUSTOM = '__custom'
+
+// Custom mode lets MH (F-*) and any future keys through without
+// duplicating a fact registry in the UI: the backend validates every
+// override against the persisted pack vocabulary and 422s unknowns.
+// GJ presets stay as one-click shortcuts.
+function resolveSpec(row: OverrideRow): { name: string; kind: FieldKind } | null {
+  if (row.field === CUSTOM) {
+    const name = row.customName.trim()
+    if (!name) return null
+    return { name, kind: row.customKind }
+  }
   const spec = SUPPORTED_FIELDS.find((f) => f.name === row.field)
-  if (!spec) return { ok: false, error: `Unsupported field: ${row.field}` }
+  return spec ? { name: spec.name, kind: spec.kind } : null
+}
+
+function parseRow(row: OverrideRow, rowField: string): { ok: true; value: unknown } | { ok: false; error: string } {
+  if (row.asUnknown) return { ok: true, value: null }
+  const spec = resolveSpec(row)
+  if (!spec) {
+    return row.field === CUSTOM
+      ? { ok: false, error: 'Enter a custom fact key (e.g. F-PET-02)' }
+      : { ok: false, error: `Unsupported field: ${rowField}` }
+  }
   const trimmed = row.raw.trim()
   if (spec.kind === 'boolean') {
     if (trimmed === 'true') return { ok: true, value: true }
     if (trimmed === 'false') return { ok: true, value: false }
-    return { ok: false, error: `${row.field} must be true or false (or mark as unknown)` }
+    return { ok: false, error: `${spec.name} must be true or false (or mark as unknown)` }
   }
   if (spec.kind === 'number') {
-    if (trimmed === '') return { ok: false, error: `${row.field} needs a number` }
+    if (trimmed === '') return { ok: false, error: `${spec.name} needs a number` }
     const n = Number(trimmed)
-    if (!Number.isFinite(n)) return { ok: false, error: `${row.field} must be a number` }
+    if (!Number.isFinite(n)) return { ok: false, error: `${spec.name} must be a number` }
     return { ok: true, value: n }
   }
-  if (trimmed === '') return { ok: false, error: `${row.field} needs a value` }
+  if (trimmed === '') return { ok: false, error: `${spec.name} needs a value` }
   return { ok: true, value: trimmed }
 }
 
 export function WhatIfPanel({ applicationId }: WhatIfPanelProps) {
   const [rows, setRows] = useState<OverrideRow[]>([
-    { field: 'production_capacity', raw: '', asUnknown: false },
+    { field: CUSTOM, raw: '', asUnknown: false, customName: 'F-PET-02', customKind: 'number' },
   ])
   const [result, setResult] = useState<WhatIfResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const addRow = () => setRows((r) => [...r, { field: 'production_capacity', raw: '', asUnknown: false }])
+  const addRow = () => setRows((r) => [...r, { field: CUSTOM, raw: '', asUnknown: false, customName: '', customKind: 'string' }])
   const removeRow = (idx: number) => setRows((r) => r.filter((_, i) => i !== idx))
   const updateRow = (idx: number, patch: Partial<OverrideRow>) =>
     setRows((r) => r.map((row, i) => (i === idx ? { ...row, ...patch } : row)))
@@ -78,12 +100,17 @@ export function WhatIfPanel({ applicationId }: WhatIfPanelProps) {
     setResult(null)
     const overrides: Record<string, unknown> = {}
     for (const row of rows) {
-      const parsed = parseRow(row)
+      const parsed = parseRow(row, row.field)
       if (!parsed.ok) {
         setError(parsed.error)
         return
       }
-      overrides[row.field] = parsed.value
+      const spec = resolveSpec(row)
+      if (!spec) {
+        setError('Enter a custom fact key (e.g. F-PET-02)')
+        return
+      }
+      overrides[spec.name] = parsed.value
     }
     if (Object.keys(overrides).length === 0) {
       setError('Add at least one fact override')
@@ -109,7 +136,8 @@ export function WhatIfPanel({ applicationId }: WhatIfPanelProps) {
         <Disclosure summary="Try temporary fact changes">
           <div className="mt-3 space-y-2">
             {rows.map((row, idx) => {
-              const spec = SUPPORTED_FIELDS.find((f) => f.name === row.field)
+              const spec = resolveSpec(row)
+              const isCustom = row.field === CUSTOM
               return (
                 <div key={idx} className="flex flex-wrap items-center gap-2">
                   <Select
@@ -121,10 +149,31 @@ export function WhatIfPanel({ applicationId }: WhatIfPanelProps) {
                         {f.name}
                       </option>
                     ))}
+                    <option value={CUSTOM}>Custom fact…</option>
                   </Select>
+                  {isCustom && (
+                    <>
+                      <TextInput
+                        className="w-36"
+                        placeholder="Fact key, e.g. F-PET-02"
+                        value={row.customName}
+                        onChange={(e) => updateRow(idx, { customName: e.target.value })}
+                      />
+                      <Select
+                        value={row.customKind}
+                        onChange={(e) =>
+                          updateRow(idx, { customKind: e.target.value as FieldKind })
+                        }
+                      >
+                        <option value="number">number</option>
+                        <option value="boolean">boolean</option>
+                        <option value="string">string</option>
+                      </Select>
+                    </>
+                  )}
                   <TextInput
                     className="w-40"
-                    placeholder={spec?.hint ?? 'value'}
+                    placeholder={spec ? `${spec.kind} value` : 'value'}
                     value={row.raw}
                     disabled={row.asUnknown}
                     onChange={(e) => updateRow(idx, { raw: e.target.value })}

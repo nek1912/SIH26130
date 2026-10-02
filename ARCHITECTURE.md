@@ -1746,3 +1746,22 @@ project available (NOT VERIFIED). DEFAULT_JURISDICTION stays IN-GJ.
 
 
 
+
+## 74. Closure: T3 frontend journey + T4 R-087 + T5 citations reconciled (2026-10-02)
+
+- T3: MH demo drivable through the UI (explicit IN-MH creation via optional
+  validated `requested_jurisdiction` on `POST /projects`; embedded
+  `{"facts_json"}` body contract; `GET approval-codes` pack projection;
+  code-linked `POST /applications`; MH facts editor + assessment dashboard
+  + applicant per-approval cards + custom-fact What-If + truthful handoff).
+  Additive migration 013 (`approval_handoffs.portal_kind`) fixed live
+  handoff drift. Zero rule/role/composition/evidence changes.
+- T4: R-087 TRIGGER?EXEMPTION + APR-023 composition
+  (triggers R-028/R-073/R-086). R-030 stays TRIGGER, APR-026 uncomposed.
+- T5: pack-backed same-jurisdiction citations + persisted-pack
+  orchestration citations; DB sources stay GJ-only by design.
+- T6 stays BLOCKED (no verified staging target; local DB reference-only).
+- Final: 26 active / 61 deferred / 11 confirmation-only / 3 DNI /
+  4 hygiene-terminal (105); roles TRIGGER 22 / EXEMPTION 3 / CLASSIFICATION 1;
+  compositions APR-001/APR-043/APR-023; GJ 19 rules, no compositions,
+  DEFAULT_JURISDICTION IN-GJ. Backend 2467 green; tsc/build clean.

@@ -2,7 +2,8 @@
 
 Checks (read-only unless --seed-catalog):
  1. PostgreSQL connectivity.
- 2. Migrations 001-010 applied (tables + 010 identity columns/constraints).
+  2. Migrations 001-013 applied (tables + 010 identity columns/constraints
+      + 013 handoff portal_kind).
  3. Required tables exist.
  4. Migration 010 identity columns/constraints exist.
  5. Approval catalog A01-A18 exists exactly once (--seed-catalog loads it).
@@ -77,6 +78,11 @@ def main() -> int:
         "SELECT conname FROM pg_constraint WHERE conname IN "
         "('chk_projects_jurisdiction','chk_applications_jurisdiction')")
     check("4 identity CHECK constraints", len(checks) == 2)
+
+    portal = db.fetch_all(
+        "SELECT column_name FROM information_schema.columns "
+        "WHERE table_name = 'approval_handoffs' AND column_name = 'portal_kind'")
+    check("4b handoff portal_kind column (013)", len(portal) == 1)
 
     from app.repositories.approvals import ApprovalsRepository
     from app.seed.approval_catalog import load_approval_catalog

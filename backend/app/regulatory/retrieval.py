@@ -162,6 +162,9 @@ def get_citations_for_source_ids(
                 source_type=source.source_type,
                 excerpt=excerpt,
                 relevance_rank=1.0,
+                jurisdiction=source.jurisdiction or None,
+                checked_date=source.checked_date or None,
+                trust_tier=source.trust_tier or None,
             )
         )
     return citations
@@ -176,4 +179,219 @@ def get_all_sources(
     assert isinstance(client, PostgresDB)
     return client.fetch_all(
         "SELECT * FROM sources ORDER BY id LIMIT %s OFFSET %s", (limit, offset)
+    )
+
+
+# ─────────────────────────────────────────────────────────────
+# T5: pack-backed deterministic retrieval (no DB, no embeddings).
+#
+# Maharashtra regulatory evidence lives in the in-memory
+# RegulatoryPack (verified/stored SourceRecords). The DB tables only
+# carry Gujarat rows. These helpers resolve rule/approval evidence
+# strictly within one pack's jurisdiction: no cross-jurisdiction
+# fallback, missing sources stay missing, and ranking is a simple
+# deterministic token overlap (inspectable, no LLM/vector layer).
+# ─────────────────────────────────────────────────────────────
+
+def pack_source_to_citation(
+    source: SourceRecord,
+    excerpt: str | None = None,
+    rank: float = 1.0,
+    provision: str | None = None,
+) -> Citation:
+    """Build a Citation from a pack SourceRecord (additive metadata kept)."""
+    return Citation(
+        source_id=source.id,
+        title=source.title,
+        authority=source.authority,
+        url=source.url,
+        source_type=source.source_type,
+        excerpt=excerpt if excerpt is not None else source.title,
+        relevance_rank=float(rank),
+        jurisdiction=source.jurisdiction,
+        checked_date=source.checked_date or None,
+        trust_tier=source.trust_tier or None,
+        provision=provision,
+    )
+
+
+def get_pack_source_by_id(
+    sources: list[SourceRecord],
+    source_id: str,
+) -> SourceRecord | None:
+    """Exact source lookup within one pack. None when missing (no fallback)."""
+    for s in sources:
+        if s.id == source_id:
+            return s
+    return None
+
+
+def get_pack_citations_for_source_ids(
+    sources: list[SourceRecord],
+    source_ids: list[str],
+    provisions: dict[str, str] | None = None,
+) -> list[Citation]:
+    """Citations for source IDs strictly within the given pack sources.
+
+    Unknown IDs are skipped (explicit missing, never substituted with
+    another jurisdiction's source). Order follows source_ids.
+    """
+    by_id = {s.id: s for s in sources}
+    out: list[Citation] = []
+    for sid in source_ids:
+        source = by_id.get(sid)
+        if source is None:
+            continue
+        provision = (provisions or {}).get(sid)
+        out.append(pack_source_to_citation(source, rank=1.0, provision=provision))
+    return out
+
+
+def get_rule_source_ids(
+    approval_rules: list[Any],
+    rule_id: str,
+) -> list[str]:
+    """Source IDs referenced by one rule (empty when the rule is unknown)."""
+    for rule in approval_rules:
+        if getattr(rule, "id", None) == rule_id:
+            return [ref.source_id for ref in (rule.source_refs or []) if ref.source_id]
+    return []
+
+
+def get_approval_source_ids(
+    approval_rules: list[Any],
+    approval_id: str,
+) -> list[str]:
+    """Deduplicated source IDs for an approval (order-preserving)."""
+    ids: list[str] = []
+    for rule in approval_rules:
+        if getattr(rule, "approval_id", None) == approval_id:
+            for ref in rule.source_refs or []:
+                if ref.source_id and ref.source_id not in ids:
+                    ids.append(ref.source_id)
+    return ids
+
+
+def get_approval_provisions(
+    approval_rules: list[Any],
+    approval_id: str,
+) -> dict[str, str]:
+    """First-seen citation_span per source for an approval (provision display)."""
+    out: dict[str, str] = {}
+    for rule in approval_rules:
+        if getattr(rule, "approval_id", None) == approval_id:
+            for ref in rule.source_refs or []:
+                if ref.source_id and ref.source_id not in out:
+                    out[ref.source_id] = ref.citation_span
+    return out
+
+
+def get_approval_citations(
+    sources: list[SourceRecord],
+    approval_rules: list[Any],
+    approval_id: str,
+) -> list[Citation]:
+    """Only sources actually associated with an approval (pack-scoped)."""
+    ids = get_approval_source_ids(approval_rules, approval_id)
+    provisions = get_approval_provisions(approval_rules, approval_id)
+    return get_pack_citations_for_source_ids(sources, ids, provisions)
+
+
+def _tokenize(text: str) -> set[str]:
+    import re as _re
+
+    return set(_re.findall(r"[a-z0-9]+", text.lower()))
+
+
+def search_pack_sources(
+    sources: list[SourceRecord],
+    query: str,
+    limit: int = 5,
+) -> list[Citation]:
+    """Deterministic ranked text search over pack sources (no DB).
+
+    Score = token overlap between the query and
+    (title + authority + source_type + notes). Ties break by source_id
+    for determinism. Jurisdiction filtering is by construction: callers
+    pass exactly one pack's sources, so GJ rows can never appear for an
+    MH query and vice versa.
+    """
+    if not query.strip() or limit <= 0:
+        return []
+    qtokens = _tokenize(query)
+    if not qtokens:
+        return []
+    scored: list[tuple[int, SourceRecord]] = []
+    for s in sources:
+        hay = f"{s.title} {s.authority} {s.source_type} {s.notes}"
+        overlap = len(qtokens & _tokenize(hay))
+        if overlap > 0:
+            scored.append((overlap, s))
+    scored.sort(key=lambda t: (-t[0], t[1].id))
+    out: list[Citation] = []
+    for overlap, s in scored[:limit]:
+        # Deterministic rank in (0, 1]: overlap density, no ML.
+        rank = overlap / max(len(qtokens), 1)
+        out.append(pack_source_to_citation(s, excerpt=s.title, rank=rank))
+    return out
+
+
+def filter_rules_by_effective_date(
+    approval_rules: list[Any],
+    evaluation_date: Any | None,
+) -> list[Any]:
+    """Respect rule effective windows when an evaluation date is supplied.
+
+    None evaluation_date preserves existing behavior (all rules).
+    Rules outside [effective_from, effective_to] are excluded from
+    evidence lookup (their sources must not cite for that date).
+    """
+    if evaluation_date is None:
+        return list(approval_rules)
+    try:
+        from datetime import date as _date
+
+        if isinstance(evaluation_date, str):
+            evaluation_date = _date.fromisoformat(evaluation_date)
+    except (ValueError, TypeError):
+        return list(approval_rules)
+    out: list[Any] = []
+    for r in approval_rules:
+        eff_from = getattr(r, "effective_from", None)
+        eff_to = getattr(r, "effective_to", None)
+        if eff_from is not None and evaluation_date < eff_from:
+            continue
+        if eff_to is not None and evaluation_date > eff_to:
+            continue
+        out.append(r)
+    return out
+
+
+def search_chunks_for_jurisdiction(
+    client: Any,
+    query: str,
+    limit: int = 5,
+    jurisdiction: str | None = None,
+) -> list[dict[str, Any]]:
+    """Jurisdiction-filtered full-text search over DB chunks (additive).
+
+    None jurisdiction preserves the legacy unfiltered behavior (GJ path
+    unchanged). When set, only chunks whose source carries that
+    jurisdiction are returned (JOIN sources). No fallback across
+    jurisdictions.
+    """
+    if not query.strip():
+        return []
+    assert isinstance(client, PostgresDB), "search requires PostgresDB"
+    if jurisdiction is None:
+        return _ranked_search(client, query, limit)
+    return client.fetch_all(
+        "SELECT sc.id, sc.source_id, sc.chunk_text, sc.chunk_index, "
+        "sc.metadata, "
+        "ts_rank_cd(sc.tsv, plainto_tsquery('english', %s)) AS rank "
+        "FROM source_chunks sc JOIN sources s ON s.id = sc.source_id "
+        "WHERE s.jurisdiction = %s "
+        "AND sc.tsv @@ plainto_tsquery('english', %s) "
+        "ORDER BY rank DESC LIMIT %s",
+        (query, jurisdiction, query, limit),
     )

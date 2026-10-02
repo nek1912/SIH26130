@@ -99,24 +99,51 @@ export function OrchestrationPanel({ orchestration, staffView = false }: Orchest
             </Disclosure>
           )
         ) : (
-          orchestration.total_blockers > 0 && (
+          // Applicant view: one card per assessed approval. Every value is
+          // rendered verbatim from the backend orchestration response —
+          // applicability, readiness, reason, documents, dependencies,
+          // blockers (with source/evidence), and next action all come
+          // from the server. Nothing is computed here.
+          Object.entries(orchestration.approvals).length > 0 && (
             <div className="space-y-2">
-              {Object.entries(orchestration.approvals).map(([key, approval]) => {
-                if (approval.blockers.length === 0) return null
-                return (
-                  <div key={key} className="space-y-1">
-                    {approval.blockers.map((blocker, idx) => (
-                      <div key={idx} className="rounded-md bg-red-50 p-3 text-sm">
-                        <p className="text-red-800">{blocker.description}</p>
-                        {blocker.action_required && (
-                          <p className="mt-1 text-xs text-red-600">{blocker.action_required}</p>
-                        )}
-                        <EvidenceGapNote blocker={blocker} />
-                      </div>
-                    ))}
+              {Object.entries(orchestration.approvals).map(([key, approval]) => (
+                <div key={key} className="rounded-md border p-3 text-sm">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-xs text-muted-foreground">{approval.approval_id}</span>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusBadge(approval.status)}`}
+                    >
+                      {approval.status.replace(/_/g, ' ')}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      applicability: <span className="font-medium">{approval.applicability_result.replace(/_/g, ' ')}</span>
+                    </span>
                   </div>
-                )
-              })}
+                  <p className="mt-1 text-xs text-muted-foreground">{approval.explanation}</p>
+                  <div className="mt-1 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                    <span>Documents: {approval.document_readiness}</span>
+                    <span>Dependencies: {approval.dependency_readiness}</span>
+                  </div>
+                  {approval.blockers.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {approval.blockers.map((blocker, idx) => (
+                        <div key={idx} className="rounded-md bg-red-50 p-2 text-sm">
+                          <p className="text-red-800">{blocker.description}</p>
+                          {(blocker.source_ref || blocker.evidence) && (
+                            <p className="mt-1 text-xs text-red-600">
+                              {[blocker.source_ref, blocker.evidence].filter(Boolean).join(' — ')}
+                            </p>
+                          )}
+                          {blocker.action_required && (
+                            <p className="mt-1 text-xs text-red-600">{blocker.action_required}</p>
+                          )}
+                          <EvidenceGapNote blocker={blocker} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )
         )}

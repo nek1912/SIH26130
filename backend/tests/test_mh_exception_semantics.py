@@ -280,7 +280,7 @@ class TestRoleLint:
     def test_only_expected_non_trigger_rules_exist(self):
         non_trigger = {r.id for r in load_mh_approval_rules()
                        if r.role != RuleRole.TRIGGER}
-        assert non_trigger == {"R-002", "R-043", "R-044"}  # STOP: R-030 stays TRIGGER
+        assert non_trigger == {"R-002", "R-043", "R-044", "R-087"}  # STOP: R-030 stays TRIGGER
 
 
 class TestR043Pilot:
@@ -511,7 +511,7 @@ class TestRemainingCandidatesUntouched:
 
     def test_legacy_non_trigger_roles(self):
         roles = {r.id: r.role.value for r in load_mh_approval_rules()}
-        for rule_id in ("R-087", "R-035", "R-077"):
+        for rule_id in ("R-035", "R-077"):
             assert roles[rule_id] == "trigger", rule_id
 
     def test_legacy_trigger_behavior_byte_identical(self):
@@ -529,7 +529,7 @@ class TestDefaultCompatibility:
     def test_only_expected_non_trigger_rules(self):
         non_trigger = {r.id for r in load_mh_approval_rules()
                        if r.role.value != "trigger"}
-        assert non_trigger == {"R-002", "R-043", "R-044"}  # STOP: R-030 stays TRIGGER
+        assert non_trigger == {"R-002", "R-043", "R-044", "R-087"}  # STOP: R-030 stays TRIGGER
 
     def test_gj_pack_has_no_compositions_or_roles(self):
         gj = load_regulatory_pack(IN_GJ)

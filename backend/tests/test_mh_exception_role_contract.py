@@ -330,7 +330,7 @@ class TestRoleLint:
         "R-083": "trigger",
         "R-084": "trigger",
         "R-086": "trigger",
-        "R-087": "trigger",
+        "R-087": "exemption",
         "R-089": "trigger",
         "R-093": "trigger",
         "R-094": "trigger",
@@ -391,7 +391,7 @@ class TestRoleLint:
 
         mh = load_regulatory_pack(IN_MH)
         assert mh.approval_compositions == load_mh_approval_compositions()
-        assert set(mh.approval_compositions) == {"APR-001", "APR-043"}  # APR-026 blocked
+        assert set(mh.approval_compositions) == {"APR-001", "APR-043", "APR-023"}  # APR-026 blocked
         assert load_regulatory_pack(IN_GJ).approval_compositions == {}
 
 

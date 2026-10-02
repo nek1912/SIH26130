@@ -653,13 +653,17 @@ def _r086() -> ApprovalRule:
 
 # -- R-087: 1923-Act-registered boilers are deemed registered
 # -- (transitional status, s.45(2)(f)); certificate continues per
-# -- s.45(2)(g) — the date itself is tracked in F-BLR-08, not decided
+# -- s.45(2)(g) — the date itself is tracked in F-BLR-08, not decided.
+# -- EXEMPTION: duty-defeat candidate interpreted only through explicit
+# -- approval composition (APR-023); TRUE never independently APPLIES,
+# -- FALSE carries no duty information.
 def _r087() -> ApprovalRule:
     return _encode(
         "R-087", "APR-023",
         [_leaf("F-BLR-07", "eq", "REGISTERED_UNDER_1923_ACT")],
         _refs(("SRC-034", "s.45(2)")),
         effective_from=date(2025, 5, 1),
+        role=RuleRole.EXEMPTION,
     )
 
 
@@ -753,11 +757,17 @@ def load_mh_approval_rules() -> list[ApprovalRule]:
 # Explicit per-approval role compositions (P0 exception-role design).
 #
 # - APR-043: trigger R-077 (OE-area limb) stays TRIGGER; R-043 (MSE limb)
-#   and R-044 (domestic limb) are EXEMPTION. R-077 is not migrated in
-#   this task. R-030/R-087/R-035 stay TRIGGER per staging.
+#   and R-044 (domestic limb) are EXEMPTION. R-030/R-035 stay TRIGGER
+#   per staging.
 # - APR-001: R-002 is CLASSIFICATION with no active trigger (R-001 stays
 #   deferred); the approval therefore composes to INSUFFICIENT_DATA until
 #   the R-003-pattern consumer lands with real trigger evidence.
+# - APR-023: triggers R-028 (boiler definition, s.2(c)), R-073 (BOE
+#   heating-surface condition, BOE Rules 2025), R-086 (registration
+#   trigger, definition + NOT_REGISTERED, s.12); exemption R-087
+#   (1923-Act deemed registration, s.45(2)(f)). All four built APR-023
+#   rules are named (lint-enforced); triggers stay non-empty so the
+#   R-030 trigger-deficit invariant never applies here.
 #
 # Approvals without an entry aggregate with the legacy priority unchanged.
 # Every built rule of a composed approval must be named here (enforced by
@@ -771,6 +781,11 @@ MH_APPROVAL_COMPOSITIONS: dict[str, ApprovalComposition] = {
     "APR-001": ApprovalComposition(
         approval_id="APR-001",
         classifications=["R-002"],
+    ),
+    "APR-023": ApprovalComposition(
+        approval_id="APR-023",
+        triggers=["R-028", "R-073", "R-086"],
+        exemptions=["R-087"],
     ),
 }
 

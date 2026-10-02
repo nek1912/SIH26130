@@ -22,6 +22,9 @@ export interface Project {
   description: string | null
   applicant_id: string
   created_at: string
+  // Persisted regulatory identity (server-stamped; never client-inferred).
+  jurisdiction?: string | null
+  pack_version?: string | null
 }
 
 export interface ProjectFacts {
@@ -32,6 +35,8 @@ export interface ProjectFacts {
   jurisdictions: string[]
   headcount: number
   annual_turnover_inr: number
+  // Extended IN-MH fact registry payload (F-* keys), if recorded.
+  facts_json?: Record<string, unknown> | null
 }
 
 export interface Approval {
@@ -40,6 +45,8 @@ export interface Approval {
   name?: string
   description?: string
   rules?: ApprovalRule[]
+  // Canonical workbook/catalog code (A01… / APR-xxx) when seeded.
+  code?: string | null
 }
 
 export interface ApprovalRule {
@@ -67,6 +74,10 @@ export interface Application {
   id: string
   project_id: string
   approval_id: string
+  // Pack approval code (APR-xxx / Axx); authoritative for assessment scope.
+  approval_code?: string | null
+  jurisdiction?: string | null
+  pack_version?: string | null
   status: ApplicationStatus
   applicant_id: string
   reference_number: string
@@ -396,6 +407,19 @@ export interface ProjectImpact {
 
 export interface ImpactRehearseResponse extends ProjectImpact {
   application_id: string
+}
+
+// ── MH demo: pack approval codes projected per project ──
+
+export interface PackApprovalCode {
+  approval_code: string
+  authority: string
+}
+
+export interface PackApprovalCodes {
+  jurisdiction: string
+  pack_version: string | null
+  approvals: PackApprovalCode[]
 }
 
 // ── Manual Government Handoff (no integration; all statuses reported/verified) ──

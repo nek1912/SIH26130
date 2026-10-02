@@ -14,6 +14,7 @@ import type {
   ImpactRehearseResponse,
   HandoffListResponse,
   HandoffRecord,
+  PackApprovalCodes,
   Source,
   SourceChunk,
   RegulatoryExplanation,
@@ -86,12 +87,26 @@ export const api = {
   projects: {
     list: (userId: string) => request<unknown[]>(`/projects${toQuery({ applicant_id: userId })}`),
     get: (id: string) => request<unknown>(`/projects/${id}`),
-    create: (name: string, description?: string, applicantId?: string) =>
-      request<unknown>(`/projects${toQuery({ name, description, applicant_id: applicantId })}`, { method: 'POST' }),
+    create: (name: string, description?: string, applicantId?: string, jurisdiction?: string) =>
+      request<unknown>(`/projects${toQuery({ name, description, applicant_id: applicantId, requested_jurisdiction: jurisdiction })}`, { method: 'POST' }),
     getFacts: (projectId: string) => request<unknown>(`/projects/${projectId}/facts`),
-    upsertFacts: (projectId: string, facts: Record<string, unknown>) =>
-      request<unknown>(`/projects/${projectId}/facts${toQuery(facts)}`, { method: 'POST' }),
+    // Contract: legacy typed fields travel as query params; the extended
+    // IN-MH registry payload travels as an embedded JSON body
+    // ({"facts_json": {...}}) — the backend silently drops a bare-dict body
+    // when complex query params are present (FastAPI body embedding).
+    upsertFacts: (
+      projectId: string,
+      legacy: Record<string, unknown>,
+      factsJson?: Record<string, unknown>,
+    ) =>
+      request<unknown>(`/projects/${projectId}/facts${toQuery(legacy)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ facts_json: factsJson ?? null }),
+      }),
     getApplications: (projectId: string) => request<unknown[]>(`/projects/${projectId}/applications`),
+    getApprovalCodes: (projectId: string) =>
+      request<PackApprovalCodes>(`/projects/${projectId}/approval-codes`),
   },
 
   approvals: {
@@ -109,8 +124,11 @@ export const api = {
     list: (params: { status?: string; assigned_to?: string; applicant_id?: string; page?: number; page_size?: number } = {}) =>
       request<{ items: unknown[]; total: number; page: number; page_size: number }>(`/applications${toQuery(params)}`),
     get: (id: string) => request<unknown>(`/applications/${id}`),
-    create: (projectId: string, approvalId: string) =>
-      request<unknown>(`/applications${toQuery({ project_id: projectId, approval_id: approvalId })}`, { method: 'POST' }),
+    // approval_code is the authoritative assessment identity; approval_id
+    // (approvals-table UUID) is optional — the server links the pack
+    // catalog row when it is omitted.
+    create: (projectId: string, approvalCode: string, approvalId?: string) =>
+      request<unknown>(`/applications${toQuery({ project_id: projectId, approval_id: approvalId, approval_code: approvalCode })}`, { method: 'POST' }),
     getSla: (appId: string) =>
       request<SlaInfo | null>(`/applications/${appId}/sla`),
   },

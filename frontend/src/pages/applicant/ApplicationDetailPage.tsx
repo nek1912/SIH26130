@@ -117,6 +117,8 @@ export function ApplicantApplicationDetailPage() {
       <DetailPageHeader
         referenceNumber={application.reference_number}
         objectId={application.id}
+        approvalCode={application.approval_code}
+        jurisdiction={application.jurisdiction}
         onBack={() => navigate(-1)}
       />
 

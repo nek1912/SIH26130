@@ -49,10 +49,17 @@ router = APIRouter()
 async def list_sources(
     limit: int = Query(default=100, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
+    jurisdiction: str | None = Query(
+        default=None,
+        description="Optional jurisdiction filter (e.g. 'IN-MH'). "
+        "When omitted, all DB sources are returned (legacy behavior).",
+    ),
     _user: UserContext = Depends(get_current_user),
     repo: SourcesRepository = Depends(get_sources_repository),
 ) -> list[dict[str, Any]]:
-    """List all regulatory sources."""
+    """List regulatory sources, optionally filtered by jurisdiction."""
+    if jurisdiction is not None:
+        return repo.get_by_jurisdiction(jurisdiction)
     return repo.get_all_sources(limit=limit, offset=offset)
 
 
@@ -121,9 +128,27 @@ async def explain_regulatory(
     request: ExplanationRequest,
     client: PostgresDB = Depends(get_db_client),
     _user: UserContext = Depends(get_current_user),
+    active_jurisdiction: str = Depends(get_active_jurisdiction),
 ) -> dict[str, Any]:
-    """Answer a regulatory query with source citations."""
-    explanation = answer_query(client, request.query, limit=request.limit)
+    """Answer a regulatory query with source citations.
+
+    Jurisdiction-filtered: request.jurisdiction wins when it names a known
+    pack; otherwise the active default applies. IN-MH searches only the MH
+    pack (never GJ rows); IN-GJ preserves the legacy DB path.
+    """
+    jurisdiction = request.jurisdiction or active_jurisdiction
+    try:
+        pack = load_regulatory_pack(jurisdiction)
+    except Exception:
+        pack = load_regulatory_pack(active_jurisdiction)
+        jurisdiction = active_jurisdiction
+    explanation = answer_query(
+        client,
+        request.query,
+        limit=request.limit,
+        jurisdiction=jurisdiction,
+        pack_sources=list(pack.sources),
+    )
     return explanation.model_dump()
 
 
@@ -132,6 +157,11 @@ async def explain_approval_endpoint(
     approval_id: str,
     applicability: str = Query(default="unknown"),
     reason: str = Query(default=""),
+    evaluation_date: str | None = Query(
+        default=None,
+        description="Optional ISO date (YYYY-MM-DD) to respect rule "
+        "effective windows. Omitted preserves existing behavior.",
+    ),
     client: PostgresDB = Depends(get_db_client),
     _user: UserContext = Depends(get_current_user),
     jurisdiction: str = Depends(get_active_jurisdiction),
@@ -145,6 +175,9 @@ async def explain_approval_endpoint(
         approval_rules=rules,
         applicability_result=applicability,
         reason=reason,
+        jurisdiction=jurisdiction,
+        pack_sources=list(pack.sources),
+        evaluation_date=evaluation_date,
     )
     return explanation.model_dump()
 
@@ -154,18 +187,51 @@ async def orchestration_citations(
     application_id: str,
     approval_id: str = Query(description="Specific approval to explain"),
     explanation: str = Query(default=""),
+    evaluation_date: str | None = Query(default=None),
     client: PostgresDB = Depends(get_db_client),
     _user: UserContext = Depends(get_current_user),
     jurisdiction: str = Depends(get_active_jurisdiction),
+    applications_repo: ApplicationsRepository | None = Depends(
+        get_applications_repository
+    ),
 ) -> dict[str, Any]:
-    """Enrich an orchestration result with source citations."""
-    pack = load_regulatory_pack(jurisdiction)
+    """Enrich an orchestration result with source citations.
+
+    Prefers the application's persisted (jurisdiction, pack_version) pack
+    when the application resolves; otherwise falls back to the active
+    jurisdiction (legacy contract preserved for non-UUID callers/tests).
+    Sources never cross jurisdictions: MH approvals cite only MH pack
+    evidence, GJ only GJ.
+    """
+    from app.seed.pack import UnknownPackError, resolve_persisted_pack
+
+    pack = None
+    resolved_jurisdiction: str = jurisdiction
+    if applications_repo is not None:
+        try:
+            application = applications_repo.get_by_id(UUID(application_id))
+        except Exception:
+            application = None
+        if application and application.get("jurisdiction") and application.get("pack_version"):
+            try:
+                pack = resolve_persisted_pack(
+                    application.get("jurisdiction"), application.get("pack_version")
+                )
+                resolved_jurisdiction = pack.jurisdiction
+            except UnknownPackError:
+                pack = None
+    if pack is None:
+        pack = load_regulatory_pack(jurisdiction)
+        resolved_jurisdiction = pack.jurisdiction
     rules = pack.approval_rules
     result = explain_orchestration_with_citations(
         client=client,
         approval_id=approval_id,
         approval_rules=rules,
         orchestration_explanation=explanation,
+        jurisdiction=resolved_jurisdiction,
+        pack_sources=list(pack.sources),
+        evaluation_date=evaluation_date,
     )
     return result.model_dump()
 

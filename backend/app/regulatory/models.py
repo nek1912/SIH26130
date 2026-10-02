@@ -45,7 +45,13 @@ class RetrievedChunk(BaseModel):
 
 
 class Citation(BaseModel):
-    """A source citation for an explanation."""
+    """A source citation for an explanation.
+
+    Core fields (source_id/title/authority/url/source_type/excerpt/
+    relevance_rank) are the stable contract. Jurisdiction-aware
+    metadata below is additive and optional: missing stored metadata
+    is exposed as None (unavailable) rather than invented.
+    """
     source_id: str
     title: str
     authority: str
@@ -53,6 +59,12 @@ class Citation(BaseModel):
     source_type: str
     excerpt: str
     relevance_rank: float
+    # Additive T5 citation metadata (all optional for back-compat).
+    jurisdiction: str | None = None
+    checked_date: str | None = None
+    trust_tier: str | None = None
+    # Provision/section locator from the rule's SourceRef citation_span.
+    provision: str | None = None
 
 
 class ExplanationRequest(BaseModel):
@@ -61,6 +73,10 @@ class ExplanationRequest(BaseModel):
     approval_id: str | None = None
     application_id: str | None = None
     limit: int = Field(default=5, ge=1, le=20)
+    # Optional jurisdiction selector for RAG retrieval (T5). None preserves
+    # the server default (IN-GJ behavior unchanged). When set, retrieval
+    # is strictly jurisdiction-filtered with no cross-jurisdiction fallback.
+    jurisdiction: str | None = None
 
 
 class RegulatoryExplanation(BaseModel):

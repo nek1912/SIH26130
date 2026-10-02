@@ -19,7 +19,8 @@ foreach ($m in @('001_initial_schema','002_document_requirements',
 '003_document_extraction','004_consistency','005_rag_sources',
 '006_documents_extraction_status','007_applications_approval_code',
 '008_approvals_code','009_approval_handoffs','010_persisted_jurisdiction',
-'011_approval_workflow_definition','012_application_applicant_id')) {
+'011_approval_workflow_definition','012_application_applicant_id',
+'013_handoff_portal_kind')) {
   psql -h localhost -p 5432 -U postgres -d gaia_dev `
     -v ON_ERROR_STOP=1 `
     -f "supabase/migrations/$m.sql"

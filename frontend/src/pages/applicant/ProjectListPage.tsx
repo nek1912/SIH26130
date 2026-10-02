@@ -48,7 +48,20 @@ export function ProjectListPage() {
             <Link key={project.id} to={`/projects/${project.id}`}>
               <Card className="transition-colors hover:border-primary/50 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
                 <CardHeader>
-                  <CardTitle>{project.name}</CardTitle>
+                  <CardTitle className="flex flex-wrap items-center gap-2">
+                    {project.name}
+                    {project.jurisdiction && (
+                      <span
+                        className={`inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[10px] font-medium ${
+                          project.jurisdiction === 'IN-MH'
+                            ? 'bg-blue-100 text-blue-800'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}
+                      >
+                        {project.jurisdiction}
+                      </span>
+                    )}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground line-clamp-2">

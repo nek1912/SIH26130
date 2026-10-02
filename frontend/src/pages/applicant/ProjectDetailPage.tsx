@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { PageHeader } from '@/components/shared/PageHeader'
+import { MhFactsEditor } from '@/pages/shared/MhFactsEditor'
+import { MhAssessmentPanel } from '@/pages/shared/MhAssessmentPanel'
 
 export function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -86,14 +88,37 @@ export function ProjectDetailPage() {
   if (error) return <div className="mt-12 text-center text-destructive">{error}</div>
   if (!project) return <div className="mt-12 text-center text-muted-foreground">Project not found</div>
 
+  const isMh = project.jurisdiction === 'IN-MH'
+
   return (
     <div className="space-y-6">
       <PageHeader
         title={project.name}
         description={
-          project.description ? (
-            <p className="text-muted-foreground">{project.description}</p>
-          ) : undefined
+          <div className="space-y-1">
+            {project.description ? (
+              <p className="text-muted-foreground">{project.description}</p>
+            ) : undefined}
+            <p className="text-xs">
+              <span className="text-muted-foreground">Jurisdiction: </span>
+              {project.jurisdiction ? (
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[10px] font-medium ${
+                    isMh ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  {project.jurisdiction}
+                </span>
+              ) : (
+                <span className="text-muted-foreground">not stamped (legacy record)</span>
+              )}
+              {project.pack_version && (
+                <span className="ml-2 font-mono text-[10px] text-muted-foreground">
+                  {project.pack_version}
+                </span>
+              )}
+            </p>
+          </div>
         }
         actions={
           <Link to="/projects">
@@ -102,6 +127,19 @@ export function ProjectDetailPage() {
         }
       />
 
+      {isMh ? (
+        <>
+          <MhFactsEditor
+            projectId={id!}
+            existing={facts}
+            onSaved={(updated) => {
+              setFacts(updated)
+              api.projects.getApplications(id!).then((a) => setApplications(a as Application[])).catch(() => {})
+            }}
+          />
+          <MhAssessmentPanel projectId={id!} />
+        </>
+      ) : (
       <div className="grid gap-4 md:grid-cols-2">
         {/* Project Facts */}
         <Card>
@@ -238,6 +276,7 @@ export function ProjectDetailPage() {
           </CardContent>
         </Card>
       </div>
+      )}
     </div>
   )
 }

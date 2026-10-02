@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 export function ProjectCreatePage() {
@@ -12,6 +13,7 @@ export function ProjectCreatePage() {
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [jurisdiction, setJurisdiction] = useState('IN-MH')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -20,7 +22,7 @@ export function ProjectCreatePage() {
     setError('')
     setLoading(true)
     try {
-      const project = await api.projects.create(name, description || undefined, session?.user?.id) as { id: string }
+      const project = await api.projects.create(name, description || undefined, session?.user?.id, jurisdiction) as { id: string }
       navigate(`/projects/${project.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create project')
@@ -50,6 +52,21 @@ export function ProjectCreatePage() {
                 required
                 placeholder="e.g. Chemical Plant Unit A"
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="jurisdiction">Regulatory Jurisdiction</Label>
+              <Select
+                id="jurisdiction"
+                value={jurisdiction}
+                onChange={(e) => setJurisdiction(e.target.value)}
+              >
+                <option value="IN-MH">IN-MH — Maharashtra (SIH demo)</option>
+                <option value="IN-GJ">IN-GJ — Gujarat (legacy/reference)</option>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                The jurisdiction is stamped on the project by the server and
+                selects the regulatory pack. It cannot be changed later.
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>

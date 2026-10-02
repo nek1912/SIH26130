@@ -15,15 +15,40 @@ interface DetailPageHeaderProps {
   referenceNumber: string
   objectId: string
   onBack: () => void
+  // Persisted regulatory identity chips (rendered verbatim from the row).
+  approvalCode?: string | null
+  jurisdiction?: string | null
 }
 
 // Shared title row for both detail pages. Same hierarchy as the previous
 // copy-pasted blocks (h1 + mono id + outline Back), centralized on PageHeader.
-export function DetailPageHeader({ referenceNumber, objectId, onBack }: DetailPageHeaderProps) {
+export function DetailPageHeader({ referenceNumber, objectId, onBack, approvalCode, jurisdiction }: DetailPageHeaderProps) {
   return (
     <PageHeader
       title={`Application ${referenceNumber}`}
-      description={<p className="break-all font-mono text-xs text-muted-foreground">{objectId}</p>}
+      description={
+        <div className="space-y-1">
+          <p className="break-all font-mono text-xs text-muted-foreground">{objectId}</p>
+          {(approvalCode || jurisdiction) && (
+            <p className="flex flex-wrap gap-1">
+              {approvalCode && (
+                <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 font-mono text-[10px] font-medium text-gray-700">
+                  {approvalCode}
+                </span>
+              )}
+              {jurisdiction && (
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 font-mono text-[10px] font-medium ${
+                    jurisdiction === 'IN-MH' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  {jurisdiction}
+                </span>
+              )}
+            </p>
+          )}
+        </div>
+      }
       actions={
         <Button variant="outline" onClick={onBack}>
           Back

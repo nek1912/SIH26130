@@ -3,7 +3,7 @@
 from typing import Any
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, Query
 
 from app.api.deps import (
     get_active_jurisdiction,
@@ -31,23 +31,34 @@ async def create_project(
     repo: ProjectRepository = Depends(get_project_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
     jurisdiction: str = Depends(get_active_jurisdiction),
+    requested_jurisdiction: str | None = Query(
+        default=None,
+        description=(
+            "Explicit regulatory jurisdiction for the new project "
+            "(e.g. 'IN-MH' for the Maharashtra demo). Must be a known pack; "
+            "when omitted the server default applies. Never changes the default."
+        ),
+    ),
 ):
     """Create a new project.
 
-    Regulatory identity is server-derived from the active default;
-    clients cannot supply or override jurisdiction/pack_version.
+    Regulatory identity is server-derived: an explicit
+    ``requested_jurisdiction`` (strictly validated against known packs)
+    wins, otherwise the active default applies. Clients can never set
+    pack_version directly and the global default is never modified.
     """
     from app.seed.pack import DEFAULT_PACK_VERSIONS
 
-    if jurisdiction not in DEFAULT_PACK_VERSIONS:
+    effective_jurisdiction = requested_jurisdiction or jurisdiction
+    if effective_jurisdiction not in DEFAULT_PACK_VERSIONS:
         raise HTTPException(
-            status_code=422, detail=f"Unknown jurisdiction {jurisdiction!r}"
+            status_code=422, detail=f"Unknown jurisdiction {effective_jurisdiction!r}"
         )
     data = {
         "name": name,
         "description": description,
-        "jurisdiction": jurisdiction,
-        "pack_version": DEFAULT_PACK_VERSIONS[jurisdiction],
+        "jurisdiction": effective_jurisdiction,
+        "pack_version": DEFAULT_PACK_VERSIONS[effective_jurisdiction],
     }
     # Use the authenticated user's ID as the applicant unless explicitly provided
     # (and the caller has elevated privileges).
@@ -79,6 +90,52 @@ async def get_project(
         raise HTTPException(status_code=404, detail="Project not found")
     check_project_ownership(user, project)
     return project
+
+
+@router.get("/projects/{project_id}/approval-codes")
+async def list_project_approval_codes(
+    project_id: UUID,
+    project_repo: ProjectRepository = Depends(get_project_repository),
+    user: UserContext = Depends(
+        require_any_permission(
+            Permission.APPLICATION_VIEW_OWN,
+            Permission.APPLICATION_VIEW_TEAM,
+            Permission.APPLICATION_VIEW_ALL,
+        )
+    ),
+):
+    """List assessable approval codes for a project.
+
+    Read-only projection of the project's persisted regulatory pack
+    (authorities included). The UI uses this to offer per-code assessment
+    without hardcoding pack contents. No regulatory evaluation happens here.
+    """
+    from app.seed.pack import UnknownPackError, resolve_persisted_pack
+
+    project = project_repo.get_by_id(project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    check_project_ownership(user, project)
+
+    try:
+        pack = resolve_persisted_pack(
+            project.get("jurisdiction"), project.get("pack_version")
+        )
+    except UnknownPackError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    codes = sorted({rule.approval_id for rule in pack.approval_rules})
+    return {
+        "jurisdiction": pack.jurisdiction,
+        "pack_version": project.get("pack_version"),
+        "approvals": [
+            {
+                "approval_code": code,
+                "authority": pack.approval_authorities.get(code, ""),
+            }
+            for code in codes
+        ],
+    }
 
 
 @router.get("/projects/{project_id}/facts")

@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.api.deps import (
     get_applications_repository,
+    get_approvals_repository,
     get_documents_repository,
     get_project_repository,
     get_workflow_events_repository,
@@ -19,6 +20,7 @@ from app.auth.dependencies import (
 from app.auth.models import UserContext
 from app.auth.permissions import Permission
 from app.repositories.applications import ApplicationsRepository
+from app.repositories.approvals import ApprovalsRepository
 from app.repositories.documents import DocumentsRepository
 from app.repositories.projects import ProjectRepository
 from app.repositories.workflow_events import WorkflowEventsRepository
@@ -87,9 +89,14 @@ async def list_applications(
 @router.post("/applications")
 async def create_application(
     project_id: UUID,
-    approval_id: UUID,
+    approval_id: UUID | None = Query(
+        default=None,
+        description="Approvals-table UUID (legacy GJ path). When omitted, "
+        "the server links the pack's catalog row for approval_code.",
+    ),
     approval_code: str = Query(..., description="Approval code like A01, A02"),
     repo: ApplicationsRepository = Depends(get_applications_repository),
+    approvals_repo: ApprovalsRepository = Depends(get_approvals_repository),
     doc_repo: DocumentsRepository = Depends(get_documents_repository),
     project_repo: ProjectRepository = Depends(get_project_repository),
     user: UserContext = Depends(require_permission(Permission.APPLICATION_CREATE)),
@@ -100,6 +107,10 @@ async def create_application(
     from the parent project — never from the approval code, the
     request, or the global default. The approval code must exist in
     the inherited pack, else 422. No A↔APR translation is performed.
+    The persistence link (approval_id) resolves server-side from the
+    catalog row for approval_code when the caller omits it, so pack
+    codes without a pre-seeded row (e.g. MH APR-xxx) stay creatable
+    without weakening the FK.
     """
     from app.seed.pack import UnknownPackError, resolve_persisted_pack
 
@@ -124,6 +135,17 @@ async def create_application(
                 f"'{pack.jurisdiction}'"
             ),
         )
+
+    if approval_id is None:
+        catalog_row = approvals_repo.get_by_code(approval_code)
+        if catalog_row is None:
+            catalog_row = approvals_repo.create({
+                "code": approval_code,
+                "name": approval_code,
+                "authority": pack.approval_authorities.get(approval_code, ""),
+                "active": True,
+            })
+        approval_id = catalog_row["id"]
 
     data = {
         "project_id": str(project_id),
